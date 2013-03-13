@@ -1,0 +1,58 @@
+<script type="text/javascript">
+	Ext.onReady(function(){
+		var form = Ext.create('Ext.Window', {
+			title: 'Login',
+			width: 300,
+			resizable: false,
+			closable: false,
+			draggable: false,
+			items: [{
+				xtype: 'form',
+				layout: 'form',
+				bodyPadding: '5 5 5 5',
+				id: 'login-form',
+				waitMsgTarget: true,
+				border: false,
+				defaultType: 'textfield',
+				items: [{
+					fieldLabel: 'Username',
+					name: 'USERNAME',
+					allowBlank: false
+				},{
+					fieldLabel: 'Password',
+					inputType: 'password',
+					allowBlank: false,
+					name: 'PASSWORD'
+				}],
+				buttons: [{
+					text: 'Login',
+					listeners: {
+						click: function() {
+							var form = Ext.getCmp('login-form').getForm();
+							if(form.isValid()) {
+								form.submit({
+									url: sharedData.baseUrl + '/dashboard/login',
+									success: function(a, b) {
+										var json = Ext.decode(b.response.responseText);
+										Ext.Msg.alert('Message',json.data.message);
+										document.location = sharedData.baseUrl + '/dashboard/login/redirector';
+									},
+									failure: function(a, b) {
+										var json = Ext.decode(b.response.responseText);
+										Ext.Msg.alert('Error',json.data.message);
+									},
+									waitMsg: 'Authenticating, please wait..'
+								});
+							} else {
+								Ext.Msg.alert('Message','Please complete form first !');
+							}
+						}
+					}
+				}]
+			}]
+		});
+		form.show();
+	});
+</script>
+
+<div id="login-panel"></div>

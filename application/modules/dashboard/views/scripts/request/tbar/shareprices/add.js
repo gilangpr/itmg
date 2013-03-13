@@ -1,0 +1,74 @@
+Ext.create('Ext.Window', {
+	title: 'Add New Shareprices',
+	width: 400,
+	height: 146,
+	closable: true,
+	resizable: false,
+	draggable: false,
+	modal: true,
+	buttons: [{
+		text: 'Save',
+		listeners: {
+			click: function() {
+				var form  = Ext.getCmp('shareprices-add-new-form').getForm();
+				if(form.isValid()) {
+					form.submit({
+						url: sd.baseUrl + '/shareprices/request/create',
+						success: function(data) {
+							var json = Ext.decode(data.respnoseText);
+							form.reset();
+							Ext.Msg.alert('Message','Success adding new Shareprices');
+							var store = loadStore('Shareprices');
+							store.loadPage(1);
+						},
+						failure: function(data,res) {
+							var json = Ext.decode(res.response.responseText);
+							Ext.Msg.alert('Error',json.error_message);
+							form.reset();
+							store.loadPage(1);
+						}
+					});
+				}
+			}
+		}
+	},{
+		text: 'Cancel',
+		listeners: {
+			click: function() {
+				this.up().up().close();
+			}
+		}
+	}],
+	items: [{
+		xtype: 'form',
+		layout: 'form',
+		border: false,
+		id: 'shareprices-add-new-form',
+		defaultType: 'textfield',
+		bodyPadding: '5 5 5 5',
+		items: [{
+	        fieldLabel: 'Date',
+	        name: 'DATE',
+	        format: 'Y-m-d',
+	        xtype: 'datefield'
+	    },{
+			xtype: 'combobox',
+			fieldLabel: 'Shareprices Name',
+			name: 'SHAREPRICES_NAME',
+			labelWidth: 110,
+			store: Ext.data.StoreManager.lookup('SharepricesNames'),
+			displayField: 'SHAREPRICES_NAME',
+			typeAhead: true,
+			allowBlank: false,
+			minChars: 2,
+			emptyText: 'Select'
+		},{
+			fieldLabel: 'Value',
+			xtype: 'numberfield',
+			name: 'VALUE',
+			allowBlank: false,
+			minValue: 0,
+			value: 0
+		}]
+	}]
+}).show();
