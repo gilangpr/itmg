@@ -6,7 +6,8 @@ storeSP.load({
 		all: 1
 	}
 });
-
+Ext.require('Ext.chart.*');
+Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox']);
 Ext.onReady(function() {
 	
 	// Add the additional 'advanced' VTypes
@@ -43,8 +44,8 @@ Ext.onReady(function() {
 		xtype: 'panel',
 		layout: 'border',
 		id: 'detail-shareprices-main',
-		width: 325,
-		height: 154,
+		width: 345,
+		height: 152,
 		modal: true,
 		closable: true,
 		resizable: false,
@@ -57,6 +58,7 @@ Ext.onReady(function() {
 			id: 'detail-shareprices-form',
 			bodyPadding: '5 5 5 5',
 			defaultType: 'textfield',
+			width: 350,
 			items: [{
 				fieldLabel:'Start Date',
 				xtype: 'datefield',
@@ -66,6 +68,7 @@ Ext.onReady(function() {
 		        itemId: 'startdt',
 		        vtype: 'daterange',
 		        endDateField: 'enddt',
+		        emptyText: 'End Date',
 				labelWidth: 120,
 				allowBlank: false
 			},{
@@ -77,6 +80,7 @@ Ext.onReady(function() {
 	            itemId: 'enddt',
 	            vtype: 'daterange',
 	            startDateField: 'startdt',
+	            emptyText: 'Start Date',
 				labelWidth: 120,
 				allowBlank: false
 			},{
@@ -84,12 +88,13 @@ Ext.onReady(function() {
 				fieldLabel: 'Shareprices Name',
 				name: 'SHAREPRICES_NAME',
 				labelWidth: 120,
+				width: 320,
 				store: Ext.data.StoreManager.lookup('SharepricesNames'),
 				displayField: 'SHAREPRICES_NAME',
 				typeAhead: true,
 				allowBlank: false,
 				minChars: 2,
-				emptyText: 'Select'
+				emptyText: 'Select shareprices name'
 			}]
 		}],
 		buttons: [{
@@ -148,7 +153,7 @@ Ext.onReady(function() {
 						                    width: 80,
 						                    height: 40,
 						                    renderer: function(storeItem, item) {
-						                        this.setTitle(storeItem.get('name'));
+						                        this.setTitle(storeItem.get('SHAREPRICES_NAME'));
 						                        this.update(storeItem.get('data1'));
 						                    }
 						                },

@@ -50,6 +50,8 @@ Ext.create('Ext.Window', {
 	        fieldLabel: 'Date',
 	        name: 'DATE',
 	        format: 'Y-m-d',
+	        allowBlank: false,
+	        emptyText: 'Input date',
 	        xtype: 'datefield'
 	    },{
 			xtype: 'combobox',
@@ -61,7 +63,7 @@ Ext.create('Ext.Window', {
 			typeAhead: true,
 			allowBlank: false,
 			minChars: 2,
-			emptyText: 'Select'
+			emptyText: 'Select shareprices name'
 		},{
 			fieldLabel: 'Value',
 			xtype: 'numberfield',

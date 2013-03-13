@@ -169,41 +169,53 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			$getId = explode('|',$posts['data']['IDS']);
 			$ids = array();
 			foreach($getId as $k=>$d) {
-				$temp = explode('_', $d);				
-				
+				$temp = explode('_', $d);
 				if($temp[1] > 0) {
+					$name = $temp[0];
+					$date = $posts['data']['DATE'];
 					
+					//update shareprices log
+					//check value before shareprices and put on value before log
+					$where[] = $this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $name);
+					$where[] = $this->_model->getAdapter()->quoteInto('DATE = ?', $date);
+					if ($this->_model->isExistByKey('DATE', $posts['data']['DATE'])){
+						$sd = $this->_model->getValueByKey('SHAREPRICES_NAME', $temp[0], 'VALUE');
+							
+						$d = array(
+								'VALUE_BEFORE' => $sd);
+						$this->_modelLog->update($d, $where);
+					}
+					
+					//update value after log
+					$data = array(
+							'VALUE_AFTER'      => $posts['data'][$temp[0]]
+					);
+					$wherelog = array(
+							$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $name),
+							$this->_modelLog->getAdapter()->quoteInto('DATE = ?', $date)
+					);
+					$this->_modelLog->update($data, $wherelog);
+					
+					
+					//update shareprices
 					$this->_model->update(array(
 							'VALUE' => $posts['data'][$temp[0]]
 					), $this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $temp[1]));
-					
-					$valbef = $this->_modelLog->getValueLog($posts['data']['DATE'], $temp[0], 'VALUE_AFTER');
-					$splogid = $this->_modelLog->getPksp($posts['data']['DATE'], $temp[0]);
-					
-					$this->_modelLog->update(array(
-							'VALUE_BEFORE' => $valbef,
-					),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
-					
-					$this->_modelLog->update(array(
-							'VALUE_AFTER' => $posts['data'][$temp[0]],
-					),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+										
 				} else {
-					//insert shareprices
 					$this->_model->insert(array(
 							'DATE'=> $posts['data']['DATE'],
 							'SHAREPRICES_NAME' => $temp[0],
 							'VALUE' => $posts['data'][$temp[0]],
 							'CREATED_DATE' => date('Y-m-d H:i:s')
-					));
+					), $this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $temp[0]));
 					
-					//insert shareprices log
 					$this->_modelLog->insert(array(
 							'DATE'=> $posts['data']['DATE'],
 							'SHAREPRICES_NAME' => $temp[0],
 							'VALUE_BEFORE' => $posts['data'][$temp[0]],
-							'VALUE_AFTER' => $posts['data'][$temp[0]],
 							'CREATED_DATE' => date('Y-m-d H:i:s')
-					));
+					), $this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $temp[0]));
 				}
 			}
 		}
@@ -346,32 +358,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		if(file_exists($upload->getDestination() . '/' . $new_name)) {
 			unlink($upload->getDestination() . '/' . $new_name);
 		}
-		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	public function searchAction ()
-	{		
-		$searchModel = new Application_Model_Shareprices();
-		$getSdate = explode('T', $this->_posts['START_DATE']);
-		$getEdate = explode('T', $this->_posts['END_DATE']);
-		
-		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $this->_posts['SHAREPRICES_NAME'])){
-			$listSearch = $searchModel->select()
-			->where('SHAREPRICES_NAME = ?' ,$this->_posts['SHAREPRICES_NAME'])
-			->orwhere('SHAREPRICES_NAME = ?' ,$this->_posts['SHAREPRICES_NAME'])
-			->where('DATE >= ?' ,$getSdate[0])
-			->where('DATE <= ?' ,$getEdate[0]);
-			
-			$list = $listSearch->query()->fetchall();
-		}
-		
-		$data = array(
-				'data' => array(
-						'items' => $list,
-						'totalCount' => count($list)
-				)
-		);
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
