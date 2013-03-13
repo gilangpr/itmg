@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-class Peerrs_RequestController extends Zend_Controller_Action
+class Totalcashcost_RequestController extends Zend_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -9,50 +9,68 @@ class Peerrs_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
-	
+
 	public function init()
 	{
 		$this->_helper->layout()->disableLayout();
 		$this->_helper->viewRenderer->setNoRender(true);
-		$this->_model = new Application_Model_PeerResourceReserves();
+		$this->_model = new Application_Model_TotalCashCost();
 		if($this->getRequest()->isPost()) {
 			$this->_posts = $this->getRequest()->getPost();
 		} else {
 			$this->_posts = array();
 		}
-		
+
 		$this->_start = (isset($this->_posts['start'])) ? $this->_posts['start'] : 0;
 		$this->_limit = (isset($this->_posts['limit'])) ? $this->_posts['limit'] : 25;
-		
+
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
 	}
 	public function indexAction()
 	{
-		
+
 	}
+
+	public function getTitleAction()
+	{
+		$titleList = $this->_model->select();
+		$titleList = $titleList->query()->fetchAll();
+		$title = array(array('flex'=>1,'text'=>'','dataIndex'=>'NAME'));
+		foreach($titleList as $k=>$d) {
+			$title[$k+1]['text'] = $d['TITLE'];
+			$title[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
+			$title[$k+1]['align'] = 'center';
+		}
+		$data = array(
+				'data' => array(
+						'items' => $title
+				)
+		);
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
 	public function createAction()
 	{
 		$data = array(
-			'data' => array()
+				'data' => array()
 		);
-		$modelPeer = new Application_Model_Peers();
+		$modelPeer = new Application_Model_TotalCashCost();
 		try {
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				$this->_model->insert(array(
 						'PEER_ID' => $peer_id,
-						'MINE' => $this->_posts['MINE'],
-						'RESOURCES' => $this->_posts['RESOURCES'],
-						'RESERVES' => $this->_posts['RESERVES'],
-						'AREA' => $this->_posts['AREA'],
-						'CV' => $this->_posts['CV'],
-						'LOCATION' => $this->_posts['LOCATION'],
-						'LICENSE' => $this->_posts['LICENSE'],
+						'TITLE' => $this->_posts['TITLE'],
+						'ROYALTY_IDR' => $this->_posts['ROYALTY_IDR'],
+						'ROYALTY_USD' => $this->_posts['ROYALTY_USD'],
+						'TOTAL_IDR' => $this->_posts['TOTAL_IDR'],
+						'TOTAL_USD' => $this->_posts['TOTAL_USD'],
+						'CURRENCY' => $this->_posts['CURRENCY'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
-						));
+				));
 			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'PEER_ID NOT FOUND';
@@ -63,40 +81,42 @@ class Peerrs_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
+
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-	
+
 	public function readAction()
 	{
-		$modelPeer = new Application_Model_Peers();
+		$modelPeer = new Application_Model_TotalCashCost();
 		$peer_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
 			$list = $list->query()->fetchAll();
 			
-			/* Add total */
-			$sum = array(
-					'RESOURCES'=> 0,
-					'RESERVES' => 0,
-					'AREA' => 0
+			$attr = array(
+					'ROYALTY_IDR' => array('title' => 'Ex. Royalty (IDR)'),
+					'ROYALTY_USD' => array('title' => 'Ex. Royalty (USD)'),
+					'TOTAL_IDR' => array('title' => 'Total (IDR)'),
+					'TOTAL_USD' => array('title' => 'Total (USD)'),
+					'CURRENCY' => array('title' => 'Currency 1 USD =')
 					);
+			$content = array();
+			$i = 0;
+			$j = 0;
 			foreach($list as $k=>$d) {
-				$sum['RESOURCES'] += $d['RESOURCES'];
-				$sum['RESERVES'] += $d['RESERVES'];
-				$sum['AREA'] += $d['AREA'];
+				if($j!=$k) {
+					$i=0;
+					$j=$k;
+				}
+				foreach($attr as $_k=>$_d) {
+						$content[$i]['NAME'] = $_d['title'];
+						$content[$i]['VALUE_' . $d['TITLE']] = $d[$_k];
+						$i++;
+				}
 			}
-			
-			$c = count($list);
-			$list[$c]['MINE'] = 'TOTAL';
-			$list[$c]['RESOURCES'] = $sum['RESOURCES'];
-			$list[$c]['RESERVES'] = $sum['RESERVES'];
-			$list[$c]['AREA'] = $sum['AREA'];
-			/* End of : Add Total */
-			
 			$data = array(
 				'data' => array(
-					'items' => $list,
+					'items' => $content,
 					'totalCount' => count($list)
 					)
 				);
@@ -110,17 +130,17 @@ class Peerrs_RequestController extends Zend_Controller_Action
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-	
+
 	public function updateAction()
 	{
 		$data = array(
 				'data' => array()
 		);
-		
+
 		try {
 			// $posts = $this->getRequest()->getRawBody();
 			// $posts = Zend_Json::decode($posts);
-			
+				
 			// $this->_model->update(array(
 			// 		'INVESTOR_TYPE' => $posts['data']['INVESTOR_TYPE']
 			// 		),
@@ -130,21 +150,21 @@ class Peerrs_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
+
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-	
+
 	public function destroyAction()
 	{
 		$data = array(
 				'data' => array()
-				);
+		);
 		try {
 			// Delete
- 			// $this->_model->delete(
- 			// 		$this->_model->getAdapter()->quoteInto(
- 			// 				'INVESTOR_TYPE_ID = ?', $this->_posts['INVESTOR_TYPE_ID']
- 			// 				));
+			// $this->_model->delete(
+			// 		$this->_model->getAdapter()->quoteInto(
+			// 				'INVESTOR_TYPE_ID = ?', $this->_posts['INVESTOR_TYPE_ID']
+			// 				));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

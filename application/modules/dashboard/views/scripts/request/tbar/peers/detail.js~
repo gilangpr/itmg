@@ -1,0 +1,487 @@
+var c = Ext.getCmp('<?php echo $this->container ?>');
+var selected = c.getSelectionModel().getSelection();
+
+if(selected.length > 0) {
+	var id = 'peers-detail' + selected[0].id;
+	if(!c.up().items.get(id)){
+		var data = selected[0].data;
+        var storeRR = loadStore('PeerResourceReserves');
+        storeRR.load({
+            params: {
+                id: data.PEER_ID
+            }
+        });
+		c.up().add({
+            xtype: 'panel',
+            layout: 'border',
+            title: data.PEER_NAME,
+            id: id,
+            closable: true,
+            autoScroll: true,
+            border: false,
+            items: [{
+                title: 'Peers Detail',
+                collapsible: true,
+                region: 'west',
+                width: '50%',
+                autoScroll: true,
+                items: [{
+                    title: 'Brief History',
+                    bodyPadding: '5 5 5 5',
+                    html: '<p style="text-align: justify">' + data.BRIEF_HISTORY.replace('\n','<br/>') + '</p>',
+                    collapsible: true,
+                    border: false
+                },{
+                    title: 'Business Activity',
+                    bodyPadding: '5 5 5 5',
+                    html: '<p style="text-align: justify">' + data.BUSINESS_ACTIVITY.replace('\n','<br/>') + '</p>',
+                    collapsible: true,
+                    border: false
+                }]
+            },{ //Peers Data
+            	title: 'Peers Data',
+                region: 'center',
+                autoScroll: true,
+                items: [{
+                    title: 'Striping Ratio',
+                    border: false,
+                    collapsible: true,
+                    items: [{
+                        xtype: 'gridpanel',
+                        border: false,
+                        minHeight: 100,
+                        columns: [{
+                            text: '2007',
+                            flex: 1,
+                            align: 'center'
+                        },{
+                            text: '2008',
+                            flex: 1,
+                            align: 'center'
+                        },{
+                            text: '2009',
+                            flex: 1,
+                            align: 'center'
+                        },{
+                            text: '2010',
+                            flex: 1,
+                            align: 'center'
+                        },{
+                            text: '2011',
+                            flex: 1,
+                            align: 'center'
+                        }]
+                    },{
+                        xtype: 'gridpanel',
+                        border: false,
+                        minHeight: 100,
+                        columns: [{
+                            flex: 1
+                        },{
+                            text: '2011F',
+                            align: 'center'
+                        },{
+                            text: '9M10',
+                            align: 'center'
+                        },{
+                            text: '9M11',
+                            align: 'center'
+                        }]
+                    }]
+                },{
+                    title: 'Average Selling Price',
+                    border: false,
+                    collapsible: true,
+                    items: [{
+                        xtype: 'gridpanel',
+                        border: false,
+                        minHeight: 100,
+                        columns: [{
+                            flex: 1
+                        },{
+                            text: 'FY10',
+                            align: 'center'
+                        },{
+                            text: '9M10',
+                            align: 'center'
+                        },{
+                            text: '9M11',
+                            align: 'center'
+                        }]
+                    }]
+                },{
+                    title: 'Financial Performance',
+                    collapsible: true,
+                    border: false,
+                    xtype: 'gridpanel',
+                    minHeight: 200,
+                    tbar: [{
+                        xtype: 'button',
+                        text: 'Add New Financial Performance',
+                        iconCls: 'icon-accept',
+                        listeners: {
+                            click: function() {
+                                Ext.create('Ext.Window', {
+                                    title: 'Add New Financial Performance',
+                                    draggable: false,
+                                    modal: true,
+                                    width: 400,
+                                    align: 'center',
+                                    resizable: false,
+                                    items: [{
+                                        xtype: 'panel',
+                                        border: false,
+                                        items: [{
+                                            xtype: 'form',
+                                            layout: 'form',
+                                            id: 'add-financial-performance-form',
+                                            border: false,
+                                            bodyPadding: '5 5 5 5',
+                                            defaultType: 'numberfield',
+                                            waitMsgTarget: true,
+                                            items: [{
+                                                fieldLabel: 'Revenues',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Gross Profit',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'EBIT',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'EBITDA',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Net Profit',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Total Assets',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Cash',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Gross Profit Margin',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'EBIT Margin',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Net Profit Margin',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Return On Asset',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Return On Equity',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            },{
+                                                fieldLabel: 'Return On Investment',
+                                                allowBlank: false,
+                                                name: 'NAME'
+                                            }]
+                                        }],
+                                        buttons: [{
+                                            text: 'Save',
+                                            listeners: {
+                                                click: function() {
+
+                                                }
+                                            }
+                                        },{
+                                            text: 'Cancel',
+                                            listeners: {
+                                                click: function() {
+                                                    this.up().up().up().close();
+                                                }
+                                            }
+                                        }]
+                                    }]
+                                }).show();
+                            }
+                        }
+                    },{
+                        xtype: 'button',
+                        text: 'Delete',
+                        iconCls: 'icon-stop',
+                        listeners: {
+                            click: function() {
+
+                            }
+                        }
+                    }],
+                    columns: [{
+                        flex: 1,
+                        text: ''
+                    },{
+                        text: 'FY10',
+                        align: 'center'
+                    },{
+                        text: '9M10',
+                        align: 'center'
+                    },{
+                        text: '9M11',
+                        align: 'center'
+                    }]
+                },{
+                    title: 'Total Cash Cost (FOB)',
+                    border: false,
+                    collapsible: true,
+                    items: [{
+                        xtype: 'gridpanel',
+                        border: false,
+                        minHeight: 100,
+                        columns: [{
+                            flex: 1,
+                            text: 'Tanjung Enim System *)'
+                        },{
+                            text: 'FY10',
+                            align: 'center'
+                        },{
+                            text: '9M10',
+                            align: 'center'
+                        },{
+                            text: '9M11',
+                            align: 'center'
+                        }]
+                    }]
+                },{ //Reserves & Resources
+                    title: 'Reserves & Resources',
+                    collapsible: true,
+                    border: false,
+                    xtype: 'gridpanel',
+                    store: storeRR,
+                    minHeight: 130,
+                    tbar: [{
+                        xtype: 'button',
+                        text: 'Add New Reserves & Resources',
+                        iconCls: 'icon-accept',
+                        listeners: {
+                            click: function() {
+                                Ext.create('Ext.Window', {
+                                    title: 'Add New Reserves & Resources',
+                                    id: 'RR',
+                                    draggable: false,
+                                    modal: true,
+                                    width: 400,
+                                    align: 'center',
+                                    resizable: false,
+                                    items: [{
+                                        xtype: 'panel',
+                                        border: false,
+                                        items: [{
+                                            xtype: 'form',
+                                            layout: 'form',
+                                            id: 'add-new-reserves-resources-form',
+                                            border: false,
+                                            bodyPadding: '5 5 5 5',
+                                            defaultType: 'textfield',
+                                            waitMsgTarget: true,
+                                            items: [{
+                                                fieldLabel: 'Mine',
+                                                allowBlank: false,
+                                                name: 'MINE'
+                                            },{
+                                                fieldLabel: 'Resources',
+                                                allowBlank: false,
+                                                name: 'RESOURCES',
+                                                xtype: 'numberfield',
+                                                minValue: 0,
+                                                value: 0
+                                            },{
+                                                fieldLabel: 'Reserves',
+                                                allowBlank: false,
+                                                name: 'RESERVES',
+                                                xtype: 'numberfield',
+                                                minValue: 0,
+                                                value: 0
+                                            },{
+                                                fieldLabel: 'Area',
+                                                allowBlank: false,
+                                                name: 'AREA',
+                                                xtype: 'numberfield',
+                                                minValue: 0,
+                                                value: 0
+                                            },{
+                                                fieldLabel: 'CV',
+                                                allowBlank: false,
+                                                name: 'CV'
+                                            },{
+                                                fieldLabel: 'Location',
+                                                allowBlank: false,
+                                                name: 'LOCATION'
+                                            },{
+                                                fieldLabel: 'License',
+                                                allowBlank: false,
+                                                name: 'LICENSE'
+                                            }]
+                                        }],
+                                        buttons: [{
+                                                text: 'Save',
+                                                listeners: {
+                                                    click: function() {
+                                                        var form = Ext.getCmp('add-new-reserves-resources-form').getForm();
+                                                        var store = loadStore ('PeerResourceReserves');
+                                                        
+                                                        if (form.isValid()) {
+                                                            form.submit({
+                                                                url: sd.baseUrl + '/peerrs/request/create/id/' + data.PEER_ID,
+                                                                success: function(d) {
+                                                                    //console.log(data);
+                                                                    var json = Ext.decode(d.responseText);
+                                                                    form.reset();
+                                                                    store.load({
+                                                                        params: {
+                                                                            id: data.PEER_ID
+                                                                        }
+                                                                    }); // Refresh grid data
+                                                                    Ext.Msg.alert('Success', 'Data has been saved');
+                                                                    Ext.getCmp('RR').close();
+                                                                },
+                                                                failure: function(data) {
+                                                                    //console.log(data);
+                                                                    var json = Ext.decode(data.responseText);
+                                                                    Ext.Msg.alert('Error', json.error_message);
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                }
+                                            },{
+                                                text: 'Cancel',
+                                                listeners: {
+                                                    click: function() {
+                                                        this.up().up().up().close();
+                                                    }
+                                                }
+                                            }] 
+                                        }]
+                                }).show();
+                            }
+                        }
+                    },{
+                        xtype: 'button',
+                        text: 'Delete',
+                        iconCls: 'icon-stop',
+                        listeners: {
+                            click: function() {
+
+                            }
+                        }
+                    }],
+                    columns: [{
+                        flex: 1,
+                        text: 'Mine',
+                        align: 'center',
+                        dataIndex: 'MINE'
+                    },{
+                        flex: 1,
+                        text: 'Resources <br /> (Mil. Tons)',
+                        align: 'center',
+                        dataIndex: 'RESOURCES'
+                    },{
+                        flex: 1,
+                        text: 'Reserves <br /> (Mil. Tons)',
+                        align: 'center',
+                        dataIndex: 'RESERVES'
+                    },{
+                        flex: 1,
+                        text: 'Area (Ha)',
+                        align: 'center',
+                        dataIndex: 'AREA'
+                    },{
+                        flex: 1,
+                        text: 'CV (Kcal)',
+                        align: 'center',
+                        dataIndex: 'CV'
+                    },{
+                        flex: 1,
+                        text: 'Location',
+                        align: 'center',
+                        dataIndex: 'LOCATION'
+                    },{
+                        flex: 1,
+                        text: 'License',
+                        align: 'center',
+                        dataIndex: 'LICENSE'
+                    }]
+                },{
+                    title: 'Composition of the Company\'s Shareholders at the End of the Year 2009 & 2010',
+                    border: false,
+                    collapsible: true,
+                    items: [{
+                        xtype: 'gridpanel',
+                        border: false,
+                        minHeight: 100,
+                        columns: [{
+                            flex: 1,
+                            text: 'Ownership',
+                            align: 'center'
+                        },{
+                            text: '2009',
+                            align: 'center'
+                        },{
+                            text: '2010',
+                            align: 'center'
+                        }]
+                    }]
+                },{
+                    title: 'Coal Sales Distribution',
+                    border: false,
+                    collapsible: true,
+                    items: [{
+                        xtype: 'gridpanel',
+                        border: false,
+                        minHeight: 100,
+                        columns: [{
+                            flex: 1,
+                            text: '9M11',
+                            align: 'center'
+                        },{
+                            text: 'Country',
+                            align: 'center'
+                        },{
+                            text: 'Volume (mt)',
+                            align: 'center'
+                        },{
+                            text: 'Percentage',
+                            align: 'center'
+                        }]
+                    }]
+                // },{
+                //     title: 'Coal Sales Distribution 9M11 by Country',
+                //     border: false,
+                //     collapsible: true,
+                //     items: [{
+                //         xtype: 'gridpanel',
+                //         border: false,
+                //         minHeight: 100,
+                //         columns: [{
+                //             flex: 1,
+                //             text: 'Country',
+                //             align: 'center'
+                //         },{
+                //             text: 'Percentage',
+                //             align: 'center'
+                //         }]
+                //     }]
+                }]
+            }]
+        });
+	}
+	c.up().setActiveTab(id);
+} else {
+	Ext.Msg.alert('Message', 'You did not select any Company');
+}

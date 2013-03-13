@@ -83,6 +83,7 @@ class Coalsales_RequestController extends Zend_Controller_Action
 
 	public function readAction()
 	{
+		
 		$modelCoalsales = new Application_Model_Coalsales();
 		$peer_id = (isset($this->_post['id'])) ? $this->_post['id'] : 0;
 		if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
@@ -96,14 +97,38 @@ class Coalsales_RequestController extends Zend_Controller_Action
 					)
 				);
 
-			$type = 'Domestic';
-			$i = 0;
-			$count = 0;
-			$t = array();
-
+// 			$type = 'Domestic';
+// 			$i = 0;
+// 			$count = 0;
+// 			$t = array();
+// 			$data = array();
+			$domestic = 0;
+			$export = 0;
 			foreach($list as $k=>$d) {
-
+// 				$data['data']['items'][$k]['NAME'] = $d['TYPE'];
+// 				$data['data']['items'][$k]['VOLUME'] = $d['VOLUME'];
+				if(strtolower($d['TYPE']) == 'domestic') {
+					$domestic += $d['VOLUME'];
+				} else {
+					$export += $d['VOLUME'];
+				}
 			}
+			$sum = $domestic + $export;
+			$data = array(
+					'data' => array(
+					'items' => array(
+							array(
+									'NAME' => 'Domestic',
+									'VOLUME' => $domestic,
+									'PERCENTAGE' => number_format(($domestic / $sum) * 100, 2) . '%'
+									),
+							array(
+									'NAME' => 'Export',
+									'VOLUME' => $export,
+									'PERCENTAGE' => number_format(($export / $sum) * 100, 2) . '%'
+									)
+							)
+					));
 
 		}
 

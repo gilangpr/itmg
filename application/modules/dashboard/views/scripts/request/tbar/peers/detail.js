@@ -11,22 +11,33 @@ var sryFields = <?php echo $this->sryFields?>;
 var aspColumns = <?php echo $this->aspColumns?>;
 var aspFields = <?php echo $this->aspFields?>;
 var csyColumns = <?php echo $this->csyColumns?>;
-var csyFields = [];
+var csyFields = <?php echo $this->csyFields?>;
+var fobColumns = <?php echo $this->fobColumns?>;
+var fobFields = <?php echo $this->fobFields?>;
 
 if(selected.length > 0) {
     var id = 'peers-detail' + selected[0].id;
     if(!c.up().items.get(id)){
         var data = selected[0].data;
+        //Store Resources and Reserves
+        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+			clicksToMoveEditor: 1,
+	        autoCancel: false
+	    });
         var storeRR = loadStore('PeerResourceReserves');
         storeRR.load({
             params: {
                 id: data.PEER_ID
             }
         });
+        var showSummary = true;
+        
+        //Model Financial Performances
         Ext.define('FinancialPerformance', {
             extend: 'Ext.data.Model',
             fields: fpFields
         });
+        //Store Financial Performances
         var storeFP = Ext.create('Ext.data.Store',{
             storeId: 'FinancialPerformances',
             model: 'FinancialPerformance',
@@ -66,10 +77,12 @@ if(selected.length > 0) {
                 id: data.PEER_ID
             }
         });
+        //Model Coal Sales Distribution
         Ext.define('CoalSalesDistribution', {
             extend: 'Ext.data.Model',
             fields: csdFields
         });
+        //Store Coal Sales Distribution
         var storeCSD = Ext.create('Ext.data.Store',{
             storeId: 'CoalSalesDistributions',
             model: 'CoalSalesDistribution',
@@ -109,10 +122,12 @@ if(selected.length > 0) {
                 id: data.PEER_ID
             }
         });
+        //Model Stripping Ratio
         Ext.define('StrippingRatio', {
             extend: 'Ext.data.Model',
             fields: srFields
         });
+        //Store Stripping Ratio
         var storeSR = Ext.create('Ext.data.Store',{
             storeId: 'StrippingRatios',
             model: 'StrippingRatio',
@@ -152,10 +167,12 @@ if(selected.length > 0) {
                 id: data.PEER_ID
             }
         });
+        //Model Stripping Ratio By Year
         Ext.define('StrippingRatioYear', {
             extend: 'Ext.data.Model',
             fields: sryFields
         });
+        //Store Stripping Ratio By Year
         var storeSRY = Ext.create('Ext.data.Store',{
             storeId: 'StrippingRatioYears',
             model: 'StrippingRatioYear',
@@ -188,17 +205,20 @@ if(selected.length > 0) {
             sorter: {
                 property: 'STRIPPING_RATIO_YEAR_ID',
                 direction: 'ASC'
-            }
+            },
+            autoSync: true
         });
         storeSRY.load({
             params: {
                 id: data.PEER_ID
             }
         });
+        //Model Selling Price
          Ext.define('SellingPrice', {
             extend: 'Ext.data.Model',
             fields: aspFields
         });
+        //Store Selling Price
         var storeASP = Ext.create('Ext.data.Store',{
             storeId: 'SellingPrices',
             model: 'SellingPrice',
@@ -238,20 +258,23 @@ if(selected.length > 0) {
                 id: data.PEER_ID
             }
         });
+        
+        //Model Composition Company
         Ext.define('CompositionCompany', {
-            extend: 'Ext.data.Model',
-            fields: csyFields
+        	extend: 'Ext.data.Model',
+        	fields: csyFields
         });
+        //Store Composition Company
         var storeCSY = Ext.create('Ext.data.Store',{
             storeId: 'CompositionCompanys',
             model: 'CompositionCompany',
             proxy: {
                 type: 'ajax',
                 api: {
-                    read: '/compositioncompany/request/read',
-                    create: '/compositioncompany/request/create',
-                    update: '/compositioncompany/request/update',
-                    destroy: '/compositioncompany/request/destroy'
+                    read	: '/compositioncompany/request/read',
+                    create	: '/compositioncompany/request/create',
+                    update	: '/compositioncompany/request/update',
+                    destroy	: '/compositioncompany/request/destroy'
                 },
                 actionMethods: {
                     create: 'POST',
@@ -281,6 +304,53 @@ if(selected.length > 0) {
                 id: data.PEER_ID
             }
         });
+        
+        //Model Total Cash Cost
+        Ext.define('TotalCashCost', {
+        	extend: 'Ext.data.Model',
+        	fields: fobFields
+        });
+        //Store Total Cash Cost
+        var storeFOB = Ext.create('Ext.data.Store',{
+            storeId: 'TotalCashCosts',
+            model: 'TotalCashCost',
+            proxy: {
+                type: 'ajax',
+                api: {
+                    read	: '/totalcashcost/request/read',
+                    create	: '/totalcashcost/request/create',
+                    update	: '/totalcashcost/request/update',
+                    destroy	: '/totalcashcost/request/destroy'
+                },
+                actionMethods: {
+                    create: 'POST',
+                    destroy: 'POST',
+                    read: 'POST',
+                    update: 'POST'
+                },
+                reader: {
+                    idProperty: 'TOTAL_CASHCOST_ID',
+                    type: 'json',
+                    root: 'data.items',
+                    totalProperty: 'data.totalCount'
+                },
+                writer: {
+                    type: 'json',
+                    root: 'data',
+                    writeAllFields: true
+                }
+            },
+            sorter: {
+                property: 'TOTAL_CASHCOST_ID',
+                direction: 'ASC'
+            }
+        });
+        storeFOB.load({
+            params: {
+                id: data.PEER_ID
+            }
+        });
+        
         c.up().add({
             xtype: 'panel',
             layout: 'border',
@@ -319,7 +389,8 @@ if(selected.length > 0) {
                     items: [{
                         xtype: 'gridpanel',
                         border: false,
-                        minHeight: 100,
+                        plugins: [cellEditing],
+                        minHeight: 120,
                         store: storeSRY,
                         columns: sryColumns,
                         tbar: [{
@@ -365,7 +436,7 @@ if(selected.length > 0) {
                                                 listeners: {
                                                     click: function() {
                                                         var form = Ext.getCmp('add-stripping-ratio-year-form').getForm();
-                                                        var store = loadStore('StrippingRatioYear');
+                                                        var store = loadStore('StrippingRatioYears');
                                                         
                                                         if(form.isValid()) {
                                                             form.submit({
@@ -405,7 +476,7 @@ if(selected.length > 0) {
                     },{
                         xtype: 'gridpanel',
                         border: false,
-                        minHeight: 100,
+                        minHeight: 120,
                         store: storeSR,
                         columns: srColumns,
                         tbar: [{
@@ -510,7 +581,7 @@ if(selected.length > 0) {
                     items: [{
                         xtype: 'gridpanel',
                         border: false,
-                        minHeight: 100,
+                        minHeight: 120,
                         store: storeASP,
                         columns: aspColumns,
                         tbar: [{
@@ -543,24 +614,6 @@ if(selected.length > 0) {
                                                     allowBlank: false,
                                                     name: 'TITLE',
                                                 },{
-                                                    // fieldLabel: 'Type',
-                                                    // xtype: 'fieldcontainer',
-                                                    // defaultType: 'radiofield',
-                                                    // defaults: {
-                                                    //     flex: 1
-                                                    // },
-                                                    // layout: 'hbox',
-                                                    // items: [{
-                                                    //     boxLabel: 'Domestic',
-                                                    //     name: 'TYPE',
-                                                    //     inputValue: 'domestic',
-                                                    //     id: 'radio1'
-                                                    // },{
-                                                    //     boxLabel: 'Export',
-                                                    //     name: 'TYPE',
-                                                    //     inputValue: 'export',
-                                                    //     id: 'radio2'
-                                                    // }]
                                                     fieldLabel: 'Type',
                                                     allowBlank: false,
                                                     xtype: 'combobox',
@@ -638,7 +691,7 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    minHeight: 200,
+                    minHeight: 240,
                     store: storeFP,
                     columns: fpColumns,
                     tbar: [{
@@ -784,25 +837,121 @@ if(selected.length > 0) {
                     }]
                 },{
                     title: 'Total Cash Cost (FOB)',
-                    border: false,
                     collapsible: true,
-                    items: [{
-                        xtype: 'gridpanel',
-                        border: false,
-                        minHeight: 100,
-                        columns: [{
-                            flex: 1,
-                            text: 'Tanjung Enim System *)'
-                        },{
-                            text: 'FY10',
-                            align: 'center'
-                        },{
-                            text: '9M10',
-                            align: 'center'
-                        },{
-                            text: '9M11',
-                            align: 'center'
-                        }]
+                    border: false,
+                    xtype: 'gridpanel',
+                	store: storeFOB,
+                    columns: fobColumns,
+                    minHeight: 150,
+                    tbar: [{
+                    	xtype: 'button',
+                    	text: 'Add New Total Cash Cost',
+                    	iconCls: 'icon-accept',
+                    	listeners: {
+                    		click: function() {
+                    			Ext.create('Ext.Window', {
+                    				title: 'Add New Total Cash Cost',
+                    				id: 'FOB',
+                    				draggable: false,
+                    				modal: true,
+                    				width: 400,
+                    				align: 'center',
+                    				resizable: false,
+                    				items: [{
+                    					xtype: 'panel',
+                    					border: false,
+                    					items: [{
+                    						xtype: 'form',
+                    						layout: 'form',
+                    						id: 'add-new-total-cash-cost-form',
+                    						border: false,
+                    						bodyPadding: '5 5 5 5',
+                    						defaultType: 'textfield',
+                    						waitMsgTarget: true,
+                    						items: [{
+                    							fieldLabel: 'Title',
+                    							allowBlank: false,
+                    							name: 'TITLE'
+                    						},{
+                    							fieldLabel: 'Ex. Royalty (IDR)',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'ROYALTY_IDR'
+                    						},{
+                    							fieldLabel: 'Ex. Royalty (USD)',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'ROYALTY_USD'
+                    						},{
+                    							fieldLabel: 'Total (IDR)',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'TOTAL_IDR'
+                    						},{
+                    							fieldLabel: 'Total (USD)',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'TOTAL_USD'
+                    						},{
+                    							fieldLabel: 'Currency 1 USD',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'CURRENCY'
+                    						}]
+                    					}],
+                    						buttons: [{
+                    							text: 'Save',
+                    							listeners: {
+                    								click: function() {
+                    									var form = Ext.getCmp('add-new-total-cash-cost-form').getForm();
+                    									var store = loadStore('TotalCashCosts');
+                    									
+                    									if(form.isValid()) {
+                    										form.submit({
+                                                                url: sd.baseUrl + '/totalcashcost/request/create/id/' + data.PEER_ID,
+                                                                success: function(d) {
+                                                                    //console.log(data);
+                                                                    var json = Ext.decode(d.responseText);
+                                                                    form.reset();
+                                                                    store.load({
+                                                                        params: {
+                                                                            id: data.PEER_ID
+                                                                        }
+                                                                    }); // Refresh grid data
+                                                                    Ext.Msg.alert('Success', 'Data has been saved');
+                                                                    Ext.getCmp('FOB').close();
+                                                                },
+                                                                failure: function(data) {
+                                                                    //console.log(data);
+                                                                    var json = Ext.decode(data.responseText);
+                                                                    Ext.Msg.alert('Error', json.error_message);
+                                                                }
+                                                            });
+                    									}
+                    								}
+                    							}
+                    						},{
+                    							text: 'Cancel',
+                    							listeners: {
+                    								click: function() {
+                    									this.up().up().up().close();
+                    								}
+                    							}
+                    						}]
+                    				}]
+                    			}).show();
+                    		}
+                    	}
                     }]
                 },{ //Reserves & Resources
                     title: 'Reserves & Resources',
@@ -969,10 +1118,9 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    minHeight: 100,
-                    columns: [],
-                    //columns: csyColumns,
-                    //store: storeCSY,
+                    minHeight: 150,
+                    columns: csyColumns,
+                    store: storeCSY,
                     tbar: [{
                         xtype: 'button',
                         text: 'Add New Composition',
@@ -997,37 +1145,29 @@ if(selected.length > 0) {
                                             border: false,
                                             bodyPadding: '5 5 5 5',
                                             defaultType: 'textfield',
-                                            frame: true,
-                                            fieldDefaults: {
-                                                msgTarget: 'side',
-                                                labelWidth: 75
-                                            },
-                                            defaults: {
-                                                anchor: '100%'
-                                            },
                                             waitMsgTarget: true,
                                             items: [{
                                                 fieldLabel: 'Title',
                                                 allowBlank: false,
                                                 name: 'TITLE'
                                             },{
-                                                fieldLabel: 'Ownership',
+                                                fieldLabel: 'Republic Of Indonesia Value',
                                                 allowBlank: false,
-                                                name: 'TYPE',
-                                                xtype: 'combobox',
-                                                store: new Ext.data.ArrayStore({fields:['type'], data:[['State'],['Public']]}),
-                                                mode: 'local',
-                                                value: 'State',
-                                                listWidth: 40,
-                                                triggerAction: 'all',
-                                                displayField: 'type',
-                                                valueField: 'type',
-                                                editable: false,
-                                                forceSelection: true
+                                                name: 'REPUBLIC_OF_INDONESIA',
+                                                xtype: 'numberfield',
+                                                minValue: 0,
+                                                value: 0
                                             },{
-                                                fieldLabel: 'Value',
+                                                fieldLabel: 'Domestic Investors',
                                                 allowBlank: false,
-                                                name: 'VALUE',
+                                                name: 'DOMESTIC_INVESTOR',
+                                                xtype: 'numberfield',
+                                                minValue: 0,
+                                                value: 0
+                                            },{
+                                                fieldLabel: 'Foreign Investors',
+                                                allowBlank: false,
+                                                name: 'FOREIGN_INVESTOR',
                                                 xtype: 'numberfield',
                                                 minValue: 0,
                                                 value: 0
@@ -1118,7 +1258,7 @@ if(selected.length > 0) {
                                                 xtype: 'combobox',
                                                 store: new Ext.data.ArrayStore({fields:['type'],data:[['Export'],['Domestic']]}),
                                                 mode : 'local',
-                                                value: '',
+                                                value: 'Domestic',
                                                 listWidth : 40,
                                                 triggerAction : 'all',
                                                 displayField  : 'type',
@@ -1159,6 +1299,8 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
+                    store: storeCSD,
+                    columns: [],
                     minHeight: 200,
                     tbar: [{
                         xtype: 'button',
@@ -1217,26 +1359,6 @@ if(selected.length > 0) {
                                 }).show();
                             }
                         }
-                    },{
-                        xtype: 'button',
-                        text: 'Delete',
-                        iconCls: 'icon-stop',
-                        listeners: {
-                            click: function() {
-
-                            }
-                        }
-                    }],
-                    columns: [{
-                        flex: 1,
-                        text: 'Country',
-                        align: 'center',
-                        dataIndex: 'COUNTRY'
-                    },{
-                        flex: 1,
-                        text: 'Percentage',
-                        align: 'center',
-                        dataIndex: 'PERCENTAGE'
                     }]
                 }]
             }]

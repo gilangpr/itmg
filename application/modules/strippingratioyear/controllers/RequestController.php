@@ -61,12 +61,26 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
-				$this->_model->insert(array(
-						'PEER_ID' => $peer_id,
-						'TITLE' => $this->_posts['TITLE'],
-						'VALUE' => $this->_posts['VALUE'],
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
+				
+				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
+				
+					$this->_model->insert(array(
+							'PEER_ID' => $peer_id,
+							'TITLE' => $this->_posts['TITLE'],
+							'VALUE' => $this->_posts['VALUE'],
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+				
+				} else {
+					
+					$this->_model->update(array(
+							'VALUE' => $this->_posts['VALUE']
+							), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_YEAR_ID = ?', 
+									$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
+									));
+					
+				}
+				
 			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'PEER_ID NOT FOUND';
@@ -120,6 +134,35 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 					)
 			);
 		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
+	public function updateAction()
+	{
+		//UPDATE DATA
+		$data = array(
+				'data' => array()
+		);
+	
+		$data = $this->getRequest()->getRawBody();//GET JSON DATA
+		$data = Zend_Json::decode($data);//CHANGE JSON DATA TO ARRAY
+		
+		foreach($data['data'] as $k=>$d) {
+			$t = explode('_', $k);
+			if(isset($t[0])) {
+				if($t[0] == 'VALUE') {
+					if($this->_model->isExistByKey('TITLE', $t[1])) {
+						$id = $this->_model->getPkByKey('TITLE', $t[1]);
+						$data['ids'][] = $id;
+						$data['vals'][] = $d;
+						$this->_model->update(array(
+								'VALUE' => $d
+								), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_YEAR_ID = ?', $id));
+					}
+				}
+			}
+		}
+	
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

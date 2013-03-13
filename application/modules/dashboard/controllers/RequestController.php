@@ -84,7 +84,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 					$this->view->aspColumns = $this->getAspColumns(new Application_Model_SellingPrice());
 					$this->view->aspFields = $this->getAspFields(new Application_Model_SellingPrice());
 					$this->view->csyColumns = $this->getCsyColumns(new Application_Model_CompositionCompany());
-					$this->view->csdFields = $this->getCsyFields(new Application_Model_CompositionCompany());
+					$this->view->csyFields = $this->getCsyFields(new Application_Model_CompositionCompany());
+					$this->view->fobColumns = $this->getFobColumns(new Application_Model_TotalCashCost());
+					$this->view->fobFields = $this->getFobFields(new Application_Model_TotalCashCost());
 				}
 				
 				$this->_data['data']['items'] = $this->view->render($ctl->getValueByKey('CONTENT_TBAR_ID', $ct->getPkByKey('ID', $id), 'PATH'));
@@ -136,7 +138,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	{
 		$list = $model->select()->limit(1,0)->order('CREATED_DATE DESC');
 		$list = $list->query()->fetchAll();
-		$rows = array(array(
+		$columns = array(array(
 			'flex' => 1,
 			'text' => $list[0]['TITLE'],
 			'align' => 'center',
@@ -150,7 +152,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			'align' => 'center',
 			'dataIndex' => 'PERCENTAGE'
 		));
-		return Zend_Json::encode($rows);
+		return Zend_Json::encode($columns);
 	}
 
 	protected function getCsdFields($model)
@@ -166,7 +168,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			'type' => 'float'	
 		),array(
 			'name' => 'PERCENTAGE',
-			'type' => 'float'
+			'type' => 'string'
 		));
 		return Zend_Json::encode($fields);
 	}
@@ -214,6 +216,11 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k]['align'] = 'center';
 			$columns[$k]['flex'] = 1;
+			$columns[$k]['editor'] = array(
+					'xtype'=> 'numberfield',
+					'allowBlank' => false,
+					'minValue' => 0
+					);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -267,27 +274,80 @@ class Dashboard_RequestController extends Zend_Controller_Action
 
 	protected function getCsyColumns($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(2,0);
 		$list = $list->query()->fetchAll();
-		$columns = array();
-		foreach ($list as $k => $d) {
-			$columns[$k]['text'] = $d['TITLE'];
-			$columns[$k]['dataIndex'] = 'VALUE_' . $d['TITLE'];
-			$columns[$k]['align'] = 'center';
-			$columns[$k]['flex'] = 1;
+		$columns = array(array(
+// 				'flex' => 1,
+				'width' => 200,
+				'text' => 'Ownership',
+				'dataIndex' => 'NAME'
+		));
+		foreach($list as $k=>$d) {
+			$columns[$k+1]['text'] = $d['TITLE'];
+// 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
+			$columns[$k+1]['align'] = 'center';
+			$columns[$k+1]['flex'] = '1';
+			$columns[$k+1]['columns'] = array(array(
+// 					'flex' => 1,
+					'text' => 'Value',
+					'width'=> 90,
+					'dataIndex' => 'VALUE_' . $d['TITLE'],
+					'align' => 'center'
+					),array(
+// 					'flex' => 1,
+					'width'=> 90,
+					'text' => 'Percentage',
+					'dataIndex' => 'PERCENTAGE_' . $d['TITLE'],
+					'align' => 'center'
+					));
 		}
 		return Zend_Json::encode($columns);
 	}
 
 	protected function getCsyFields($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(2,0);
 		$list = $list->query()->fetchAll();
 		$fields = array(array(
 				'name' => 'NAME',
 				'type' => 'string'
 		));
-		foreach ($list as $k => $d) {
+		foreach($list as $k=>$d) {
+			$idx = count($fields);
+			$fields[$idx]['name'] = 'VALUE_' . $d['TITLE'];
+			$fields[$idx]['type'] = 'float';
+			$fields[$idx+1]['name'] = 'PERCENTAGE_' . $d['TITLE'];
+			$fields[$idx+1]['type'] = 'string';
+		}
+		return Zend_Json::encode($fields);
+	}
+	
+	protected function getFobColumns($model)
+	{
+		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $list->query()->fetchAll();
+		$columns = array(array(
+				'flex' => 1,
+				'text' => 'Tanjung Enim Systems',
+				'dataIndex' => 'NAME'
+		));
+		foreach($list as $k=>$d) {
+			$columns[$k+1]['text'] = $d['TITLE'];
+			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
+			$columns[$k+1]['align'] = 'center';
+		}
+		return Zend_Json::encode($columns);
+	}
+	
+	protected function getFobFields($model)
+	{
+		$list = $model->select()->order('CREATED_DATE ASC')->limit(5,0);
+		$list = $list->query()->fetchAll();
+		$fields = array(array(
+				'name' => 'NAME',
+				'type' => 'string'
+		));
+		foreach($list as $k=>$d) {
 			$fields[$k+1]['name'] = 'VALUE_' . $d['TITLE'];
 			$fields[$k+1]['type'] = 'float';
 		}
