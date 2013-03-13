@@ -37,11 +37,6 @@ Ext.create('Ext.Window', {
                 fieldLabel: 'End Time',
                 allowBlank: false,
                 name: 'END_TIME'
-            },{
-                fieldLabel: 'Notes',
-                name: 'NOTES',
-                xtype: 'htmleditor',
-                height: 150
             }]
         }],
         buttons: [{

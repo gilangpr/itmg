@@ -38,11 +38,11 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		try {
 			// Insert Data :
  			$this->_model->insert(array(
- 					'MEETING_EVENT'=> $this->_posts['MEETING_EVENT'],
-					'MEETING_DATE'=>$this->_posts['MEETING_DATE'],
-					'START_TIME'=>$this->_posts['START_TIME'],
-					'END_TIME'=>$this->_posts['END_TIME'],
-					'NOTES'=>$this->_posts['NOTES'],
+ 					'MEETING_EVENT' => $this->_posts['MEETING_EVENT'],
+					'MEETING_DATE' => $this->_posts['MEETING_DATE'],
+					'START_TIME' => $this->_posts['START_TIME'],
+					'END_TIME' => $this->_posts['END_TIME'],
+					'NOTES' => '',
  					'CREATED_DATE' => date('Y-m-d H:i:s')
  					));
 		}catch(Exception $e) {

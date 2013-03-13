@@ -38,7 +38,7 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
 		try {
 			// Insert Data :
  			$this->_model->insert(array(
-					'INVESTOR_ID'=>$this->_posts['INVESTOR_ID'],
+					'INVESTOR_ID'=>$this->_posts['id'],
  					'TITLE'=> $this->_posts['TITLE'],
 					'VALUE'=> $this->_posts['VALUE'],
  					'CREATED_DATE' => date('Y-m-d H:i:s')

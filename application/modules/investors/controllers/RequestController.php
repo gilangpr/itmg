@@ -64,25 +64,90 @@ class Investors_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		$data = array(
-			'data' => array(
-				'items' => $this->_model->getListInvestorsLimit($this->_limit, $this->_start),
-				'totalCount' => $this->_model->count()
-			)
-		);
-	
-		MyIndo_Tools_Return::JSON($data);
-	}
-	
-	public function searchAction() 
-	{
-		$data = array(
 				'data' => array(
 						'items' => array(),
 						'totalCount' => 0
 						)
 				);
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		
+		if(!isset($this->_posts['TYPE'])) {
+			$data = array(
+				'data' => array(
+					'items' => $this->_model->getListInvestorsLimit($this->_limit, $this->_start),
+					'totalCount' => $this->_model->count()
+				)
+			);
+		} else {
+			
+			// Search :
+			$TYPE = 'List';
+			
+			$q = $this->_model->select()->setIntegrityCheck(false)
+			->from('INVESTORS', array('*'));
+			
+			if(isset($this->_posts['COMPANY_NAME'])) {
+				$q->where('COMPANY_NAME LIKE ?', '%' . $this->_posts['COMPANY_NAME'] . '%');
+			}
+			
+			if(isset($this->_posts['CONTACT_PERSON'])) {
+				$modelCT = new Application_Model_Contacts();
+				
+				if($this->_posts['CONTACT_PERSON'] != '') {
+					$q->join('CONTACTS', 'CONTACTS.INVESTOR_ID = INVESTORS.INVESTOR_ID', array('*'));
+					$q->where('CONTACTS.NAME LIKE ?', '%' . $this->_posts['CONTACT_PERSON'] . '%');
+				}
+			}
+			
+			if(isset($this->_posts['EQUITY_ASSETS'])) {
+				$EQUITY_ASSETS = $this->_posts['EQUITY_ASSETS'];
+				if(strtolower($EQUITY_ASSETS) == 'small') {
+					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
+				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
+					$q->where('EQUITY_ASSETS >= 21 AND EQUITY_ASSETS <= 40');
+				} else if(strtolower($EQUITY_ASSETS) == 'large'){
+					$q->where('EQUITY_ASSETS >= 41');
+				} else {
+					$q->where('EQUITY_ASSETS >= 0');
+				}
+			}
+			
+			if(isset($this->_posts['INVESTOR_TYPE'])) {
+				$modelIT = new Application_Model_InvestorType();
+				if($modelIT->isExistByKey('INVESTOR_TYPE', $this->_posts['INVESTOR_TYPE'])) {
+					$id = $modelIT->getPkByKey('INVESTOR_TYPE', $this->_posts['INVESTOR_TYPE']);
+					$q->where('INVESTORS.INVESTOR_TYPE_ID = ?', $id);
+					$q->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('*'));
+				} else {
+					$q->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('*'));
+				}
+			}
+			
+			if(isset($this->_posts['LOCATION'])) {
+				$modelLC = new Application_Model_Locations();
+				if($modelLC->isExistByKey('LOCATION', $this->_posts['LOCATION'])) {
+					$id = $modelLC->getPkByKey('LOCATION', $this->_posts['LOCATION']);
+					$q->where('INVESTORS.LOCATION_ID = ?', $id);
+					$q->join('LOCATIONS', 'INVESTORS.LOCATION_ID = LOCATIONS.LOCATION_ID', array('*'));
+				} else {
+					$q->join('LOCATIONS', 'INVESTORS.LOCATION_ID = LOCATIONS.LOCATION_ID', array('*'));
+				}
+			}
+			
+			/* Model */
+			
+			/* End of : Models */
+			//die($q);
+			$x = $q->query()->fetchAll();
+			
+			$data['data']['items'] = $x;
+			$data['data']['totalCount'] = count($x);
+			$data['data']['CONTACT_PERSON'] = $this->_posts['CONTACT_PERSON'];
+			
+		}
+	
+		MyIndo_Tools_Return::JSON($data);
 	}
+	
 	public function destroyAction(){
 		$data = array(
 				'data' => array()

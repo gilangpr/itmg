@@ -46,15 +46,29 @@ class Locations_RequestController extends Zend_Controller_Action
 				'data' => array()
 		);
 		
-		try {
-			// Insert Data :
-			$this->_model->insert(array(
-					'LOCATION'=> $this->_posts['LOCATION'],
-					'CREATED_DATE' => date('Y-m-d H:i:s')
-			));
-		}catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			if(!$this->_model->isExistByKey('LOCATION', $this->_posts['LOCATION'])) {
+				try {
+					
+					// Insert Data :
+					$this->_model->insert(array(
+							'LOCATION'=> $this->_posts['LOCATION'],
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+					
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->_error_code = 201;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
+		} else {
+			$this->_error_code = 901;
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
 			$this->_success = false;
 		}
 		
@@ -66,6 +80,33 @@ class Locations_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
+		
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest() && isset($this->_posts['LOCATION_ID'])) {
+			
+			if($this->_model->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID'])) {
+				
+				try {
+					
+					$this->_model->delete($this->_model->getAdapter()->quoteInto('LOCATION_ID = ?', $this->_posts['LOCATION_ID']));
+					
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+				
+			} else {
+				$this->_error_code = 101;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
+			
+		} else {
+			$this->_error_code = 901;
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

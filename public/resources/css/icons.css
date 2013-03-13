@@ -36,6 +36,14 @@
 	background-image: url(../../images/icons/list_components.gif) !important;
 }
 
+.icon-left {
+	background-image: url(../../images/icons/action_back.gif) !important;
+}
+
+.icon-right {
+	background-image: url(../../images/icons/action_forward.gif) !important;
+}
+
 /* Icon 2 */
 
 .icon2-accept {

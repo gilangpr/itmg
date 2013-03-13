@@ -35,16 +35,30 @@ class Investortype_RequestController extends Zend_Controller_Action
 			'data' => array()
 		);
 		
-		try {
-			
-			//Insert Data :
-			$this->_model->insert(array(
-					'INVESTOR_TYPE'=> $this->_posts['INVESTOR_TYPE'],
-					'CREATED_DATE' => date('Y-m-d H:i:s')
-					));
-		}catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			try {
+				
+				if(!$this->_model->isExistByKey('INVESTOR_TYPE', $this->_posts['INVESTOR_TYPE'])) {
+					//Insert Data :
+					$this->_model->insert(array(
+							'INVESTOR_TYPE'=> $this->_posts['INVESTOR_TYPE'],
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+							));
+				
+				} else {
+					$this->_error_code = 201;
+					$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+					$this->_success = false;
+				}
+				
+			}catch(Exception $e) {
+				$this->_error_code = $e->getCode();
+				$this->_error_message = $e->getMessage();
+				$this->_success = false;
+			}
+		} else {
+			$this->_error_code = 901;
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
 			$this->_success = false;
 		}
 		

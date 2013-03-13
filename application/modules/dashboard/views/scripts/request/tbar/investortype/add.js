@@ -32,14 +32,14 @@ Ext.create('Ext.Window', {
 					form.submit({
 						url: sd.baseUrl + '/investortype/request/create',
 						waitMsg: 'Saving data, please wait..',
-						success: function(data) {
-							var json = Ext.decode(data.responseText);
+						success: function(d, e) {
+							var json = Ext.decode(e.response.responseText);
 							form.reset();
 							store.loadPage(1); // Refresh grid data
 							Ext.Msg.alert('Success', 'Data has been saved');
 						},
-						failure: function(data) {
-							var json = Ext.decode(data.responseText);
+						failure: function(d, e) {
+							var json = Ext.decode(e.response.responseText);
 							Ext.Msg.alert('Error', json.error_message);
 						}
 					})

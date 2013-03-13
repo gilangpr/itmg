@@ -73,16 +73,20 @@ class Contacts_RequestController extends Zend_Controller_Action
 		);
 		$modelInvestors = new Application_Model_Investors();
 		$investor_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
+		if($investor_id > 0) {
 		if($modelInvestors->isExistByKey('INVESTOR_ID', $investor_id)) {
 			$list = $this->_model->select()->where('INVESTOR_ID = ?', $investor_id);
 			$list = $list->query()->fetchAll();
-			$data = array(
-				'data' => array(
-					'items' => $list,
-					'totalCount' => count($list)
-					)
-				);
+		}} else {
+			$list = $this->_model->select();
+			$list = $list->query()->fetchAll();
 		}
+		$data = array(
+				'data' => array(
+						'items' => $list,
+						'totalCount' => count($list)
+				)
+		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	public function updateAction()

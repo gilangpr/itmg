@@ -30,6 +30,7 @@ if(selected.length > 0) {
 	/*
 	 * End of : Meeting Activities
 	 */
+	
 	/*
 	 * Meeting Investors
 	 */
@@ -202,7 +203,6 @@ if(selected.length > 0) {
 	
 	if(!c.up().items.get(id)) {
 		var data = selected[0].data;
-		console.log(data);
 		var maxWidth = 221;
 		c.up().add(Ext.create('Ext.panel.Panel', {
 			title: 'Detail : ' + data.COMPANY_NAME,
@@ -280,7 +280,7 @@ if(selected.length > 0) {
 								}
 							}
 						}]
-					},{
+					}/*,{
 						title: 'Custom Attributes',
 						xtype: 'gridpanel',
 						minHeight: 180,
@@ -314,7 +314,7 @@ if(selected.length > 0) {
 								}
 							}
 						}]
-					}]
+					}*/]
 				},{
 					title: 'Company Address',
 					border: false,
@@ -329,10 +329,11 @@ if(selected.length > 0) {
 						bodyPadding: '5 5 5 5',
 						border: false,
 						items: [{
-							xtype: 'textarea',
+							xtype: 'htmleditor',
 							fieldLabel: 'Address',
 							name: 'ADDRESS',
 							allowBlank: false,
+							height: 150,
 							value: data.ADDRESS
 						},{
 							xtype: 'combobox',
@@ -423,7 +424,7 @@ if(selected.length > 0) {
 					bodyPadding: '5 5 5 5',
 					id: 'investors-detail-company-overview-form-' + data.INVESTOR_ID,
 					items: [{
-						xtype: 'textarea',
+						xtype: 'htmleditor',
 						name: 'COMPANY_OVERVIEW',
 						value: data.COMPANY_OVERVIEW,
 						minHeight: 160,
@@ -470,7 +471,7 @@ if(selected.length > 0) {
 					bodyPadding: '5 5 5 5',
 					id: 'investors-detail-investment-strategy-form-' + data.INVESTOR_ID,
 					items: [{
-						xtype: 'textarea',
+						xtype: 'htmleditor',
 						name: 'INVESTMENT_STRATEGY',
 						value: data.INVESTMENT_STRATEGY,
 						minHeight: 160,

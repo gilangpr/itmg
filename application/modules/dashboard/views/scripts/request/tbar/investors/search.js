@@ -1,3 +1,9 @@
+var _storeInvestors = Ext.create("Ext.data.Store", {
+	model: "Investor",
+	storeId: "Investors_combobox",
+	proxy:{"type":"ajax","api":{"read":"\/investors\/request\/read","create":"\/investors\/request\/create","update":"\/investors\/request\/update","destroy":"\/investors\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"INVESTOR_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+	sorter: {"property":"INVESTOR_ID","direction":"ASC"}});
+
 Ext.create('Ext.Window', {
 	title: 'Search Investor',
 	xtype: 'panel',
@@ -20,25 +26,61 @@ Ext.create('Ext.Window', {
 					var obj3 = {};
 					var val1 = form1.getValues();
 					var val2 = form2.getValues();
-					for(var attrname in val1) {
-						obj3[attrname] = val1[attrname];
+					var COMPANY_NAME = '';
+					var CONTACT_PERSON = '';
+					var EQUITY_ASSETS = '';
+					var INVESTOR_TYPE = '';
+					var LOCATION = '';
+					var FORMAT = '';
+					/* Form 1 */
+					
+					if(typeof(val1.COMPANY_NAME) !== 'undefined') {
+						COMPANY_NAME = val1.COMPANY_NAME;
 					}
-					for(var attrname in val2) {
-						obj3[attrname] = val2[attrname];
+					if(typeof(val1.CONTACT_PERSON) !== 'undefined') {
+						CONTACT_PERSON = val1.CONTACT_PERSON;
 					}
-					showLoadingWindow();
-					Ext.Ajax.request({
-						url: sd.baseUrl + '/investors/request/search',
-						params: obj3,
-						success: function(data) {
-							
-							closeLoadingWindow();
+					EQUITY_ASSETS = val1.EQUITY_ASSETS;
+					
+					/* End of : Form 1*/
+					
+					/* Form 2 */
+					
+					if(typeof(val2.INVESTOR_TYPE) !== 'undefined') {
+						INVESTOR_TYPE = val2.INVESTOR_TYPE;
+					}
+					
+					if(typeof(val2.LOCATION) !== 'undefined') {
+						LOCATION = val2.LOCATION;
+					}
+					
+					FORMAT = val2.FORMAT;
+					
+					/* End of : Form 2 */
+					
+					var _store = Ext.data.StoreManager.lookup('Investors');
+					
+					_store.load({
+						params: {
+							TYPE: 'SEARCH',
+							COMPANY_NAME: COMPANY_NAME,
+							EQUITY_ASSETS: EQUITY_ASSETS,
+							INVESTOR_TYPE: INVESTOR_TYPE,
+							LOCATION: LOCATION,
+							CONTACT_PERSON: val1.CONTACT_PERSON
 						},
-						failure: function(data) {
-							
-							closeLoadingWindow();
+						callback: function() {
+							if(_store.data.items.length > 0) {
+								if(FORMAT == 'Detail') {
+									<?php echo $this->render('/request/tbar/investors/search-detailed.js') ?>
+								}
+							} else {
+								Ext.Msg.alert('Message', 'Sorry, No data found.');
+							}
 						}
 					});
+					// Close search window
+					Ext.getCmp('search-investor-main').close();
 				}
 			}
 		}
@@ -46,10 +88,7 @@ Ext.create('Ext.Window', {
 		text: 'Cancel',
 		listeners: {
 			click: function() {
-				var p = Ext.getCmp('search-investor-main');
-				if(confirm('Cancel search ?')) {
-					p.close();
-				}
+				Ext.getCmp('search-investor-main').close();
 			}
 		}
 	}],
@@ -67,28 +106,27 @@ Ext.create('Ext.Window', {
 			items: [{
 				fieldLabel: 'Company Name',
 				emptyText: 'All',
-				store: Ext.data.StoreManager.lookup('Investors'),
+				store: _storeInvestors,
                 displayField: 'COMPANY_NAME',
-                valueField:'COMPANY_NAME',
                 typeAhead: true,
 				name: 'COMPANY_NAME',
-				allowBlank: false
+				allowBlank: true
 			},{
 				fieldLabel: 'Contact Person',
 				emptyText: 'All',
 				store: Ext.data.StoreManager.lookup('Contacts'),
                 displayField: 'NAME',
-                valueField:'CONTACT_ID',
                 typeAhead: true,
-				name: 'CONTACT PERSON',
-				allowBlank: false
+				name: 'CONTACT_PERSON',
+				allowBlank: true
 			},{
 				fieldLabel: 'Equity Assets',
 				emptyText: 'All',
-				store: Ext.data.StoreManager.lookup('Investors'),
-                displayField: 'EQUITY_ASSETS',
-                valueField:'EQUITY_ASSETS',
+				store: new Ext.data.ArrayStore({fields:['EA'],data:[['All'],['Small'],['Medium'],['Large']]}),
+                displayField: 'EA',
+                value: 'All',
                 typeAhead: true,
+                editable: false,
 				name: 'EQUITY_ASSETS',
 				allowBlank: false
 			}]
@@ -112,7 +150,8 @@ Ext.create('Ext.Window', {
                 valueField:'INVESTOR_TYPE',
                 typeAhead: true,
 				name: 'INVESTOR_TYPE',
-				allowBlank: false
+				allowBlank: true,
+				editable: false
 			},{
 				fieldLabel: 'Location',
 				emptyText: 'All',
@@ -121,127 +160,18 @@ Ext.create('Ext.Window', {
                 valueField:'LOCATION',
                 typeAhead: true,
 				name: 'LOCATION',
-				allowBlank: false
+				allowBlank: true,
+				editable: false
 			},{
 				fieldLabel: 'Format',
 				emptyText: 'List',
 				name: 'FORMAT',
-				allowBlank: false
+				store: new Ext.data.ArrayStore({fields:['FR'],data:[['List'],['Detail']]}),
+				allowBlank: false,
+				value: 'List',
+				displayField: 'FR',
+				editable: false
 			}]
 		}]
 	}]
 }).show();
-//var c = Ext.getCmp('<?php echo $this->container ?>');
-//var id = 'investor-search-investor';
-//
-//if(!c.up().items.get(id)) {
-//	c.up().add({
-//		xtype: 'panel',
-//		layout: 'border',
-//		title: 'Seach Investors',
-//		id: id,
-//		closable: true,
-//		border: false,
-//		bodyStyle: {
-//			'background-color' : '#FFF'
-//		},
-//		tbar: [{
-//			xtype: 'button',
-//			text: 'Search',
-//			iconCls: 'icon-accept',
-//			listeners: {
-//				click: function() {
-//					var form1 = this.up().up().items.items[0];
-//					var form2 = this.up().up().items.items[1];
-//					if(form1.getForm().isValid() && form2.getForm().isValid()) {
-//						var obj3 = {};
-//						var val1 = form1.getValues();
-//						var val2 = form2.getValues();
-//						for(var attrname in val1) {
-//							obj3[attrname] = val1[attrname];
-//						}
-//						for(var attrname in val2) {
-//							obj3[attrname] = val2[attrname];
-//						}
-//						showLoadingWindow();
-//						Ext.Ajax.request({
-//							url: sd.baseUrl + '/investors/request/search',
-//							params: obj3,
-//							success: function(data) {
-//								
-//								closeLoadingWindow();
-//							},
-//							failure: function(data) {
-//								
-//								closeLoadingWindow();
-//							}
-//						})
-//					}
-//				}
-//			}
-//		},{
-//			xtype: 'button',
-//			text: 'Cancel',
-//			iconCls: 'icon-stop',
-//			listeners: {
-//				click: function() {
-//					if(confirm('Abort search investor ?')) {
-//						this.up().up().close();
-//					}
-//				}
-//			}
-//		}],
-//		items: [{
-//			xtype: 'form',
-//			region: 'west',
-//			id: 'search-form-one',
-//			border: false,
-//			bodyPadding: '5 5 5 5',
-//			items: [{
-//				xtype: 'combobox',
-//				fieldLabel: 'Company Name',
-//				name: 'COMPANY_NAME',
-//				allowBlank: false,
-//				width: 300
-//			},{
-//				xtype: 'combobox',
-//				fieldLabel: 'Contact Person',
-//				name: 'CONTACT_PERSON',
-//				allowBlank: false,
-//				width: 300
-//			},{
-//				xtype: 'combobox',
-//				fieldLabel: 'Equity Assets',
-//				name: 'EQUITY_ASSETS',
-//				allowBlank: false,
-//				width: 300
-//			}]
-//		},{
-//			xtype: 'form',
-//			region: 'west',
-//			id: 'search-form-two',
-//			border: false,
-//			bodyPadding: '5 5 5 5',
-//			items: [{
-//				xtype: 'combobox',
-//				fieldLabel: 'Investor Type',
-//				name: 'INVESTOR_TYPE',
-//				allowBlank: false,
-//				width: 300
-//			},{
-//				xtype: 'combobox',
-//				fieldLabel: 'Location',
-//				name: 'LOCATION',
-//				allowBlank: false,
-//				width: 300
-//			},{
-//				xtype: 'combobox',
-//				fieldLabel: 'Format',
-//				name: 'FORMAT',
-//				allowBlank: false,
-//				width: 300
-//			}]
-//		}]
-//	});
-//}
-//c.up().setActiveTab(id);
