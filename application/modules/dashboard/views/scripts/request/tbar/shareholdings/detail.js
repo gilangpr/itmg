@@ -75,8 +75,8 @@ if(selected.length > 0) {
 						minValue: 0
 					}
 				},{
-					text: 'Created Date',
-					dataIndex: 'CREATED_DATE',
+					text: 'Date',
+					dataIndex: 'DATE',
 					align: 'center',
 					width: 150
 				},{

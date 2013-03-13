@@ -6,12 +6,6 @@ storeSH.load({
 		all: 1
 	}
 });
-var store = loadStore('ShareholdingAmounts');
-store.load({
-	params: {
-		id: data.SHAREHOLDING_ID /* single param */
-	}
-});
     // Add the additional 'advanced' VTypes
     Ext.apply(Ext.form.field.VTypes, {
         daterange: function(val, field) {
@@ -91,16 +85,16 @@ Ext.create('Ext.Window', {
 		listeners: {
 			click: function() {
 				var form = Ext.getCmp('search-shareholdings-form');
-				console.log()
+				var _id = 'shareholdings-search-result-' + Math.random();
 				if(form.getForm().isValid()) {
 					Ext.define('Shareholding__', {
 						extend: 'Ext.data.Model',
 						fields: [{
 							name: 'AMOUNT',
-							type: 'number'
+							type: 'string'
 						},{
 							name: 'DATE',
-							type: 'date'
+							type: 'string'
 						}]
 					});
 					var _xxstore = Ext.create("Ext.data.Store", {
@@ -115,21 +109,25 @@ Ext.create('Ext.Window', {
 					            "read": "POST"
 					        },
 					        "reader": {
-					            "idProperty": "SHAREHOLDING_ID",
+					            "idProperty": "SHAREHOLDING_AMOUNT_ID",
 					            "type": "json",
 					            "root": "data.items",
 					            "totalProperty": "data.totalCount"
 					        }
 					    },
 					    sorter: {
-					        "property": "SHAREHOLDING_ID",
+					        "property": "SHAREHOLDING_AMOUNT_ID",
 					        "direction": "ASC"
 					    }
 					});
+					//console.log(form.getForm()._fields.items);
 					_xxstore.load({
 						params: {
-							
+							'INVESTOR_NAME': (typeof(form.getForm()._fields.items[0].value) == 'undefined') ? '' : form.getForm()._fields.items[0].value,
+							'START_DATE': form.getForm()._fields.items[1].value,
+							'END_DATE': form.getForm()._fields.items[2].value
 						}
+					
 					});
 					c.up().add({
 						title: 'Search result',

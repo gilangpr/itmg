@@ -152,7 +152,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 					'INVESTOR_NAME' => $data['data']['INVESTOR_NAME'],
 					'INVESTOR_STATUS' => $data['data']['INVESTOR_STATUS'],
 					'ACCOUNT_HOLDER' => $data['data']['ACCOUNT_HOLDER'],
-					//'AMOUNT' => $data['data']['AMOUNT']
 					),$this->_model->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $id));
 			
 		}catch(Exception $e) {
@@ -169,14 +168,14 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		//tampil dari 2 join tabel shareholdings and shareholding amounts
 		$modelSA = new Application_Model_ShareholdingAmounts();
 		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
-		//$list = $this->_model->joinHolding($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
+
 		foreach($list as $k=>$d) {
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 		}
 		$sum = 0;
 		foreach($list as $k=>$d) {
 			$sum += $d['AMOUNT'];
-			//$sum += $list[$k]['AMOUNT'];
+
 		}
 		foreach($list as $k=>$d) {
 			if($sum > 0) {
@@ -235,8 +234,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		try {				
 			//delete by shareholding amount id
 			$modelSA = new Application_Model_ShareholdingAmounts();
-		    //$id = $modelSA->getValueByKey('SHAREHOLDING_ID', $this->_posts['SHAREHOLDING_ID'], 'SHAREHOLDING_AMOUNT_ID');
-		    //$id = $modelSA->getValueByKey('AMOUNT', $this->_posts['AMOUNT'], 'SHAREHOLDING_AMOUNT_ID');
 		    $id = $this->_posts['id'];
 			$where = $modelSA->getAdapter()->quoteInto(
 							'SHAREHOLDING_AMOUNT_ID = ?', $id
@@ -289,14 +286,14 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		// membaca file excel yang diupload
 		$upload = new Zend_File_Transfer_Adapter_Http();
 	
-		$upload->setDestination(APPLICATION_PATH. '/../public/shareholdings');
+		$upload->setDestination(APPLICATION_PATH . '/../public/uploads/shareholdings/');
 		$upload->addValidator('Extension',false,'xls,xlsx');
-	
+
 		if ($upload->isValid()) {
 	
 			$upload->receive();
 			$fileInfo = $upload->getFileInfo();
-	
+
 			/* Get file extension */
 			$filExt = explode('.',$fileInfo['FILE']['name']);
 			$filExt = '.' . strtolower($filExt[count($filExt)-1]);
@@ -306,8 +303,8 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$new_name = microtime() . $filExt ;
 			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 			/* End of : Rename file */
-			 
 		}
+		
 		try
 		{
 	
@@ -390,59 +387,41 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 
  	public function searchAction()
  	{
- 		$data = array(
- 				'data' => array(
- 						'items' => array(),
- 						'totalCount' => 0
- 				)
- 		);
- 		$modelAmount = new Application_Model_ShareholdingAmounts();
- 		/* INVESTOR_NAME BY DATE AMOUNT IN TABLE SHAREHOLDING AMOUNTS
  		
- 	    if($this->_posts['search'] == 1) {
-						
-					$where = array();*/
-						
-					/* Title 
-					if(isset($this->_posts['INVESTOR_NAME'])) {
-						$where[] = $modelAmount->getAdapter()->quoteInto('INVESTOR_NAME LIKE ?', '%' . $this->_posts['INVESTOR_NAME'] . '%');
-					} else {
-						$where[] = $modelAmount->getAdapter()->quoteInto('INVESTOR_NAME LIKE ?', '%%');
-					}
- 	    }
-					$query = $modelAmount->select()
-					->where($where[0])
-					->limit($modelAmount->count(), $this->_start);
-					$list = $query->query()->fetchAll();*/
+ 		
+ 		$modelSearch = new Application_Model_ShareholdingAmounts();
+ 		$start_date = explode('T',$this->_posts['START_DATE']);
+ 		$end_date = explode('T',$this->_posts['END_DATE']);
+
+ 		if(isset($this->_posts['INVESTOR_NAME'])) {
+ 			if($this->_model->isExistByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME'])) {
+ 				$ID = $this->_model->getPkByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME']);
+ 		         
+ 		         $list = $modelSearch->select()
+ 		         ->from('SHAREHOLDING_AMOUNTS', array('*'))
+ 		         ->where('SHAREHOLDING_ID = ?', $ID)
+ 		         ->where('DATE >= ?',  $start_date[0])
+ 		         ->where('DATE <= ?',  $end_date[0]);
+ 		         
+ 			} else {
+ 				$list = $modelSearch->select()
+ 				->from('SHAREHOLDING_AMOUNTS', array('*'))
+ 				->where('DATE >= ?',  $start_date[0])
+ 				->where('DATE <= ?',  $end_date[0]);
+ 			}
+ 		}
+ 		         $list = $list->query()->fetchAll();
+
+ 		         
+ 		         $data = array(
+ 		         		'data' => array(
+ 		         				'items' => $list,
+ 		         				'totalCount' => count($list)
+ 		         		)
+ 		         );
+ 		         
+ 		         MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+ 		       
 		
- 			$start_date = $this->_posts['START_DATE'];
-  			$end_date = $this->_posts['END_DATE'];
-  			$id = $this->_model->getPkByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME']);
-  			$modelSearch = new Application_Model_ShareholdingAmounts();
-		    if(isset($this->_posts['INVESTOR_NAME'])) {
-		    $listSearch = $modelSearch->select()
-		                        ->from('SHAREHOLDING_AMOUNTS', array('SHAREHOLDING_AMOUNT_ID','SHAREHOLDING_ID','AMOUNT','DATE'))
-		                        ->where('SHAREHOLDING_ID = ?', $id)
-		                        ->where('DATE > ?',  $start_date)
-		                        ->where('DATE < ?',  $end_date);
-		                   $list = $listSearch->query()->fetchAll();
-		    } else {
-		    	
-		    	$listSearch = $modelSearch->select()
-		    	                          ->from('SHAREHOLDING_AMOUNTS', array('*'))
-		    	                          ->where('DATE > ?', $start_date)
-		    	                          ->where('DATE ?', $end_date);
-		    	
-		    	            $list = $listSearch->query()->fetchAll();
-		    }
-		    
-		    $data = array(
-		    		'data' => array(
-		    				'items' => $list,
-		    				'totalCount' => $modelSearch->count()
-		    		)
-		    );
-		
- 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
 }
