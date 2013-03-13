@@ -30,7 +30,22 @@ if(selected.length > 0) {
 	/*
 	 * End of : Meeting Activities
 	 */
+	/*
+	 * Meeting Investors
+	 */
 	
+	var storeMI = Ext.create("Ext.data.Store", {
+		model: "Meetinginvestor",
+		storeId: "Meetinginvestors",
+		proxy:{extraParams:{id:selected[0].data.INVESTOR_ID},"type":"ajax","api":{"read":"\/meetinginvestor\/request\/read","create":"\/meetinginvestor\/request\/create","update":"\/meetinginvestor\/request\/update","destroy":"\/meetinginvestor\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"MEETING_INVESTOR","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+		sorter: {"property":"MEETING_INVESTOR","direction":"ASC"}});
+	
+	storeMI.load();
+	
+	/*
+	 * End of : Meeting Investors
+	 */
+
 	/*
 	 * Contacts
 	 */
@@ -720,7 +735,7 @@ if(selected.length > 0) {
 				}]
 			},{
 				region: 'north',
-				title: 'Meeting Activities',
+				title: 'Meeting Investor',
 				border: false,
 				maxWidth: Ext.getBody().getViewSize().width - maxWidth,
 				items: [{
@@ -729,8 +744,8 @@ if(selected.length > 0) {
 					minHeight: 150,
 					maxHeight: 150,
 					autoScroll: true,
-					store: storeMA,
-					id: 'investors-detail-meeting-activities-grid-' + data.INVESTOR_ID,
+					store: storeMI,
+					id: 'investors-detail-meeting-investor-grid-' + id,
 					columns: [{
 						text: 'Meeting Date',
 						align: 'center',
@@ -754,14 +769,14 @@ if(selected.length > 0) {
 				}],
 				tbar: [{
 					xtype: 'button',
-					text: 'Add New Meeting Activities',
+					text: 'Add New Meeting Investors',
 					iconCls: 'icon-go',
 					listeners: {
 						click: function() {
 							Ext.create('Ext.Window', {
-								title: 'Add New Meeting Activities',
+								title: 'Add New Meeting Investors',
                                 draggable: false,
-			    				id: 'MA',
+			    				id: 'MI',
                                 modal: true,
                                 width: 400,
                                 align: 'center',
@@ -772,41 +787,33 @@ if(selected.length > 0) {
                                 	items: [{
                                 		xtype: 'form',
                                 		layout: 'form',
-                                		id: 'add-meetingactivities-form',
+                                		id: 'add-meetinginvestors-form',
                                 		border: false,
                                 		bodyPadding: '5 5 5 5',
                                 		defaultType: 'textfield',
                                 		waitMsgTarget: true,
                                 		items: [{
-                                			fieldLabel: 'Meeting Event',
-                                			allowBlank: false,
-                                			name: 'MEETING_EVENT'
-                                		},{
-                                			xtype:'datefield',
-                                			fieldLabel: 'Meeting Date',
-                                			allowBlank: false,
-                                			name: 'MEETING_DATE',
-                                			format:'Y-m-d'
-                                		},{
-                                			xtype:'timefield',
-                                			fieldLabel: 'Start Time',
-                                			allowBlank: false,
-                                			name: 'START_TIME'
-                                		},{
-                                			xtype:'timefield',
-                                			fieldLabel: 'End Time',
-                                			allowBlank: false,
-                                			name: 'END_TIME'
+                                			xtype: 'combobox',
+                                            fieldLabel: 'Meeting Event',
+                                            name: 'MEETING_ACTIVITIE_ID',
+                                            labelWidth: 130,
+                                            store: Ext.data.StoreManager.lookup('Meetingactivities'),
+                                            displayField: 'MEETING_EVENT',
+                                            valueField:'MEETING_ACTIVITIE_ID',
+                                            typeAhead: true,
+                                            allowBlank: false,
+                                            minChars: 1,
+                                            emptyText: 'Select Meeting Event'
                                 		}]
                                 	}],
                                 	buttons: [{
                                 		text: 'Save',
                                 		listeners: {
                                 			click: function() {
-                                				var form = Ext.getCmp('add-meetingactivities-form').getForm();
+                                				var form = Ext.getCmp('add-meetinginvestors-form').getForm();
                                 				if (form.isValid()) {
                                 					form.submit({
-                                						url: sd.baseUrl + '/meetingactivitie/request/create',
+                                						url: sd.baseUrl + '/meetinginvestor/request/create/id'+data.INVESTOR_ID,
                                 						waitMsg: 'Saving data, please wait..',
                                 						params: {
                                 							id: data.INVESTOR_ID
@@ -814,17 +821,18 @@ if(selected.length > 0) {
                                 						success: function(d, e) {
                                 							var json = Ext.decode(e.response.responseText);
                                 							form.reset();
-                                							storeMA.load({
+                                							var store = loadStore('Meetinginvestors');
+                                							store.load({
                                 								params: {
                                 									id: data.INVESTOR_ID
                                 								}
                                 							});
                                 							Ext.Msg.alert('Success', 'Data has been saved');
-                                							Ext.getCmp('MA').close();
+                                							Ext.getCmp('MI').close();
                                 						},
                                 						failure: function(d, e) {
                                 							var json = Ext.decode(e.response.responseText);
-                                							Ext.Msg.alert('Error', json.error_message);
+                                							Ext.Msg.alert('Error','Sorry, data already exist');
                                 						}
                                 					});
                                 				}
@@ -853,11 +861,11 @@ if(selected.length > 0) {
 					}
 				},{
 					xtype: 'button',
-					text: 'Delete Meeting Activity',
+					text: 'Delete Meeting Investors',
 					iconCls: 'icon-stop',
 					listeners: {
 						click: function() {
-							var __c = Ext.getCmp('investors-detail-meeting-activities-grid-' + data.INVESTOR_ID);
+							var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + id);
 							var __sel = __c.getSelectionModel().getSelection();
 							if(__sel.length > 0) {
 								var __data = __sel[0].data;
@@ -878,14 +886,16 @@ if(selected.length > 0) {
 												showLoadingWindow();
 												this.up().up().close();
 												Ext.Ajax.request({
-													url: sd.baseUrl + '/meetingactivitie/request/destroy',
+													url: sd.baseUrl + '/meetinginvestor/request/destroy',
 													params: {
-														id: __data.MEETING_ACTIVITIE_ID
+														INVESTOR_ID: __data.INVESTOR_ID,
+                										MEETING_ACTIVITIE_ID: __data.MEETING_ACTIVITIE_ID
 													},
 													success: function(d) {
 														var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
 														closeLoadingWindow();
-														storeMA.load({
+														var store = loadStore('Meetinginvestors');
+														store.load({
 															params: {
 																id: data.INVESTOR_ID
 															}
@@ -909,7 +919,7 @@ if(selected.length > 0) {
 									}]
 								}).show();
 							} else {
-								Ext.Msg.alert('Error', 'You did not select any Meeting Activity.');
+								Ext.Msg.alert('Error', 'You did not select any Meeting Investors.');
 							}
 						}
 					}

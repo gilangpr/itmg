@@ -100,17 +100,20 @@ class Meetingparticipant_RequestController extends Zend_Controller_Action
 	
 	public function destroyAction()
 	{	
-		$meetingAc_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
+		/*
+		GET POST ID
+		*/
+		$pa_id = (isset($this->_posts['PARTICIPANT_ID'])) ? $this->_posts['PARTICIPANT_ID'] : 0;
+		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
 		$data = array(
 				'data' => array()
 				);
 		try {
 			 //Delete
-			$this->_model->delete(
- 					$this->_model->getAdapter()->quoteInto(
- 				'MEETING_ACTIVITIE_ID = ?', $meetingAc_id
-
- 							));
+			$where=array();
+			$where[]= $this->_model->getAdapter()->quoteInto('PARTICIPANT_ID = ?', $pa_id);
+			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
+			$this->_model->delete($where);
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

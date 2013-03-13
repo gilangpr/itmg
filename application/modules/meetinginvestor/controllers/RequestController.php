@@ -1,6 +1,6 @@
 <?php 
 
-class Meetingactivitie_RequestController extends Zend_Controller_Action
+class Meetinginvestor_RequestController extends Zend_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -14,7 +14,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 	{
 		$this->_helper->layout()->disableLayout();
 		$this->_helper->viewRenderer->setNoRender(true);
-		$this->_model = new Application_Model_Meetingactivitie();
+		$this->_model = new Application_Model_Meetinginvestor();
 		if($this->getRequest()->isPost()) {
 			$this->_posts = $this->getRequest()->getPost();
 		} else {
@@ -34,17 +34,23 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		$data = array(
 			'data' => array()
 		);
-		
+		//Call Model Investor
+		$inModel = new Application_Model_Investors();
 		try {
 			// Insert Data :
+			//get id params
+			$in_id = $this->_getParam('id',0);
+			if($inModel->isExistByKey('INVESTOR_ID', $in_id)) {
  			$this->_model->insert(array(
- 					'MEETING_EVENT'=> $this->_posts['MEETING_EVENT'],
-					'MEETING_DATE'=>$this->_posts['MEETING_DATE'],
-					'START_TIME'=>$this->_posts['START_TIME'],
-					'END_TIME'=>$this->_posts['END_TIME'],
-					'NOTES'=>$this->_posts['NOTES'],
- 					'CREATED_DATE' => date('Y-m-d H:i:s')
+					'INVESTOR_ID'=>$in_id,
+					'MEETING_ACTIVITIE_ID'=>$this->_posts['MEETING_ACTIVITIE_ID']
  					));
+			}
+			else {
+				$this->_error_code = 404;
+				$this->_error_message = 'INVESTOR_ID NOT FOUND';
+				$this->_success = false;
+			}
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
@@ -53,16 +59,18 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-	
 	public function readAction()
 	{
+		$in_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		$data = array(
 				'data' => array(
-				'items' => $this->_model->getListLimit($this->_limit, $this->_start),
+				'items' => $this->_model->getListMeetinginvestorLimit($this->_limit, $this->_start,$in_id),
 						'totalCount' => $this->_model->count()
 				)
 		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		
+
 	}
 	
 	public function updateAction()
@@ -91,47 +99,20 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-	public function updatenotesAction(){
-		
-		$data = array(
-			'data' => array()
-		);
-		//Call Model Investor
-		$maModel = new Application_Model_Meetingactivitie();
-		try {
-			// Insert Data :
-			//get id params
-			$ma_id = $this->_posts['id'];
-			if($maModel->isExistByKey('MEETING_ACTIVITIE_ID', $ma_id)) {
- 				$this->_model->update(array(
-					'NOTES' => $this->_posts['NOTES']),
- 				$this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id));
-			}
-			else {
-				$this->_error_code = 404;
-				$this->_error_message = 'MEETING_ACTIVITIE_ID NOT FOUND';
-				$this->_success = false;
-			}
-		}catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
-			$this->_success = false;
-		}
-		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
+	
 	public function destroyAction()
 	{	
-		//$meetingAc_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
+		$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
+		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
 		$data = array(
 				'data' => array()
 				);
 		try {
 			 //Delete
-			$this->_model->delete(
- 					$this->_model->getAdapter()->quoteInto(
- 				'MEETING_ACTIVITIE_ID = ?', $this->_posts['MEETING_ACTIVITIE_ID']
- 							));
+			$where=array();
+			$where[]= $this->_model->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id);
+			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
+			$this->_model->delete($where);
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

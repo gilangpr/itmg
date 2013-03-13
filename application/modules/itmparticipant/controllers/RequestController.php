@@ -86,15 +86,14 @@ class Itmparticipant_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	public function updateAction(){
-		//update shareholding amount table
+		//update ITM Participant
 		$data = array(
 				'data' => array()
 		);
 
-	    //$models = new Application_Model_ShareholdingAmounts();
-		$data = $this->getRequest()->getRawBody();//mengambil data json
+	    $data = $this->getRequest()->getRawBody();//mengambil data json
 		$data = Zend_Json::decode($data);//merubah data json menjadi array
-		//$id = $data['data']['CONTACT_ID'];
+		
 	
 		try {
 			

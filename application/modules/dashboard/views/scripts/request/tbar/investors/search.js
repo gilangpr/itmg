@@ -67,16 +67,28 @@ Ext.create('Ext.Window', {
 			items: [{
 				fieldLabel: 'Company Name',
 				emptyText: 'All',
+				store: Ext.data.StoreManager.lookup('Investors'),
+                displayField: 'COMPANY_NAME',
+                valueField:'COMPANY_NAME',
+                typeAhead: true,
 				name: 'COMPANY_NAME',
 				allowBlank: false
 			},{
 				fieldLabel: 'Contact Person',
 				emptyText: 'All',
+				store: Ext.data.StoreManager.lookup('Contacts'),
+                displayField: 'NAME',
+                valueField:'CONTACT_ID',
+                typeAhead: true,
 				name: 'CONTACT PERSON',
 				allowBlank: false
 			},{
 				fieldLabel: 'Equity Assets',
 				emptyText: 'All',
+				store: Ext.data.StoreManager.lookup('Investors'),
+                displayField: 'EQUITY_ASSETS',
+                valueField:'EQUITY_ASSETS',
+                typeAhead: true,
 				name: 'EQUITY_ASSETS',
 				allowBlank: false
 			}]
@@ -95,11 +107,19 @@ Ext.create('Ext.Window', {
 			items: [{
 				fieldLabel: 'Investor Type',
 				emptyText: 'All',
+				store: Ext.data.StoreManager.lookup('InvestorTypes'),
+                displayField: 'INVESTOR_TYPE',
+                valueField:'INVESTOR_TYPE',
+                typeAhead: true,
 				name: 'INVESTOR_TYPE',
 				allowBlank: false
 			},{
 				fieldLabel: 'Location',
 				emptyText: 'All',
+				store: Ext.data.StoreManager.lookup('Locations'),
+                displayField: 'LOCATION',
+                valueField:'LOCATION',
+                typeAhead: true,
 				name: 'LOCATION',
 				allowBlank: false
 			},{

@@ -1,68 +1,80 @@
-
 Ext.create('Ext.Window', {
-	title: 'Add New Meeting',
-	draggable: false,
-	modal: true,
-	width: 500,
-	resizable: false,
-	items: [{
-		xtype: 'panel',
-		border: false,
-		items: [{
-			xtype: 'form',
-			layout: 'form',
-			border: false,
-			bodyPadding: '5 5 5 5',
-			defaultType: 'textfield',
-			id: 'meetingdocument-add-form',
-			waitMsgTarget: true,
-			items: [{
-					fieldLabel: 'Meeting Event',
-					name: 'MEETING_EVENT'
-				},
-				{
-					xtype     : 'datefield',
-				        name      : 'MEETING_DATE',
-				        fieldLabel: 'Meeting date',
-				        margin: '0 5 0 0',
-				        allowBlank: false
-				},{
-					
-				
-
-				}]
-		}]
-	}],
-	buttons: [{
-		text: 'Save',
-		listeners: {
-			click: function() {
-				var form = this.up().up().items.items[0].items.items[0].getForm();
-				var store = loadStore('Meetingdocumentation');
-				if(form.isValid()) {
-					form.submit({
-						url: sd.baseUrl + '/meetingdocumentation/request/create',
-						waitMsg: 'Saving data, please wait..',
-						success: function(data) {
-							var json = Ext.decode(data.responseText);
-							form.reset();
-							store.loadPage(1); // Refresh grid data
-							Ext.Msg.alert('Success', 'Data has been saved');
-						},
-						failure: function(data) {
-							var json = Ext.decode(data.responseText);
-							Ext.Msg.alert('Error', json.error_message);
-						}
-					})
-				}
-			}
-		}
-	},{
-		text: 'Cancel',
-		listeners: {
-			click: function() {
-				this.up().up().close();
-			}
-		}
-	}]
+	title: 'Add New Meeting Activities',
+    draggable: false,
+	id: 'MA',
+    modal: true,
+    width: 400,
+    align: 'center',
+    resizable: false,
+    items: [{
+        xtype: 'panel',
+        border: false,
+        items: [{
+            xtype: 'form',
+            layout: 'form',
+            id: 'add-meetingactivities-form',
+            border: false,
+            bodyPadding: '5 5 5 5',
+            defaultType: 'textfield',
+            waitMsgTarget: true,
+            items: [{
+            	fieldLabel: 'Meeting Event',
+            	allowBlank: false,
+                name: 'MEETING_EVENT'
+            },{
+             	xtype:'datefield',
+                fieldLabel: 'Meeting Date',
+                allowBlank: false,
+                name: 'MEETING_DATE',
+                format:'Y-m-d'
+            },{
+             	xtype:'timefield',
+                fieldLabel: 'Start Time',
+                allowBlank: false,
+                name: 'START_TIME'
+            },{
+                xtype:'timefield',
+                fieldLabel: 'End Time',
+                allowBlank: false,
+                name: 'END_TIME'
+            },{
+                fieldLabel: 'Notes',
+                name: 'NOTES',
+                xtype: 'htmleditor',
+                height: 150
+            }]
+        }],
+        buttons: [{
+            text: 'Save',
+            listeners: {
+	            click: function() {
+		            var form = Ext.getCmp('add-meetingactivities-form').getForm();
+		            if (form.isValid()) {
+		                form.submit({
+		                    url: sd.baseUrl + '/meetingactivitie/request/create',
+		                    waitMsg: 'Saving data, please wait..',
+		                    success: function(d, e) {
+		                    	var json = Ext.decode(e.response.responseText);
+		                    	form.reset();
+			                    store.loadPage(1); // Refresh grid data
+			                    Ext.Msg.alert('Success', 'Data has been saved');
+			                    Ext.getCmp('MA').close();
+		                    },
+		                    failure: function(d, e) {
+		                        var json = Ext.decode(e.response.responseText);
+		                        Ext.Msg.alert('Error', json.error_message);
+		                    }
+		                });
+		            }
+	            }
+            }
+        },{
+         	text: 'Cancel',
+            listeners: {
+                click: function() {
+                    this.up().up().up().close();
+                }
+            }
+        }]
+    }]
 }).show();
