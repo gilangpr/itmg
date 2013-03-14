@@ -87,6 +87,8 @@ class Dashboard_RequestController extends Zend_Controller_Action
 					$this->view->csyFields = $this->getCsyFields(new Application_Model_CompositionCompany());
 					$this->view->fobColumns = $this->getFobColumns(new Application_Model_TotalCashCost());
 					$this->view->fobFields = $this->getFobFields(new Application_Model_TotalCashCost());
+					$this->view->csd_bcColumns = $this->getCsd_bcColumns(new Application_Model_Coalsales());
+					$this->view->csd_bcFields = $this->getCsd_bcFields(new Application_Model_Coalsales());
 				}
 				
 				$this->_data['data']['items'] = $this->view->render($ctl->getValueByKey('CONTENT_TBAR_ID', $ct->getPkByKey('ID', $id), 'PATH'));
@@ -115,6 +117,11 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
+			$columns[$k+1]['editor'] = array(
+					'xtype'=> 'numberfield',
+					'allowBlank' => false,
+					'minValue' => 0
+			);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -146,12 +153,23 @@ class Dashboard_RequestController extends Zend_Controller_Action
 		),array(
 			'text' => 'Volume',
 			'align' => 'center',
-			'dataIndex' => 'VOLUME'
+			'dataIndex' => 'VOLUME',
+			'editor' => array(
+					'xtype' => 'numberfield',
+					'allowBlank' => false,
+					'minValue' => 0
+			)
 		),array(
 			'text' => 'Percentage',
 			'align' => 'center',
 			'dataIndex' => 'PERCENTAGE'
 		));
+// 		$columns = array(
+// 				'editor' => array(
+// 					'xtype'=> 'numberfield',
+// 					'allowBlank' => false,
+// 					'minValue' => 0
+// 		));
 		return Zend_Json::encode($columns);
 	}
 
@@ -173,6 +191,40 @@ class Dashboard_RequestController extends Zend_Controller_Action
 		return Zend_Json::encode($fields);
 	}
 	
+	//COAL SALES DISTRIBUTION BY COUNTRY COLUMNS
+	protected function getCsd_bcColumns($model)
+	{
+		$list = $model->select()->limit(1,0)->order('CREATED_DATE DESC');
+		$list = $list->query()->fetchAll();
+		$columns = array(array(
+				'flex' => 1,
+				'text' => 'Country',
+				'align' => 'center',
+				'dataIndex' => 'COUNTRY'
+		),array(
+				'flex' => 1,
+				'text' => 'Percentage',
+				'align' => 'center',
+				'dataIndex' => 'PERCENTAGE'
+		));
+		return Zend_Json::encode($columns);
+	}
+	
+	//COAL SALES DISTRIBUTION BY COUNTRY FIELDS
+	protected function getCsd_bcFields($model)
+	{
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(1,0);
+		$list = $list->query()->fetchAll();
+		$fields = array(array(
+				'name' => 'COUNTRY',
+				'type' => 'string'
+		),array(
+				'name' => 'PERCENTAGE',
+				'type' => 'string'
+		));
+		return Zend_Json::encode($fields);
+	}
+	
 	protected function getSrColumns($model)
 	{
 		
@@ -187,6 +239,11 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
+			$columns[$k+1]['editor'] = array(
+					'xtype'=> 'numberfield',
+					'allowBlank' => false,
+					'minValue' => 0
+					);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -253,6 +310,11 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
+			$columns[$k+1]['editor'] = array(
+					'xtype'=> 'numberfield',
+					'allowBlank' => false,
+					'minValue' => 0
+			);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -292,7 +354,12 @@ class Dashboard_RequestController extends Zend_Controller_Action
 					'text' => 'Value',
 					'width'=> 90,
 					'dataIndex' => 'VALUE_' . $d['TITLE'],
-					'align' => 'center'
+					'align' => 'center',
+					'editor' => array(
+							'xtype' => 'numberfield',
+							'allowBlank' => false,
+							'minValue' => 0
+							)
 					),array(
 // 					'flex' => 1,
 					'width'=> 90,
@@ -335,6 +402,11 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
+			$columns[$k+1]['editor'] = array(
+					'xtype'=> 'numberfield',
+					'allowBlank' => false,
+					'minValue' => 0
+			);
 		}
 		return Zend_Json::encode($columns);
 	}
