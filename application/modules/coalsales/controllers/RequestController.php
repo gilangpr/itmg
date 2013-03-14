@@ -89,7 +89,23 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
 			$list = $list->query()->fetchAll();
-
+			
+// 			/* Add total */
+// 			$sum2 = array(
+// 					'VOLUME'=> 0,
+// 					'PERCENTAGE' => 0
+// 			);
+// 			foreach($list as $k=>$d) {
+// 				$sum2['VOLUME'] += $d['VOLUME'];
+// 				$sum2['PERCENTAGE'] += $d['PERCENTAGE'];
+// 			}
+				
+// 			$c = count($list);
+// 			$list[$c]['TYPE'] = 'TOTAL';
+// 			$list[$c]['VOLUME'] = $sum2['VOLUME'];
+// 			$list[$c]['PERCENTAGE'] = $sum2['PERCENTAGE'];
+// 			/* End of : Add Total */
+			
 			$data = array(
 				'data' => array(
 					'items' => $list,
@@ -97,16 +113,9 @@ class Coalsales_RequestController extends Zend_Controller_Action
 					)
 				);
 
-// 			$type = 'Domestic';
-// 			$i = 0;
-// 			$count = 0;
-// 			$t = array();
-// 			$data = array();
 			$domestic = 0;
 			$export = 0;
 			foreach($list as $k=>$d) {
-// 				$data['data']['items'][$k]['NAME'] = $d['TYPE'];
-// 				$data['data']['items'][$k]['VOLUME'] = $d['VOLUME'];
 				if(strtolower($d['TYPE']) == 'domestic') {
 					$domestic += $d['VOLUME'];
 				} else {
@@ -134,4 +143,24 @@ class Coalsales_RequestController extends Zend_Controller_Action
 
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+	
+	//ACTION READ FOR COAL SALES DISTRIBUTION BY COUNTRY
+	public function read2Action()
+	{
+		$modelCoalsales = new Application_Model_Coalsales();
+		$peer_id = (isset($this->_post['id'])) ? $this->_post['id'] : 0;
+		if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
+			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
+			$list = $list->query()->fetchAll();
+		
+			$data = array(
+					'data' => array(
+							'items' => $list,
+							'totalCount' => $this->_model->count()
+					)
+			);
+		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
 }

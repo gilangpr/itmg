@@ -84,21 +84,27 @@ class Peers_RequestController extends Zend_Controller_Action
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-
-	// public function addresourceAction()
-	// {
-	// 	$data = array(
-	// 			'data' => array()
-	// 	);
-
-	// 	try {
-
-	// 	}catch (Exception $e){
-	// 		$this->_error_code = $e->getCode();
-	// 		$this->_error_message = $e->getMessage();
-	// 		$this->_success = false;
-	// 	}
-
-	// 	MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	// }
+	
+	public function updateAction()
+	{
+		$data = array(
+				'data' => array()
+		);
+		
+		try {
+			$posts = $this->getRequest()->getRawBody();
+			$posts = Zend_Json::decode($posts);
+				
+			$this->_model->update(array(
+					'PEER_NAME' => $posts['data']['PEER_NAME']
+			),
+					$this->_model->getAdapter()->quoteInto('PEER_ID = ?', $posts['data']['PEER_ID']));
+		}catch(Exception $e) {
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
+		
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
 }

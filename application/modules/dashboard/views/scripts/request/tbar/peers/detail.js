@@ -14,342 +14,20 @@ var csyColumns = <?php echo $this->csyColumns?>;
 var csyFields = <?php echo $this->csyFields?>;
 var fobColumns = <?php echo $this->fobColumns?>;
 var fobFields = <?php echo $this->fobFields?>;
+var csd_bcColumns = <?php echo $this->csd_bcColumns?>;
+var csd_bcFields = <?php echo $this->csd_bcFields?>;
 
 if(selected.length > 0) {
     var id = 'peers-detail' + selected[0].id;
     if(!c.up().items.get(id)){
         var data = selected[0].data;
         //Store Resources and Reserves
-        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-			clicksToMoveEditor: 1,
-	        autoCancel: false
-	    });
-        var storeRR = loadStore('PeerResourceReserves');
-        storeRR.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        var showSummary = true;
+//        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+//			clicksToMoveEditor: 1,
+//	        autoCancel: false
+//	    });
         
-        //Model Financial Performances
-        Ext.define('FinancialPerformance', {
-            extend: 'Ext.data.Model',
-            fields: fpFields
-        });
-        //Store Financial Performances
-        var storeFP = Ext.create('Ext.data.Store',{
-            storeId: 'FinancialPerformances',
-            model: 'FinancialPerformance',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read: '/financialperform/request/read',
-                    create: '/financialperform/request/create',
-                    update: '/financialperform/request/update',
-                    destroy: '/financialperform/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'FINANCIAL_PERFORM_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'FINANCIAL_PERFORM_ID',
-                direction: 'ASC'
-            }
-        });
-        storeFP.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        //Model Coal Sales Distribution
-        Ext.define('CoalSalesDistribution', {
-            extend: 'Ext.data.Model',
-            fields: csdFields
-        });
-        //Store Coal Sales Distribution
-        var storeCSD = Ext.create('Ext.data.Store',{
-            storeId: 'CoalSalesDistributions',
-            model: 'CoalSalesDistribution',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read: '/coalsales/request/read',
-                    create: '/coalsales/request/create',
-                    update: '/coalsales/request/update',
-                    destroy: '/coalsales/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'COAL_SALES_DISTRIBUTION_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'COAL_SALES_DISTRIBUTION_ID',
-                direction: 'ASC'
-            }
-        });
-        storeCSD.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        //Model Stripping Ratio
-        Ext.define('StrippingRatio', {
-            extend: 'Ext.data.Model',
-            fields: srFields
-        });
-        //Store Stripping Ratio
-        var storeSR = Ext.create('Ext.data.Store',{
-            storeId: 'StrippingRatios',
-            model: 'StrippingRatio',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read: '/strippingratio/request/read',
-                    create: '/strippingratio/request/create',
-                    update: '/strippingratio/request/update',
-                    destroy: '/strippingratio/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'STRIPPING_RATIO_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'STRIPPING_RATIO_ID',
-                direction: 'ASC'
-            }
-        });
-        storeSR.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        //Model Stripping Ratio By Year
-        Ext.define('StrippingRatioYear', {
-            extend: 'Ext.data.Model',
-            fields: sryFields
-        });
-        //Store Stripping Ratio By Year
-        var storeSRY = Ext.create('Ext.data.Store',{
-            storeId: 'StrippingRatioYears',
-            model: 'StrippingRatioYear',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read: '/strippingratioyear/request/read',
-                    create: '/strippingratioyear/request/create',
-                    update: '/strippingratioyear/request/update',
-                    destroy: '/strippingratioyear/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'STRIPPING_RATIO_YEAR_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'STRIPPING_RATIO_YEAR_ID',
-                direction: 'ASC'
-            },
-            autoSync: true
-        });
-        storeSRY.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        //Model Selling Price
-         Ext.define('SellingPrice', {
-            extend: 'Ext.data.Model',
-            fields: aspFields
-        });
-        //Store Selling Price
-        var storeASP = Ext.create('Ext.data.Store',{
-            storeId: 'SellingPrices',
-            model: 'SellingPrice',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read: '/sellingprice/request/read',
-                    create: '/sellingprice/request/create',
-                    update: '/sellingprice/request/update',
-                    destroy: '/sellingprice/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'SELLING_PRICE_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'SELLING_PRICE_ID',
-                direction: 'ASC'
-            }
-        });
-        storeASP.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        
-        //Model Composition Company
-        Ext.define('CompositionCompany', {
-        	extend: 'Ext.data.Model',
-        	fields: csyFields
-        });
-        //Store Composition Company
-        var storeCSY = Ext.create('Ext.data.Store',{
-            storeId: 'CompositionCompanys',
-            model: 'CompositionCompany',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read	: '/compositioncompany/request/read',
-                    create	: '/compositioncompany/request/create',
-                    update	: '/compositioncompany/request/update',
-                    destroy	: '/compositioncompany/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'COMPOSITION_COMPANY_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'COMPOSITION_COMPANY_ID',
-                direction: 'ASC'
-            }
-        });
-        storeCSY.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
-        
-        //Model Total Cash Cost
-        Ext.define('TotalCashCost', {
-        	extend: 'Ext.data.Model',
-        	fields: fobFields
-        });
-        //Store Total Cash Cost
-        var storeFOB = Ext.create('Ext.data.Store',{
-            storeId: 'TotalCashCosts',
-            model: 'TotalCashCost',
-            proxy: {
-                type: 'ajax',
-                api: {
-                    read	: '/totalcashcost/request/read',
-                    create	: '/totalcashcost/request/create',
-                    update	: '/totalcashcost/request/update',
-                    destroy	: '/totalcashcost/request/destroy'
-                },
-                actionMethods: {
-                    create: 'POST',
-                    destroy: 'POST',
-                    read: 'POST',
-                    update: 'POST'
-                },
-                reader: {
-                    idProperty: 'TOTAL_CASHCOST_ID',
-                    type: 'json',
-                    root: 'data.items',
-                    totalProperty: 'data.totalCount'
-                },
-                writer: {
-                    type: 'json',
-                    root: 'data',
-                    writeAllFields: true
-                }
-            },
-            sorter: {
-                property: 'TOTAL_CASHCOST_ID',
-                direction: 'ASC'
-            }
-        });
-        storeFOB.load({
-            params: {
-                id: data.PEER_ID
-            }
-        });
+        <?php echo $this->render('/request/tbar/peers/ref/stores.js') ?>
         
         c.up().add({
             xtype: 'panel',
@@ -389,7 +67,7 @@ if(selected.length > 0) {
                     items: [{
                         xtype: 'gridpanel',
                         border: false,
-                        plugins: [cellEditing],
+                        plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                         minHeight: 120,
                         store: storeSRY,
                         columns: sryColumns,
@@ -477,6 +155,7 @@ if(selected.length > 0) {
                         xtype: 'gridpanel',
                         border: false,
                         minHeight: 120,
+                        plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                         store: storeSR,
                         columns: srColumns,
                         tbar: [{
@@ -581,6 +260,7 @@ if(selected.length > 0) {
                     items: [{
                         xtype: 'gridpanel',
                         border: false,
+                        plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                         minHeight: 120,
                         store: storeASP,
                         columns: aspColumns,
@@ -690,6 +370,7 @@ if(selected.length > 0) {
                     title: 'Financial Performance',
                     collapsible: true,
                     border: false,
+                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     xtype: 'gridpanel',
                     minHeight: 240,
                     store: storeFP,
@@ -840,6 +521,7 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
+                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                 	store: storeFOB,
                     columns: fobColumns,
                     minHeight: 150,
@@ -958,6 +640,7 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
+                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     store: storeRR,
                     minHeight: 130,
                     tbar: [{
@@ -1081,43 +764,79 @@ if(selected.length > 0) {
                         flex: 1,
                         text: 'Mine',
                         align: 'center',
-                        dataIndex: 'MINE'
+                        dataIndex: 'MINE',
+                        editor: {
+                        	xtype: 'textfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     },{
                         flex: 1,
                         text: 'Resources <br /> (Mil. Tons)',
                         align: 'center',
-                        dataIndex: 'RESOURCES'
+                        dataIndex: 'RESOURCES',
+                        editor: {
+                        	xtype: 'numberfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     },{
                         flex: 1,
                         text: 'Reserves <br /> (Mil. Tons)',
                         align: 'center',
-                        dataIndex: 'RESERVES'
+                        dataIndex: 'RESERVES',
+                        editor: {
+                        	xtype: 'numberfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     },{
                         flex: 1,
                         text: 'Area (Ha)',
                         align: 'center',
-                        dataIndex: 'AREA'
+                        dataIndex: 'AREA',
+                        editor: {
+                        	xtype: 'numberfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     },{
                         flex: 1,
                         text: 'CV (Kcal)',
                         align: 'center',
-                        dataIndex: 'CV'
+                        dataIndex: 'CV',
+                        editor: {
+                        	xtype: 'textfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     },{
                         flex: 1,
                         text: 'Location',
                         align: 'center',
-                        dataIndex: 'LOCATION'
+                        dataIndex: 'LOCATION',
+                        editor: {
+                        	xtype: 'textfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     },{
                         flex: 1,
                         text: 'License',
                         align: 'center',
-                        dataIndex: 'LICENSE'
+                        dataIndex: 'LICENSE',
+                        editor: {
+                        	xtype: 'textfield',
+                        	allowBlank: false,
+                        	minValue: 0
+                        }
                     }]
                 },{
                     title: 'Composition of the Company\'s Shareholders at the End of the Year 2009 & 2010',
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
+                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     minHeight: 150,
                     columns: csyColumns,
                     store: storeCSY,
@@ -1220,7 +939,8 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    minHeight: 200,
+                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                    minHeight: 130,
                     columns: csdColumns,
                     store: storeCSD,
                     tbar:[{
@@ -1299,8 +1019,9 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    store: storeCSD,
-                    columns: [],
+                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                    store: storeCSD_BC,
+                    columns: csd_bcColumns,
                     minHeight: 200,
                     tbar: [{
                         xtype: 'button',

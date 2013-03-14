@@ -5,8 +5,8 @@ Ext.create('Ext.Window', {
 	id: 'search-peers',
 	modal: true,
 	closable: true,
-	width: 400,
-	height: 300,
+	width: 300,
+	height: 100,
 	resizable: false,
 	draggable: false,
 	buttons: [{
@@ -38,16 +38,13 @@ Ext.create('Ext.Window', {
 		text: 'Cancel',
 		listeners: {
 			click: function() {
-				var p = Ext.getCmp('search-peers');
-				if(confirm('Cancel Search ?')) {
-					p.close();
-				}
+				Ext.getCmp('search-peers').close();
 			}
 		}
 	}],
 	items: [{
 		border: false,
-		width: 390,
+		width: 290,
 		items: [{
 			xtype: 'form',
 			layout: 'form',
