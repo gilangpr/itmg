@@ -1,5 +1,5 @@
 <?php 
-ini_set('memory_limit', '-1');
+//ini_set('memory_limit', '-1');
 class Shareholdings_RequestController extends Zend_Controller_Action
 {
 	protected $_model;
@@ -177,14 +177,19 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$sum += $d['AMOUNT'];
 
 		}
+		
 		foreach($list as $k=>$d) {
 			if($sum > 0) {
 				$list[$k]['PERCENTAGE'] = number_format(($d['AMOUNT'] / $sum) * 100,2);
 			}
 		}
+		
+		$sum += $d['AMOUNT'];
+		
 		$data = array(
 				'data' => array(
 						'items' => $list,
+						'total' => $sum,
 						'totalCount' => $this->_model->count()
 				)
 		);
@@ -277,7 +282,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-	public function uploadAction()
+    public function uploadAction()
 	{
 			
 		$data = array(
@@ -288,11 +293,14 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 		$upload->setDestination(APPLICATION_PATH . '/../public/uploads/shareholdings/');
 		$upload->addValidator('Extension',false,'xls,xlsx');
-
+		
 		if ($upload->isValid()) {
 	
 			$upload->receive();
 			$fileInfo = $upload->getFileInfo();
+			$filExt = explode('.', $fileInfo['FILE']['name']);
+			$filExt = explode('_', $fileInfo['FILE']['name']);
+			$date = explode('.', $filExt[2]);
 
 			/* Get file extension */
 			$filExt = explode('.',$fileInfo['FILE']['name']);
@@ -303,28 +311,36 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$new_name = microtime() . $filExt ;
 			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 			/* End of : Rename file */
-		}
+		} 
 		
 		try
 		{
 	
+
 			$inputFileName = $upload->getDestination() . '/' . $new_name;
 			$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
 			$objReader = PHPExcel_IOFactory::createReader($inputFileType);
 			$objReader->setReadDataOnly(true);
 			$objPHPExcel = $objReader->load($inputFileName);
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
+		    $objWriter->setPreCalculateFormulas(false);
+
 			foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-				$worksheetTitle     = $worksheet->getTitle();
-				$highestRow         = $worksheet->getHighestRow();
-				$highestColumn      = $worksheet->getHighestColumn();
-				$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+				$worksheetTitle     =  $worksheet->getTitle();
+				$highestRow         =  $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();  
+				$highestColumn      =  $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+				//$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
 				$nrColumns = ord($highestColumn) - 64;
-				for ($row = 2; $row <= $highestRow; ++ $row) {
+				
+				$highestColumn++;
+				for ($row = 2; $row < $highestRow + 1; $row++) {
+					
 					$val=array();
-					for ($col = 0; $col < $highestColumnIndex; ++ $col) {
-						$cell = $worksheet->getCellByColumnAndRow($col, $row);
-						$val[] = $cell->getValue();
-					}
+					for ($col = 'B'; $col != $highestColumn; $col++) {
+						 $val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
+					};
+
+                    if(!is_null($val[0])){
 					if(!$this->_model->isExistByKey('INVESTOR_NAME', strtoupper($val[0]))) {
 						$id = $this->_model->insert(array(
 								'INVESTOR_NAME' => $val[0],
@@ -339,23 +355,30 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 								'ACCOUNT_HOLDER' => $val[2],
 						),$this->_model->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $id));
 					}
+                    }
+
 	
 					$modelAmount = new Application_Model_ShareholdingAmounts();
-					$ts = mktime(0,0,0,1,$val[4]-1,1900);
-					$dt = date("y-m-d",$ts);
+					//$ts = mktime(0,0,0,1,$val[4]-1,1900);
+					//$dt = date("y-m-d",$ts);
 					$data['data']['INVESTOR_NAME'][$row-2] = $val[0];
 					/*--Search And Update from Two Table--*/
 					$query = $modelAmount->select()
 					->where('SHAREHOLDING_ID = ?', $id)//id from table id
-					->where('DATE = ?', $dt);//date from table shareholding amounts
+					->where('DATE = ?', $date[0]);
+					//->where('DATE = ?', $dt);//date from table shareholding amounts
 					
+					if(!is_null($val[0])){
 					if ($query->query()->rowCount() > 0) { //record amount sudah ada
-					
+						$replace = ',';
+						$with = '';
+						$amount = str_replace($replace, $with, $val[3]);
 						$modelAmount->update(array(
 								'AMOUNT' => $val[3]
 								), array(
 								$modelAmount->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $id),
-								$modelAmount->getAdapter()->quoteInto('DATE = ?', $dt)
+								$modelAmount->getAdapter()->quoteInto('DATE = ?', $date[0])
+								//$modelAmount->getAdapter()->quoteInto('DATE = ?', $dt)
 								));
 						
 					} else {
@@ -364,11 +387,12 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 								'SHAREHOLDING_ID' => $id,
 								'AMOUNT' => $val[3],
 								'CREATED_DATE' => date('Y-m-d H:i:s'),
-								'DATE' => $dt
+								'DATE' => $date[0]
 						));
 					}
-				}
-			}
+ 				}
+ 				}
+ 			}
 		}
 		 
 		catch (Exception $e) {
@@ -376,15 +400,15 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
-		}
-	
+		} 
+	    
 		if(file_exists($upload->getDestination() . '/' . $new_name)) {
 			unlink($upload->getDestination() . '/' . $new_name);
 		}
 	
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-
+	
  	public function searchAction()
  	{
  		
@@ -392,20 +416,23 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		$modelSearch = new Application_Model_ShareholdingAmounts();
  		$start_date = explode('T',$this->_posts['START_DATE']);
  		$end_date = explode('T',$this->_posts['END_DATE']);
-
+        
+        
  		if(isset($this->_posts['INVESTOR_NAME'])) {
  			if($this->_model->isExistByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME'])) {
  				$ID = $this->_model->getPkByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME']);
- 		         
+ 				
  		         $list = $modelSearch->select()
- 		         ->from('SHAREHOLDING_AMOUNTS', array('*'))
+ 		         ->from('SHAREHOLDING_AMOUNTS', array('*'))		         
  		         ->where('SHAREHOLDING_ID = ?', $ID)
  		         ->where('DATE >= ?',  $start_date[0])
  		         ->where('DATE <= ?',  $end_date[0]);
  		         
  			} else {
  				$list = $modelSearch->select()
+ 				->setIntegrityCheck(false)
  				->from('SHAREHOLDING_AMOUNTS', array('*'))
+ 				//->join('SHAREHOLDINGS', 'SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'))
  				->where('DATE >= ?',  $start_date[0])
  				->where('DATE <= ?',  $end_date[0]);
  			}
