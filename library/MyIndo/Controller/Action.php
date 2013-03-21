@@ -44,4 +44,14 @@ class MyIndo_Controller_Action extends Zend_Controller_Action
 				)
 		);
 	}
+	
+	protected function isPost()
+	{
+		return $this->getRequest()->isPost();
+	}
+	
+	protected function isAjax()
+	{
+		return $this->getRequest()->isXmlHttpRequest();
+	}
 }

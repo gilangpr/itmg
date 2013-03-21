@@ -17,7 +17,15 @@ class MyIndo_Plugin_Acl extends Zend_Controller_Plugin_Abstract
 			$request->setControllerName('login');
 			$request->setActionName('index');
 		} else {
-			$view->active_user = $this->_objAuth->getIdentity();   
+			$modelGM = new Application_Model_GroupMembers();
+			$groups = array();
+			$list = $modelGM->getListByKey('USERNAME', $this->_objAuth->getIdentity());
+			$view->active_user = $this->_objAuth->getIdentity();
+			foreach($list as $k=>$d) {
+				$groups[] = (int)$d['GROUP_ID'];
+			}
+			$view->groups = $groups;
 		}
+		
 	}
 }

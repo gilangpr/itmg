@@ -1,63 +1,39 @@
 function loadMenus() {
-	var tbar = new Array();
-	var t = [{
-		xtype: 'button',
-		text: 'Investors',
-		height: sd.nav.height,
-		width: sd.nav.width
-	},{
-		xtype: 'button',
-		text: 'Shareholdings',
-		height: sd.nav.height,
-		width: sd.nav.width
-	},{
-		xtype: 'button',
-		text: 'Peers',
-		height: sd.nav.height,
-		width: sd.nav.width
-	},{
-		xtype: 'button',
-		text: 'Shareprices',
-		height: sd.nav.height,
-		width: sd.nav.width
-	},{
-		xtype: 'button',
-		text: 'Research Report',
-		height: sd.nav.height,
-		width: sd.nav.width
-	},{
-		xtype: 'button',
-		text: 'News',
-		height: sd.nav.height,
-		width: sd.nav.width
-	},{
-		xtype: 'button',
-		text: 'User Management',
-		height: sd.nav.height,
-		width: sd.nav.width
-	}];
-	
-	// Add Toolbar Listeners :
-	var idx = 0;
-	Ext.each(t, function(c, i) {
-		t[i].listeners = {
-			click: function() {
-				loadContent(this);
-			}
+	showLoadingWindow();
+	Ext.Ajax.request({
+		url : sd.baseUrl + '/groups/request/has-access',
+		params: {
+			type: 'menus',
+			groups: Ext.encode(sd.groups)
+		},
+		success: function(d) {
+			var json = Ext.decode(d.responseText);
+			
+			Ext.each(json.data.items.data, function(_e, _i){
+				json.data.items.data[_i].height = sd.nav.height;
+				json.data.items.data[_i].width = sd.nav.width;
+				json.data.items.data[_i].listeners =  {
+					click: function() {
+						loadContent(this);
+					}
+				};
+			});
+			Ext.create('Ext.panel.Panel', {
+				renderTo: document.getElementById('nav'),
+				border: false,
+				tbar: json.data.items.data,
+				id: 'big-panel',
+				listeners: {
+					render: function() {
+						closeLoadingWindow();
+					}
+				}
+			});
+		},
+		failure: function(d) {
+			var json = Ext.decode(d.responseText);
+			closeLoadingWindow();
 		}
-		tbar[idx] = t[i];
-		
-		if(i < t.length - 1) {
-			tbar[idx+1] = '-';
-			idx+=2;
-		}
-	});
-	
-	var x = Ext.create('Ext.panel.Panel', {
-		renderTo: document.getElementById('nav'),
-		border: false,
-		tbar: tbar,
-		id: 'big-panel'
 	});
 }
 function showLoadingWindow() {
