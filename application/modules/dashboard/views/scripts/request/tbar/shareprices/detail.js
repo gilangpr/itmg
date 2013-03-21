@@ -1,11 +1,5 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
-var storeSP = loadStore('Shareprices');
-var storeRR_curpage = storeSP.currentPage;
-storeSP.load({
-	params: {
-		all: 1
-	}
-});
+
 Ext.require('Ext.chart.*');
 Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox']);
 Ext.onReady(function() {
@@ -102,83 +96,124 @@ Ext.onReady(function() {
 			listeners: {
 				click: function() {
 					var form = Ext.getCmp('detail-shareprices-form');
+					var _id = 'shareprices-detail-result-' + Math.random();
 					if(form.getForm().isValid()) {
-						form.getForm().submit({
-							url: sd.baseUrl + '/shareprices/request/detail',
-							success: function(d, e) {
-								var _id = 'shareprices-detail-result' + Math.random();
-								c.up().add({
-									title: 'Details Result',
-									closable: true,
-									id: _id,
-									xtype: 'chart',
-						            animate: false,
-						            store: storeSP,
-						            insetPadding: 30,
-						            axes: [{
-						                type: 'Numeric',
-						                minimum: 0,
-						                position: 'left',
-						                fields: ['data1'],
-						                title: false,
-						                grid: true,
-						                label: {
-						                    renderer: Ext.util.Format.numberRenderer('0,0'),
-						                    font: '10px Arial'
-						                }
-						            }, {
-						                type: 'Category',
-						                position: 'bottom',
-						                fields: ['name'],
-						                title: false,
-						                label: {
-						                    font: '11px Arial',
-//						                    renderer: function(name) {
-//						                        return name.substr(0, 3) + ' 07';
-//						                    }
-						                }
-						            }],
-						            series: [{
-						                type: 'line',
-						                axis: 'left',
-						                xField: 'name',
-						                yField: 'data1',
-						                listeners: {
-						                  itemmouseup: function(item) {
-						                      Ext.example.msg('Item Selected', item.value[1] + ' visits on ' + Ext.Date.monthNames[item.value[0]]);
-						                  }  
-						                },
-						                tips: {
-						                    trackMouse: true,
-						                    width: 80,
-						                    height: 40,
-						                    renderer: function(storeItem, item) {
-						                        this.setTitle(storeItem.get('SHAREPRICES_NAME'));
-						                        this.update(storeItem.get('data1'));
-						                    }
-						                },
-						                style: {
-						                    fill: '#38B8BF',
-						                    stroke: '#38B8BF',
-						                    'stroke-width': 3
-						                },
-						                markerConfig: {
-						                    type: 'circle',
-						                    size: 4,
-						                    radius: 4,
-						                    'stroke-width': 0,
-						                    fill: '#38B8BF',
-						                    stroke: '#38B8BF'
-						                }
-						            }]					            
-								});
-								c.up().setActiveTab(_id);
-								form.up().close();
-							},
-							failure: function(d, e) {
-								
-							}
+						Ext.define('Shareprice__', {
+	                        extend: 'Ext.data.Model',
+	                        fields: [{
+	                            name: 'SHAREPRICES_NAME',
+	                            type: 'string'
+	                        },{
+	                            name: 'DATE',
+	                            type: 'datefield'
+	                        },{
+	                            name: 'VALUE',
+	                            type: 'float'
+	                        }]
+	                    });
+						var _xxstore = Ext.create("Ext.data.Store", {
+							model: "Shareprice__",
+	                        storeId: "Shareprices__",
+	                        proxy: {
+	                            "type": "ajax",
+	                            "api": {
+	                                "read": sd.baseUrl + '/shareprices/request/detail'
+	                            },
+	                            "actionMethods": {
+	                                "read": "POST"
+	                            },
+	                            "reader": {
+	                                "idProperty": "SHAREPRICES_ID",
+	                                "type": "json",
+	                                "root": "data.items",
+	                                "totalProperty": "data.totalCount"
+	                            }
+	                        },
+	                        sorter: {
+	                            "property": "SHAREPRICES_ID",
+	                            "direction": "ASC"
+	                        }
 						});
+						_xxstore.load({
+							 params: {
+		                            'SHAREPRICES_NAME':  (typeof(form.getForm()._fields.items[2].value) == 'undefined') ? '' : form.getForm()._fields.items[2].value,
+		                            'START_DATE': form.getForm()._fields.items[0].value,
+		                            'END_DATE': form.getForm()._fields.items[1].value
+		                     }
+	                   
+	                    });
+						c.up().add({
+							title: 'Details Shareprices : ' + form.getForm()._fields.items[2].value,
+							closable: true,
+							id: _id,
+							store: _xxstore,
+							xtype: 'chart',
+							animate: {
+								easing: 'bounceOut',
+								duration: 400
+							},
+							shadow: true,
+							style: 'background: #FFF',
+							theme: 'Base:gradients',
+							axes: [{
+				                type: 'Numeric',
+				                minimum: 0,
+				                position: 'left',
+				                fields: ['VALUE'],
+				                title: false,
+				                grid: true,
+				                label: {
+				                    renderer: Ext.util.Format.numberRenderer('0,0'),
+				                    font: '10px Arial'
+				                }
+				            }, {
+				                type: 'Category',
+				                position: 'bottom',
+				                fields: ['DATE'],
+				                title: false,
+				                label: {
+				                    font: '11px Arial',
+//				                    renderer: function(name) {
+//				                        return name.substr(0, 3) + ' 07';
+//				                    }
+				                }
+				            }],
+				            series: [{
+				                type: 'line',
+				                axis: 'left',
+				                xField: 'DATE',
+				                yField: 'VALUE',
+				                listeners: {
+				                  itemmouseup: function(item) {
+				                      Ext.example.msg('Item Selected', item.value[1] + ' visits on ' + Ext.Date.monthNames[item.value[0]]);
+				                  }  
+				                },
+				                tips: {
+				                    trackMouse: true,
+				                    width: 80,
+				                    height: 40,
+				                    renderer: function(storeItem, item) {
+				                        this.setTitle(storeItem.get('SHAREPRICES_NAME'));
+				                        this.update(storeItem.get('VALUE'));
+				                    }
+				                },
+				                style: {
+				                    fill: '#000',
+				                    stroke: '#DDD',
+				                    'stroke-width': 3
+				                },
+				                markerConfig: {
+				                    type: 'circle',
+				                    size: 4,
+				                    radius: 4,
+				                    'stroke-width': 0,
+				                    fill: '#000',
+				                    stroke: '#000'
+				                }
+				            }]	
+						});
+						c.up().setActiveTab(_id);
+						form.up().close();
 					}
 				}
 			}

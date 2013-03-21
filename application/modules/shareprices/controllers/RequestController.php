@@ -41,6 +41,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
+		
 		$spNameModel = new Application_Model_SharepricesName();
 		$spRes = $spNameModel->getList();
 		$spList = array();
@@ -52,8 +53,9 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			}
 		}
 		$lastId = $this->_model->getLastId();
-		
 		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE ASC');
+		
+		//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
 		
 		$t = array();
 		$t2 = array();
@@ -94,7 +96,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		}
 		
 		$this->_data['data']['items'] = $t;
-		$this->_data['data']['totalCount'] = $i;
+		$this->_data['data']['totalCount'] = $this->_model->distinctDate();
 		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
@@ -217,18 +219,36 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	
 	public function detailAction ()
 	{
+		
+		$searchModel = new Application_Model_Shareprices();
+		$getSdate = explode('T', $this->_posts['START_DATE']);
+		$getEdate = explode('T', $this->_posts['END_DATE']);
+		
+		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $this->_posts['SHAREPRICES_NAME'])){
+			$listSearch = $searchModel->select()
+			->where('SHAREPRICES_NAME = ?' ,$this->_posts['SHAREPRICES_NAME'])
+			->where('DATE >= ?' ,$getSdate[0])
+			->where('DATE <= ?' ,$getEdate[0]);
+			
+			$list = $listSearch->query()->fetchall();
+		} 
+		
 		$data = array(
 				'data' => array(
-						'items' => array(),
-						'totalCount' => 0
+						'items' => $list,
+						'totalCount' => count($list)
 				)
 		);
-		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-	public function uploadAction ()
+public function uploadAction ()
 	{
+		
+		// file xls 	250 data 22.66 detik --
+		// file xlsx 	250 data 22.84 detik --
+		
+		
 		$data = array(
 				'data' => array()
 		);
@@ -253,7 +273,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 					$new_name = microtime() . $filExt ;
 					rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 					/* End of : Rename file */			
-
+					
 					// read file
 					try {
 						$inputFileName = $upload->getDestination() . '/' . $new_name;
@@ -267,6 +287,10 @@ class Shareprices_RequestController extends Zend_Controller_Action
 							$highestColumn      = $worksheet->getHighestColumn();
 							$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
 							$nrColumns = ord($highestColumn) - 64;
+							
+							$headingsArray = $worksheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
+							$headingsArray = $headingsArray[1];
+							
 							for ($row = 2; $row <= $highestRow; ++ $row) {
 								$val=array();
 								for ($col = 0; $col < $highestColumnIndex; ++ $col) {
@@ -276,50 +300,58 @@ class Shareprices_RequestController extends Zend_Controller_Action
 								$ts = mktime(0,0,0,1,$val[0]-1,1900);
 								$dt = date("y-m-d",$ts);
 								
-								$count = $this->_model->getCount($val[1], $dt);
-								if ($count['count'] == 0) {
-									// insert shareprices
-									$sp = $this->_model->insert(array(
-											'DATE' => $dt,
-											'SHAREPRICES_NAME' => $val[1],
-											'VALUE' => $val[2],
-											'CREATED_DATE' => date('Y-m-d H:i:s')
-									));
+								$rowNames = 1;
+								for ($colValue = 1; $colValue < $highestColumnIndex; ++ $colValue) {
+									$cellValue = $worksheet->getCellByColumnAndRow($colValue, $row);
+									$valValue = $cellValue->getValue();
 									
-									// insert shareprices log
-									$splog = $this->_modelLog->insert(array(
-											'DATE' => $dt,
-											'SHAREPRICES_NAME' => $val[1],
-											'VALUE_BEFORE' => $val[2],
-											'VALUE_AFTER' => $val[2],
-											'CREATED_DATE' => date('Y-m-d H:i:s')
-									));
-																		
-								} else {
-									// get value before log
-									$valbef = $this->_modelLog->getValueLog($dt, $val[1], 'VALUE_AFTER');									
+									$cellNames = $worksheet->getCellByColumnAndRow($colValue, $rowNames);
+									$valNames = $cellNames->getValue();									
 									
-									// get id log
-									$splogid = $this->_modelLog->getPksp($dt, $val[1]);
-									
-									// update value before log
-									$this->_modelLog->update(array(
-											'VALUE_BEFORE' => $valbef,
-									),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
-									
-									// update value after log
-									$this->_modelLog->update(array(
-											'VALUE_AFTER' => $val[2],
-									),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
-									
-									// update value
-									$spid = $this->_model->getPksp($dt, $val[1]);
-									$this->_model->update(array(
-											'VALUE' => $val[2],
-									),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
-								}								
-
-							}
+									$count = $this->_model->getCount($valNames, $dt);
+ 									if ($count['count'] == 0) {
+ 						
+ 										// insert shareprices
+ 										$sp = $this->_model->insert(array(
+ 												'DATE' => $dt,
+ 												'SHAREPRICES_NAME' => $valNames,
+ 												'VALUE' => $valValue,
+ 												'CREATED_DATE' => date('Y-m-d H:i:s')
+ 										));
+ 										
+ 										// insert shareprices log
+ 										$splog = $this->_modelLog->insert(array(
+ 												'DATE' => $dt,
+ 												'SHAREPRICES_NAME' => $valNames,
+ 												'VALUE_BEFORE' => $valValue,
+ 												'VALUE_AFTER' => $valValue,
+ 												'CREATED_DATE' => date('Y-m-d H:i:s')
+ 										));
+ 									} else {
+ 										// get value before log
+ 										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
+								
+ 										// get id log
+ 										$splogid = $this->_modelLog->getPksp($dt, $valNames);
+										
+ 										// update value before log
+ 										$this->_modelLog->update(array(
+ 												'VALUE_BEFORE' => $valbef,
+ 										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+											
+ 										// update value after log
+ 										$this->_modelLog->update(array(
+ 												'VALUE_AFTER' => $valValue,
+ 										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+								
+ 										// update value
+ 										$spid = $this->_model->getPksp($dt, $valNames);
+ 										$this->_model->update(array(
+ 												'VALUE' => $valValue,
+ 										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
+ 									}
+								}			
+							}													
 						}
 					}
 					catch (Exception $e) {
@@ -327,13 +359,13 @@ class Shareprices_RequestController extends Zend_Controller_Action
 					}
 					
 				} else {
-						$this->_error_code = 902;
-						$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-						$this->_success = false;
+					$this->_error_code = 902;
+					$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+					$this->_success = false;
 				}				
 			}
 			catch (Exception $e) {
-				
+							
 			}
 			
 		}
@@ -356,15 +388,56 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$getSdate = explode('T', $this->_posts['START_DATE']);
 		$getEdate = explode('T', $this->_posts['END_DATE']);
 		
-		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $this->_posts['SHAREPRICES_NAME'])){
+		$name = array($this->_posts['SHAREPRICES_NAME']);
+		$n = explode(', ', strtoupper($this->_posts['SHAREPRICES_NAME']));
+		
+		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $name)) {
 			$listSearch = $searchModel->select()
-			->where('SHAREPRICES_NAME = ?' ,$this->_posts['SHAREPRICES_NAME'])
-			->orwhere('SHAREPRICES_NAME = ?' ,$this->_posts['SHAREPRICES_NAME'])
+			->where('SHAREPRICES_NAME = ?' ,$nAme)
 			->where('DATE >= ?' ,$getSdate[0])
 			->where('DATE <= ?' ,$getEdate[0]);
-			
+			$list = $listSearch->query()->fetchall();	
+		} else if (count($n) == 2){
+			$listSearch = $searchModel->select()
+			->where('DATE >= ?' ,$getSdate[0])
+			->where('DATE <= ?' ,$getEdate[0])
+			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%'");
 			$list = $listSearch->query()->fetchall();
-		}
+		}	else if (count($n) == 3){
+			$listSearch = $searchModel->select()
+			->where('DATE >= ?' ,$getSdate[0])
+			->where('DATE <= ?' ,$getEdate[0])
+			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%' OR SHAREPRICES_NAME LIKE '%$n[2]%'");
+			$list = $listSearch->query()->fetchall();
+		}			
+		
+// 		$listSearch = $searchModel->select()
+// 			->where('DATE >= ?' ,$getSdate[0])
+// 			->where('DATE <= ?' ,$getEdate[0])
+// 			->where('SHAREPRICES_NAME = ?', $n[0])
+// 			->orwhere('SHAREPRICES_NAME = ?', $n[1]);
+// 		$list = $listSearch->query()->fetchall();
+		
+// 		$sql = $listSearch->__toString();
+// 		echo "$sql\n";die;
+		
+// 		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $name)) {
+// 			$listSearch = $searchModel->select()
+// 			->where('SHAREPRICES_NAME = ?' ,$name)
+// 			->where('DATE >= ?' ,$getSdate[0])
+// 			->where('DATE <= ?' ,$getEdate[0]);
+// 		$list = $listSearch->query()->fetchall();
+				
+// 		} else if ($searchModel->isExistByKey('SHAREPRICES_NAME', $n[0])) {				
+// 			if ($searchModel->isExistByKey('SHAREPRICES_NAME', $n[1])) {
+// 				$listSearch = $searchModel->select()
+// 				->where('DATE >= ?' ,$getSdate[0])
+// 				->where('DATE <= ?' ,$getEdate[0])
+// 				->where('SHAREPRICES_NAME = ?', $n[0] OR 'SHAREPRICES_NAME = ?', $n[1]);
+// 				$list = $listSearch->query()->fetchall();
+// 			}
+			
+// 		}	
 		
 		$data = array(
 				'data' => array(

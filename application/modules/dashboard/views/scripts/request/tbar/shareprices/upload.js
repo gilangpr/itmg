@@ -35,7 +35,7 @@ Ext.create('Ext.Window', {
 							form.reset();
 							store.loadPage(store.currentPage);
 						},
-						failure: function(data,e) {
+						failure: function(d, e) {
 							var json = Ext.decode(e.response.responseText);
 							Ext.Msg.show({
 								title: 'Error',
