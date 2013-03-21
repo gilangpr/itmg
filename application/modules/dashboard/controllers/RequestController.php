@@ -52,7 +52,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			try {
 				$treeStoreModel = new MyIndo_Ext_TreeStores();
 				$list = $treeStoreModel->getListByKey('NAME', $this->_p['name']);
-				$this->_data['data']['items'] = $treeStoreModel->parser($list);
+				$this->_data['data']['items'] = $treeStoreModel->parser($list, $this->view->groups);
 			} catch( Exception $e ) {
 				$this->_error_code = $e->getCode();
 				$this->_error_message = $e->getMessage();
