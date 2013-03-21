@@ -214,4 +214,32 @@ class Investors_RequestController extends Zend_Controller_Action
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+	public function printAction()
+	{
+		
+		$id = $this->_getParam('id',0);
+		if($this->_model->isExistByKey('INVESTOR_ID', $id)) {
+			$this->_helper->viewRenderer->setNoRender(false);
+			//$details = $this->_model->getDetailByKey('INVESTOR_ID', $id);
+			
+			$q = $this->_model->select()
+				->from('INVESTORS',array('*'))
+				->setIntegrityCheck(false)
+				->where('INVESTORS.INVESTOR_ID = ?', $id)
+				->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('*'))
+				->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('*'));
+				//->join('SECTOR_HOLDINGS','SECTOR_HOLDINGS.INVESTOR_ID = INVESTORS.INVESTOR_ID',array('*'));
+			$details = $q->query()->fetch();
+			
+			$this->view->details = $details;
+			
+		} else {
+			$this->_helper->viewRenderer->setNoRender(true);
+			echo "no data found";
+		}
+		
+		
+		
+		
+	}
 }

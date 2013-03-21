@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+	<head>
+		<script type="text/javascript">
+			window.print();
+		</script>
+		<link rel="stylesheet" media="print" href="<?php echo $this->baseUrl('/resources/css/print.css');?>" type="text/css" />
+		<link rel="stylesheet" media="screen" href="<?php echo $this->baseUrl('/resources/css/print.css');?>" type="text/css" />
+		<script type="text/javascript" src="<?php echo $this->baseUrl('/resources/js/ext-all.js');?>"></script>
+		<script type="text/javascript" src="<?php echo $this->baseUrl('/resources/js/jquery.min.js');?>"></script>
+		<title><?php echo $this->details['COMPANY_NAME'] ?></title>
+	</head>
+	<body>
+		<div id="content">
+			<div id="header">
+				<center><h2><?php echo $this->details['COMPANY_NAME']?></h2></center>
+			</div>
+			<div id="detail">
+				<div id="dkiri">
+					<div id="head">
+					<h3>Detail</h3>
+					</div>
+					Equity Asset : <div id="alignki"><?php echo $this->details['EQUITY_ASSETS']?></div><br/>
+					Investor Type : <div id="alignki"><?php echo $this->details['INVESTOR_TYPE']?></div><br/>
+					Style : <div id="alignki"><?php echo $this->details['STYLE'] ?></div><br/>
+					Latest Update : <div id="alignki"><?php echo $this->details['MODIFIED_DATE'] ?></div>
+				</div>
+				<div id="dkanan">
+					<div id="head">
+					<h3>Company Address</h3>
+					</div>
+					
+					<div id="alignka">
+						<div id="address">
+							<?php echo $this->details['ADDRESS']?><br>
+							<?php echo $this->details['LOCATION']?>
+						</div>
+						<div id="phone">
+							Phone : <?php echo $this->details['PHONE_1'] ?><br/>
+							Fax : <?php echo $this->details['FAX'] ?><br>
+							Website: <?php echo $this->details['WEBSITE'] ?>
+						</div> 
+					</div><br/>
+					
+				</div>	
+			</div>
+			<div id="detail2">
+				<div id="head2">
+					<h3>Company Overview</h3>
+				</div>
+				<?php echo $this->details['COMPANY_OVERVIEW'];?>
+			</div>
+			<div id="detail2">
+				<div id="head2">
+					<h3>Invesment Strategy</h3>
+				</div>
+				<?php echo $this->details['INVESTMENT_STRATEGY'];?>
+			</div>
+			<div id="detail3">
+				<div id="sector">
+					<div id="head">
+						<h3>Sector Holdings</h3>
+					</div>
+					
+					<?php 
+					foreach($this->list_SH as $sh) {
+					
+						echo $sh['TITLE']." ";
+						echo $sh['VALUE']."<br>";
+					}
+					 ?>
+					 <script type="text/javascript">
+					 	Ext.require('Ext.chart.*');
+						Ext.require('Ext.layout.container.Fit');
+
+						Ext.onReady(function () {
+    						//store1.loadData(generateData(6, 20));
+
+					   
+					        panel = Ext.create('widget.panel', {
+					        width: 450,
+					        height: 300,
+					        title: 'Sector Holdings',
+					        renderTo: Ext.getBody(),
+					        //layout: 'fit',
+					        items: {
+					            xtype: 'chart',
+					            id: 'chartCmp',
+					            animate: true,
+					            //store: store1,
+					            shadow: true,
+					            legend: {
+					                position: 'right'
+					            },					            
+					            series: [{
+					                type: 'pie',
+					                field: "$sh['VALUE']",
+					                showInLegend: true,					            
+					                highlight: {
+					                  segment: {
+					                    margin: 20
+					                  }
+					                },
+					                label: {
+					                    field: "$sh['TITLE']",
+					                    display: 'none',
+					                    contrast: true,
+					                    font: '12px Arial'
+					                }
+					            }]
+					        }
+					    });
+					});
+					 </script>
+					
+				</div>
+				<div id="portfolio">
+					<div id="head">
+						<h3>Portfolio Distribution</h3>
+					</div>
+					<!--
+					<img src="<?php echo $this->baseUrl('/images/chart-1.png');?>" width="350" height="170" />
+					-->
+					<?php 
+					foreach($this->list_PD as $pd) {
+						
+						echo $pd['TITLE']." ";
+						echo $pd['VALUE']."<br>";
+					}
+					 ?>
+				</div>
+			</div>
+			
+		</div>
+	</body>
+</html>
