@@ -25,7 +25,8 @@
 				},
 				content: {
 					height: 200
-				}
+				},
+				groups: <?php echo Zend_Json::encode($this->groups) . "\n"?>
 			});
 			Ext.onReady(function(){
 				loadMenus();
@@ -46,6 +47,9 @@
 		<!-- End of : JS -->
 	</head>
 	<body>
+		<div class="logout-box">
+			<p>Welcome, Administrator | <a href="<?php echo $this->url(array('module'=>'dashboard','controller'=>'login','action'=>'logout'),null,true)?>"><img src="<?php echo $this->baseUrl('images/logout.png')?>"/> Logout</a></p>
+		</div>
 		<div class="head">
 			<img class="logo" src="<?php echo $this->baseUrl('images/logo.png')?>" />
 		</div>
