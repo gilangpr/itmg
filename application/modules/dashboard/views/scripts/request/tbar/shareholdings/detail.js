@@ -65,6 +65,7 @@ if(selected.length > 0) {
 				plugins: [cellEditing],//memanggil plugin
 				id: 'shareholding-amount-list-' + id,
 				bbar: bbar2,
+				height: c.up().getHeight() - 56,//letak pagingtoolbar
 				columns: [{
 					text: 'Amount',
 					dataIndex: 'AMOUNT',

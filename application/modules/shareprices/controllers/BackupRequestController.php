@@ -41,7 +41,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		
 		$spNameModel = new Application_Model_SharepricesName();
 		$spRes = $spNameModel->getList();
 		$spList = array();
@@ -53,9 +52,8 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			}
 		}
 		$lastId = $this->_model->getLastId();
-		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE ASC');
 		
-		//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
+		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE ASC');
 		
 		$t = array();
 		$t2 = array();
@@ -96,7 +94,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		}
 		
 		$this->_data['data']['items'] = $t;
-		$this->_data['data']['totalCount'] = $this->_model->distinctDate();
+		$this->_data['data']['totalCount'] = $i;
 		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
@@ -242,13 +240,8 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-public function uploadAction ()
+	public function uploadAction ()
 	{
-		
-		// file xls 	250 data 22.66 detik --
-		// file xlsx 	250 data 22.84 detik --
-		
-		
 		$data = array(
 				'data' => array()
 		);
@@ -273,7 +266,7 @@ public function uploadAction ()
 					$new_name = microtime() . $filExt ;
 					rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 					/* End of : Rename file */			
-					
+
 					// read file
 					try {
 						$inputFileName = $upload->getDestination() . '/' . $new_name;
@@ -287,10 +280,6 @@ public function uploadAction ()
 							$highestColumn      = $worksheet->getHighestColumn();
 							$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
 							$nrColumns = ord($highestColumn) - 64;
-							
-							$headingsArray = $worksheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
-							$headingsArray = $headingsArray[1];
-							
 							for ($row = 2; $row <= $highestRow; ++ $row) {
 								$val=array();
 								for ($col = 0; $col < $highestColumnIndex; ++ $col) {
@@ -300,58 +289,50 @@ public function uploadAction ()
 								$ts = mktime(0,0,0,1,$val[0]-1,1900);
 								$dt = date("y-m-d",$ts);
 								
-								$rowNames = 1;
-								for ($colValue = 1; $colValue < $highestColumnIndex; ++ $colValue) {
-									$cellValue = $worksheet->getCellByColumnAndRow($colValue, $row);
-									$valValue = $cellValue->getValue();
+								$count = $this->_model->getCount($val[1], $dt);
+								if ($count['count'] == 0) {
+									// insert shareprices
+									$sp = $this->_model->insert(array(
+											'DATE' => $dt,
+											'SHAREPRICES_NAME' => $val[1],
+											'VALUE' => $val[2],
+											'CREATED_DATE' => date('Y-m-d H:i:s')
+									));
 									
-									$cellNames = $worksheet->getCellByColumnAndRow($colValue, $rowNames);
-									$valNames = $cellNames->getValue();									
+									// insert shareprices log
+									$splog = $this->_modelLog->insert(array(
+											'DATE' => $dt,
+											'SHAREPRICES_NAME' => $val[1],
+											'VALUE_BEFORE' => $val[2],
+											'VALUE_AFTER' => $val[2],
+											'CREATED_DATE' => date('Y-m-d H:i:s')
+									));
+																		
+								} else {
+									// get value before log
+									$valbef = $this->_modelLog->getValueLog($dt, $val[1], 'VALUE_AFTER');									
 									
-									$count = $this->_model->getCount($valNames, $dt);
- 									if ($count['count'] == 0) {
- 						
- 										// insert shareprices
- 										$sp = $this->_model->insert(array(
- 												'DATE' => $dt,
- 												'SHAREPRICES_NAME' => $valNames,
- 												'VALUE' => $valValue,
- 												'CREATED_DATE' => date('Y-m-d H:i:s')
- 										));
- 										
- 										// insert shareprices log
- 										$splog = $this->_modelLog->insert(array(
- 												'DATE' => $dt,
- 												'SHAREPRICES_NAME' => $valNames,
- 												'VALUE_BEFORE' => $valValue,
- 												'VALUE_AFTER' => $valValue,
- 												'CREATED_DATE' => date('Y-m-d H:i:s')
- 										));
- 									} else {
- 										// get value before log
- 										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
-								
- 										// get id log
- 										$splogid = $this->_modelLog->getPksp($dt, $valNames);
-										
- 										// update value before log
- 										$this->_modelLog->update(array(
- 												'VALUE_BEFORE' => $valbef,
- 										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
-											
- 										// update value after log
- 										$this->_modelLog->update(array(
- 												'VALUE_AFTER' => $valValue,
- 										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
-								
- 										// update value
- 										$spid = $this->_model->getPksp($dt, $valNames);
- 										$this->_model->update(array(
- 												'VALUE' => $valValue,
- 										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
- 									}
-								}			
-							}													
+									// get id log
+									$splogid = $this->_modelLog->getPksp($dt, $val[1]);
+									
+									// update value before log
+									$this->_modelLog->update(array(
+											'VALUE_BEFORE' => $valbef,
+									),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+									
+									// update value after log
+									$this->_modelLog->update(array(
+											'VALUE_AFTER' => $val[2],
+									),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+									
+									// update value
+									$spid = $this->_model->getPksp($dt, $val[1]);
+									$this->_model->update(array(
+											'VALUE' => $val[2],
+									),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
+								}								
+
+							}
 						}
 					}
 					catch (Exception $e) {

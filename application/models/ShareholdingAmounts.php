@@ -44,10 +44,12 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	{
 		if($this->isExistByKey('SHAREHOLDING_ID', $shareholding_id)) {
 			$list = $this->select()->where('SHAREHOLDING_ID = ?', $shareholding_id);
+			$this->select()->order('DATE ASC');
+			
 			$list = $list->query()->fetchAll();
 			$amount = 0;
 			foreach($list as $k=>$d) {
-				$amount += $d['AMOUNT'];
+				$amount = $d['AMOUNT'];
 			}
 			return $amount;
 		} else {

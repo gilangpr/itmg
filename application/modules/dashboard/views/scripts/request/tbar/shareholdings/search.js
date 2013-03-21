@@ -1,10 +1,17 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSH = loadStore('Shareholdings');
-var storeRR_curpage = storeSH.currentPage;
+//var storeRR_curpage = storeSH.currentPage;
+//storeSH.load({
+//	params: {
+//		all: 1
+//	}
+//});
 storeSH.load({
-	params: {
-		all: 1
-	}
+	extend: 'Ext.data.Model',
+	fields: [{
+		name: 'SHAREHOLDING_ID',
+		type: 'string'
+	}]
 });
     // Add the additional 'advanced' VTypes
     Ext.apply(Ext.form.field.VTypes, {
@@ -123,19 +130,23 @@ Ext.create('Ext.Window', {
 					//console.log(form.getForm()._fields.items);
 					_xxstore.load({
 						params: {
-							'INVESTOR_NAME': (typeof(form.getForm()._fields.items[0].value) == 'undefined') ? '' : form.getForm()._fields.items[0].value,
+							'INVESTOR_NAME': (typeof(form.getForm()._fields.items[0].value) == 'all') ? '' : form.getForm()._fields.items[0].value,
 							'START_DATE': form.getForm()._fields.items[1].value,
 							'END_DATE': form.getForm()._fields.items[2].value
 						}
 					
 					});
 					c.up().add({
-						title: 'Search result',
+						title: 'Search Result : ' + form.getForm()._fields.items[0].value,
 						closable: true,
 						id: _id,
 						store: _xxstore,
 						xtype: 'gridpanel',
+						height: c.up().getHeight() - 56,
 						columns: [{
+							text: 'INVESTOR NAME',
+							dataIndex: + form.getForm()._fields.items[0].value
+						},{
 							text: 'AMOUNT',
 							dataIndex: 'AMOUNT'
 						},{
