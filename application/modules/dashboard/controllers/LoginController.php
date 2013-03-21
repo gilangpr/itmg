@@ -80,11 +80,11 @@ class Dashboard_LoginController extends Zend_Controller_Action
 	
 	public function redirectorAction()
 	{
-		if($this->view->active_user == 'admin') {
+		//if($this->view->active_user == 'admin') {
 			$this->_redirect('/dashboard');
-		} else {
-			$this->_redirect('/desktop');
-		}
+// 		} else {
+// 			$this->_redirect('/desktop');
+// 		}
 	}
 	
 	public function logoutAction()
