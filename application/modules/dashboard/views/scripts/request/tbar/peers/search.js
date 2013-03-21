@@ -1,3 +1,13 @@
+var c = Ext.getCmp('<?php echo $this->container ?>');
+var storeSP = loadStore('Peers');
+var storeRR_curpage = storeSP.currentPage;
+
+storeSP.load({
+	params: {
+		all: 1
+	}
+});
+
 Ext.create('Ext.Window', {
 	title: 'Search Peers',
 	xtype: 'panel',
@@ -5,7 +15,7 @@ Ext.create('Ext.Window', {
 	id: 'search-peers',
 	modal: true,
 	closable: true,
-	width: 300,
+	width: 400,
 	height: 100,
 	resizable: false,
 	draggable: false,
@@ -13,24 +23,17 @@ Ext.create('Ext.Window', {
 		text: 'Search',
 		listeners: {
 			click: function() {
-				var form = getCmp('search-peers-form').getForm();
-				if(form.isValid()) {
-					var obj3 = {};
-					var val = form.getValues();
-					for(var attrname in val) {
-						obj3[attrname] = val[attrname];
-					}
-					showLoadingWindow();
-					Ext.Ajax.request({
-						url: sd.baseUrl + '/peers/request/search',
-						params: obj3,
-						success: function(data) {
-							closeLoadingWindow();
-						},
-						failure: function(data) {
-							closeLoadingWindow();
+				var form = Ext.getCmp('search-peers-form')
+				console.log()
+				if(form.getForm().isValid()) {
+					var _store = loadStore('Peers');
+					_store.load({
+						params: {
+							type: 'search',
+							name: Ext.getCmp('peers-search-peer-name').getValue()
 						}
 					});
+					this.up().up().close();
 				}
 			}
 		}
@@ -44,7 +47,7 @@ Ext.create('Ext.Window', {
 	}],
 	items: [{
 		border: false,
-		width: 290,
+		width: 390,
 		items: [{
 			xtype: 'form',
 			layout: 'form',
@@ -56,7 +59,11 @@ Ext.create('Ext.Window', {
 				fieldLabel: 'Company Name',
 				name: 'PEER_NAME',
 				emptyText: 'All',
-				allowBlank: false
+				allowBlank: false,
+				name: 'PEER_NAME',
+				store: storeSP,
+				id: 'peers-search-peer-name',
+				displayField: 'PEER_NAME'
 			}]
 		}]
 	}]

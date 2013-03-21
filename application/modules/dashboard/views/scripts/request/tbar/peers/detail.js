@@ -16,11 +16,15 @@ var fobColumns = <?php echo $this->fobColumns?>;
 var fobFields = <?php echo $this->fobFields?>;
 var csd_bcColumns = <?php echo $this->csd_bcColumns?>;
 var csd_bcFields = <?php echo $this->csd_bcFields?>;
+//var nmbr = Ext.util.Format.number;
+
+storePEERS = loadStore('Peers');
 
 if(selected.length > 0) {
     var id = 'peers-detail' + selected[0].id;
     if(!c.up().items.get(id)){
         var data = selected[0].data;
+        var maxWidth = 221;
         //Store Resources and Reserves
 //        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 //			clicksToMoveEditor: 1,
@@ -45,16 +49,100 @@ if(selected.length > 0) {
                 autoScroll: true,
                 items: [{
                     title: 'Brief History',
-                    bodyPadding: '5 5 5 5',
-                    html: '<p style="text-align: justify">' + data.BRIEF_HISTORY.replace('\n','<br/>') + '</p>',
                     collapsible: true,
-                    border: false
+                    border: false,
+                    maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                    items: [{
+                    	xtype: 'form',
+                    	layout: 'form',
+                    	border: false,
+                    	bodyPadding: '5 5 5 5',
+                    	id: 'brief-history-form' + data.PEER_ID,
+                    	items: [{
+                    		xtype: 'htmleditor',
+                    		name: 'BRIEF_HISTORY',
+                    		value: data.BRIEF_HISTORY,
+                    		minHeight: 220,
+                    		allowBlank: false
+                    	}],
+                    	buttons: [{
+                    		text: 'Update',
+                    		iconCls: 'icon-accept',
+                    		listeners: {
+                    			click: function() {
+                    				var form = Ext.getCmp('brief-history-form' + data.PEER_ID).getForm();
+    								if(form.isValid()) {
+    									form.submit({
+    										url: sd.baseUrl + '/peers/request/update-detail',
+    										waitMsg: 'Updating data, please wait..',
+    										params: {
+    											id: data.PEER_ID,
+    											type: 'BRIEF_HISTORY'
+    										},
+    										success: function(d, e) {
+    											var json = Ext.decode(e.response.responseText);
+    											Ext.Msg.alert('Message', 'Update success.');
+    											storePEERS.loadPage(storePEERS.currentPage);
+    										},
+    										failure: function(d, e) {
+    											var json = Ext.decode(e.response.responseText);
+    											Ext.Msg.alert('Error', json.error_message);
+    										}
+    									})
+    								}
+                    			}
+                    		}
+                    	}]
+                    }]
                 },{
                     title: 'Business Activity',
-                    bodyPadding: '5 5 5 5',
-                    html: '<p style="text-align: justify">' + data.BUSINESS_ACTIVITY.replace('\n','<br/>') + '</p>',
+//                    bodyPadding: '5 5 5 5',
+//                    html: '<p style="text-align: justify">' + data.BUSINESS_ACTIVITY.replace('\n','<br/>') + '</p>',
                     collapsible: true,
-                    border: false
+                    border: false,
+                    maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                    items: [{
+                    	xtype: 'form',
+                    	layout: 'form',
+                    	border: false,
+                    	bodyPadding: '5 5 5 5',
+                    	id: 'business-activity-form' + data.PEER_ID,
+                    	items: [{
+                    		xtype: 'htmleditor',
+                    		name: 'BUSINESS_ACTIVITY',
+                    		value: data.BUSINESS_ACTIVITY,
+                    		minHeight: 220,
+                    		allowBlank: false
+                    	}],
+                    	buttons: [{
+                    		text: 'Update',
+                    		iconCls: 'icon-accept',
+                    		listeners: {
+                    			click: function() {
+                    				var form = Ext.getCmp('business-activity-form' + data.PEER_ID).getForm();
+    								if(form.isValid()) {
+    									form.submit({
+    										url: sd.baseUrl + '/peers/request/update-detail',
+    										waitMsg: 'Updating data, please wait..',
+    										params: {
+    											id: data.PEER_ID,
+    											type: 'BUSINESS_ACTIVITY'
+    										},
+    										success: function(d, e) {
+    											var json = Ext.decode(e.response.responseText);
+    											Ext.Msg.alert('Message', 'Update success.');
+    											storePEERS.loadPage(storePEERS.currentPage);
+    										},
+    										failure: function(d, e) {
+    											var json = Ext.decode(e.response.responseText);
+    											Ext.Msg.alert('Error', json.error_message);
+    										}
+    									})
+    								}
+                    			}
+                    		}
+                    	}]
+                    }]
                 }]
             },{ //Peers Data
                 title: 'Peers Data',
@@ -155,8 +243,9 @@ if(selected.length > 0) {
                         xtype: 'gridpanel',
                         border: false,
                         minHeight: 120,
-                        plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+//                        plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                         store: storeSR,
+                        id: 'sr-grid',
                         columns: srColumns,
                         tbar: [{
                             xtype: 'button',
@@ -183,6 +272,11 @@ if(selected.length > 0) {
                                                 bodyPadding: '5 5 5 5',
                                                 defaultType: 'textfield',
                                                 waitMsgTarget: true,
+                                                fieldDefaults: {
+                        				            labelAlign: 'left',
+                        				            labelWidth: 150,
+                        				            anchor: '100%'
+                        				        },
                                                 items: [{
                                                     fieldLabel: 'Title',
                                                     allowBlank: false,
@@ -215,7 +309,7 @@ if(selected.length > 0) {
                                                 listeners: {
                                                     click: function() {
                                                         var form = Ext.getCmp('add-stripping-ratio-form').getForm();
-                                                        var store = loadStore('StrippingRatio');
+                                                        var store = loadStore('StrippingRatios');
                                                         
                                                         if(form.isValid()) {
                                                             form.submit({
@@ -251,6 +345,150 @@ if(selected.length > 0) {
                                     }).show();
                                 }
                             }
+                        },{
+                        	xtype: 'button',
+                        	text: 'Edit Stripping Ratio',
+                        	iconCls: 'icon-accept',
+                        	listeners: {
+                        		click: function() {
+                        			Ext.create('Ext.Window', {
+                        				title: 'Edit Stripping Ratio',
+                        				id: 'edit-stripping-ratio',
+                        				draggable: false,
+                        				modal: true,
+                        				width: 300,
+                        				align: 'center',
+                        				resizable: false,
+                        				items: [{
+                        					xtype: 'panel',
+                        					border: false,
+                        					items: [{
+                        						xtype: 'form',
+                        						layout: 'form',
+                        						id: 'edit-stripping-ratio-form',
+                        						border: false,
+                        						bodyPadding: '5 5 5 5',
+                        						defaultType: 'combobox',
+                        						waitMsgTarget: true,
+                        						fieldDefaults: {
+                        				            labelAlign: 'left',
+                        				            labelWidth: 150,
+                        				            anchor: '100%'
+                        				        },
+                        						items: [{
+                        							fieldLabel: 'TITLE',
+                                                    allowBlank: false,
+                                                    xtype: 'combobox',
+                                                    name: 'TITLE',
+                                                    store: storeSR,
+                                                    mode : 'local',
+                                                    id: 'sr-title',
+                                                    value: 'All',
+                                                    listWidth : 40,
+                                                    triggerAction : 'all',
+                                                    displayField  : 'TITLE',
+                                                    editable      : false,
+                                                    forceSelection: true,
+                                                    listeners: {
+                                                    	change: function() {
+                                                    		var _p = this.value;
+                                                    		if(this.value != 'null' && this.value != '') {
+                                                    			var _f = Ext.getCmp('edit-stripping-ratio-form');
+                                                    			if(typeof(_f) != 'undefined') {
+                                                    				var _g = Ext.getCmp('sr-grid');
+                                                    				Ext.each(_g.store.data.items, function(_v) {
+                                                    					/* Sales Volume */
+                                                    					if(_v.data.NAME == 'Sales Volume (Mil.Tons)') {
+                                                    						var x = eval('_v.data.VALUE_' + _p);
+                                                    						Ext.getCmp('sr-sales-volume').setValue(x);
+                                                    					}
+                                                    					/* Sales Volume */
+                                                    					
+                                                    					/* Production Volume */
+                                                    					if(_v.data.NAME == 'Production Volume (Mil.Tons)') {
+                                                    						var x = eval('_v.data.VALUE_' + _p);
+                                                    						Ext.getCmp('sr-production-volume').setValue(x);
+                                                    					}
+                                                    					/* Production Volume */
+                                                    					
+                                                    					/* Coal Transportation */
+                                                    					if(_v.data.NAME == 'Coal Transportation (Mil.Tons)') {
+                                                    						var x = eval('_v.data.VALUE_' + _p);
+                                                    						Ext.getCmp('sr-coal-transport').setValue(x);
+                                                    					}
+                                                    					/* Coal Transportation */
+                                                    				});
+                                                    			}
+                                                    		}
+                                                    	}
+                                                    }
+                        						},{
+                        							fieldLabel: 'Sales Volume',
+                        							xtype: 'numberfield',
+                        							allowBlank: false,
+                        							id: 'sr-sales-volume',
+                        							name: 'SALES_VOLUME',
+                        							minValue: 0,
+                        							value: 0
+                        						},{
+                        							fieldLabel: 'Production Volume',
+                        							xtype: 'numberfield',
+                        							allowBlank: false,
+                        							id: 'sr-production-volume',
+                        							name: 'PRODUCTION_VOLUME',
+                        							minValue: 0,
+                        							value: 0
+                        						},{
+                        							fieldLabel: 'Coal Transport',
+                        							xtype: 'numberfield',
+                        							allowBlank: false,
+                        							id: 'sr-coal-transport',
+                        							name: 'COAL_TRANSPORT',
+                        							minValue: 0,
+                        							value: 0
+                        						}]
+                        					}],
+                        					buttons: [{
+                        						text: 'Save',
+                        						listeners: {
+                        							 click: function() {
+                                                         var form = Ext.getCmp('edit-stripping-ratio-form').getForm();
+                                                         var store = loadStore('StrippingRatios');
+                                                         
+                                                         if(form.isValid()) {
+                                                             form.submit({
+                                                             url: sd.baseUrl + '/strippingratio/request/create/id/' + data.PEER_ID,
+                                                             success: function(d) {
+                                                                 var json = Ext.decode(d.responseText);
+                                                                 form.reset();
+                                                                 store.load({
+                                                                     params: {
+                                                                         id: data.PEER_ID
+                                                                     }
+                                                                 });
+                                                                 Ext.Msg.alert('Success', 'Data has been saved');
+                                                                 Ext.getCmp('edit-stripping-ratio').close();
+                                                             },
+                                                             failure: function(data) {
+                                                                     var json = Ext.decode(data.responseText);
+                                                                     Ext.Msg.alert('Error', json.error_message);
+                                                                 }
+                                                             });
+                                                         }
+                                                     }
+                        						}
+                        					},{
+                        						text: 'Cancel',
+                        						listeners: {
+                        							click: function() {
+                        								Ext.getCmp('edit-stripping-ratio').close();
+                        							}
+                        						}
+                        					}]
+                        				}]
+                        			}).show();
+                        		}
+                        	}
                         }]
                     }]
                 },{
@@ -263,6 +501,7 @@ if(selected.length > 0) {
                         plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                         minHeight: 120,
                         store: storeASP,
+                        id: 'asp-grid',
                         columns: aspColumns,
                         tbar: [{
                             xtype: 'button',
@@ -300,7 +539,7 @@ if(selected.length > 0) {
                                                     name: 'TYPE',
                                                     store: new Ext.data.ArrayStore({fields:['type'],data:[['Export'],['Domestic']]}),
                                                     mode : 'local',
-                                                    value: '',
+                                                    value: 'Export',
                                                     listWidth : 40,
                                                     triggerAction : 'all',
                                                     displayField  : 'type',
@@ -364,6 +603,23 @@ if(selected.length > 0) {
                                     }).show();
                                 }
                             }
+                        },{
+                        	xtype: 'button',
+                        	text: 'Edit Average Selling Price',
+                        	iconCls: 'icon-accept',
+                        	listeners: {
+                        		click: function(){
+                        			Ext.create('Ext.Window', {
+                        				title: 'Edit Average Selling Price',
+                        				id: 'edit-average-selling_price',
+                        				draggable: false,
+                        				modal: true,
+                        				width: 300,
+                        				align: 'center',
+                        				resizable: false
+                        			}).show();
+                        		}
+                        	}
                         }]
                     }]
                 },{
@@ -386,7 +642,7 @@ if(selected.length > 0) {
                                     id: 'FP',
                                     draggable: false,
                                     modal: true,
-                                    width: 400,
+                                    width: 360,
                                     align: 'center',
                                     resizable: false,
                                     items: [{
@@ -400,6 +656,11 @@ if(selected.length > 0) {
                                             bodyPadding: '5 5 5 5',
                                             defaultType: 'textfield',
                                             waitMsgTarget: true,
+                                            fieldDefaults: {
+                    				            labelAlign: 'left',
+                    				            labelWidth: 168,
+                    				            anchor: '100%'
+                    				        },
                                             items: [{
                                                 fieldLabel: 'Title',
                                                 allowBlank: false,
@@ -536,7 +797,7 @@ if(selected.length > 0) {
                     				id: 'FOB',
                     				draggable: false,
                     				modal: true,
-                    				width: 400,
+                    				width: 300,
                     				align: 'center',
                     				resizable: false,
                     				items: [{
@@ -550,6 +811,11 @@ if(selected.length > 0) {
                     						bodyPadding: '5 5 5 5',
                     						defaultType: 'textfield',
                     						waitMsgTarget: true,
+                    						fieldDefaults: {
+                    				            labelAlign: 'left',
+                    				            labelWidth: 160,
+                    				            anchor: '100%'
+                    				        },
                     						items: [{
                     							fieldLabel: 'Title',
                     							allowBlank: false,
@@ -832,7 +1098,7 @@ if(selected.length > 0) {
                         }
                     }]
                 },{
-                    title: 'Composition of the Company\'s Shareholders at the End of the Year 2009 & 2010',
+                    title: 'Composition of the Company\'s Shareholders at the End of the Year',
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
@@ -865,12 +1131,17 @@ if(selected.length > 0) {
                                             bodyPadding: '5 5 5 5',
                                             defaultType: 'textfield',
                                             waitMsgTarget: true,
+                                            fieldDefaults: {
+                    				            labelAlign: 'left',
+                    				            labelWidth: 150,
+                    				            anchor: '100%'
+                    				        },
                                             items: [{
                                                 fieldLabel: 'Title',
                                                 allowBlank: false,
                                                 name: 'TITLE'
                                             },{
-                                                fieldLabel: 'Republic Of Indonesia Value',
+                                                fieldLabel: 'Republic Of Indonesia',
                                                 allowBlank: false,
                                                 name: 'REPUBLIC_OF_INDONESIA',
                                                 xtype: 'numberfield',
@@ -897,7 +1168,7 @@ if(selected.length > 0) {
                                             listeners: {
                                                 click: function() {
                                                     var form = Ext.getCmp('add-new-composition-form').getForm();
-                                                    var store = loadStore('CompositionCompany');
+                                                    var store = loadStore('CompositionCompanys');
 
                                                     if (form.isValid()) {
                                                         form.submit({
@@ -939,87 +1210,16 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                    //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     minHeight: 130,
                     columns: csdColumns,
-                    store: storeCSD,
-                    tbar:[{
-                        xtype: 'button',
-                        text: 'Add New Coal Sales Distribution',
-                        iconCls: 'icon-accept',
-                        listeners: {
-                            click: function() {
-                                Ext.create('Ext.Window', {
-                                    title: 'Add New Coal Sales Distribution',
-                                    id: 'CSD',
-                                    draggable: false,
-                                    modal: true,
-                                    width: 400,
-                                    align: 'center',
-                                    resizable: false,
-                                    items: [{
-                                        xtype: 'panel',
-                                        border: false,
-                                        items: [{
-                                            xtype: 'form',
-                                            layout: 'form',
-                                            id: 'add-coal-sales-form',
-                                            border: false,
-                                            bodyPadding: '5 5 5 5',
-                                            defaultType: 'textfield',
-                                            waitMsgTarget: true,
-                                            items: [{
-                                                fieldLabel: 'Title',
-                                                allowBlank: false,
-                                                name: 'TITLE'
-                                            },{
-                                                fieldLabel: 'Name',
-                                                allowBlank: false,
-                                                xtype: 'combobox',
-                                                store: new Ext.data.ArrayStore({fields:['type'],data:[['Export'],['Domestic']]}),
-                                                mode : 'local',
-                                                value: 'Domestic',
-                                                listWidth : 40,
-                                                triggerAction : 'all',
-                                                displayField  : 'type',
-                                                valueField    : 'type',
-                                                editable      : false,
-                                                forceSelection: true
-                                            },{
-                                                fieldLabel: 'Volume',
-                                                allowBlank: false,
-                                                xtype: 'numberfield',
-                                                minValue: 0,
-                                                value: 0,
-                                                name: 'VOLUME'
-                                            }]
-                                        }],
-                                        buttons: [{
-                                            text: 'Save',
-                                            listeners: {
-                                                click: function() {
-                                                    
-                                                }
-                                            }
-                                        },{
-                                            text: 'Cancel',
-                                            listeners: {
-                                                click: function() {
-                                                    this.up().up().up().close();
-                                                }
-                                            }
-                                        }]
-                                    }]
-                                }).show();
-                            }
-                        }
-                    }]
+                    store: storeCSD
                 },{
                     title: 'Coal Sales Distribution By Country',
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                    //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     store: storeCSD_BC,
                     columns: csd_bcColumns,
                     minHeight: 200,
@@ -1049,9 +1249,27 @@ if(selected.length > 0) {
                                             defaultType: 'textfield',
                                             waitMsgTarget: true,
                                             items: [{
-                                                fieldLabel: 'Country',
+                                            	fieldLabel: 'Title',
+                                            	allowBlank: false,
+                                            	name: 'TITLE'
+                                            },{	
+                                            	fieldLabel: 'Country',
                                                 allowBlank: false,
                                                 name: 'COUNTRY'
+                                            },{
+                                            	fieldLabel: 'Type',
+                                            	allowBlank: false,
+                                            	xtype: 'combobox',
+                                            	store: new Ext.data.ArrayStore({fields:['type'],data:[['Export'],['Domestic']]}),
+                                            	mode : 'local',
+                                            	value: 'Domestic',
+                                            	listWidth : 40,
+                                            	triggerAction : 'all',
+                                            	displayField  : 'type',
+                                            	valueField    : 'type',
+                                            	editable      : false,
+                                            	forceSelection: true,
+                                            	name: 'TYPE'
                                             },{
                                                 fieldLabel: 'Volume',
                                                 allowBlank: false,
@@ -1065,7 +1283,29 @@ if(selected.length > 0) {
                                             text: 'Save',
                                             listeners: {
                                                 click: function() {
+                                                	var form = Ext.getCmp('add-new-coal-sales-country-form').getForm();
+                                                    var store = loadStore('CoalSalesDistributions');
 
+                                                    if (form.isValid()) {
+                                                        form.submit({
+                                                            url: sd.baseUrl + '/coalsales/request/create/id/' + data.PEER_ID,
+                                                            success: function (d, e) {
+                                                                var json = Ext.decode(e.response.responseText);
+                                                                form.reset();
+                                                                store.load({
+                                                                    params: {
+                                                                        id: data.PEER_ID
+                                                                    }
+                                                                });
+                                                                Ext.Msg.alert('Success', 'Data has been saved');
+                                                                Ext.getCmp('CSD_BC').close();
+                                                            },
+                                                            failure: function(d, e) {
+                                                                    var json = Ext.decode(e.response.responseText);
+                                                                    Ext.Msg.alert('Error', json.error_message);
+                                                                }
+                                                            });
+                                                    }
                                                 }
                                             }
                                         },{
