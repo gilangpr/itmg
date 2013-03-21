@@ -61,8 +61,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 	
 	public function privilegesAction()
 	{
-		$data = array();
-		$modelPrivileges = new Application_Model_Privileges();
+// 		$modelPrivileges = new Application_Model_Privileges();
 		
 		if($this->getRequest()->isPost() && 
 				$this->getRequest()->isXmlHttpRequest() && 
@@ -70,7 +69,37 @@ class Groups_RequestController extends MyIndo_Controller_Action
 				!empty($this->_posts['data']) && 
 				isset($this->_posts['id']) && !empty($this->_posts['id'])) {
 			
+			$groupModel = new Application_Model_Groups();
+			$privModel = new MyIndo_Ext_Privileges();
 			
+			if($groupModel->isExistByKey('GROUP_ID', $this->_posts['id'])) {
+			
+				try {
+					
+					$privModel->delete($privModel->getAdapter()->quoteInto('GROUP_ID = ?', $this->_posts['id']));
+
+					$data = Zend_Json::decode($this->_posts['data']);
+					
+					foreach($data as $k=>$d) {
+						$privModel->insert(array(
+								'GROUP_ID' => $this->_posts['id'],
+								'ID' => $d['id'],
+								'TYPE' => $d['type'],
+								'CREATED_DATE' => $this->_date
+								));
+					}
+					
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			
+			} else {
+				$this->_error_code = 101;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
 			
 		} else {
 			$this->_error_code = 901;
@@ -78,7 +107,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 			$this->_success = false;
 		}
 		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
 	/* Group Privilege */
@@ -89,34 +118,65 @@ class Groups_RequestController extends MyIndo_Controller_Action
 		$menuModel = new MyIndo_Ext_Menus();
 		$subMenuModel = new MyIndo_Ext_SubMenus();
 		$subMenuActionModel = new MyIndo_Ext_SubMenuActions();
+		$privModel = new MyIndo_Ext_Privileges();
 		
 		$data = $menuModel->getList();
 		$tree = array();
+		$id = 0;
+		if(isset($this->_posts['id']) && is_numeric($this->_posts['id']) && !empty($this->_posts['id'])) {
+			$id = $this->_posts['id'];
+		}
 		
 		foreach($data as $k=>$d) {
+			
+			$qMenu = $privModel->select()
+			->where('GROUP_ID = ?', $id)
+			->where('TYPE = ?', 'menus')
+			->where('ID = ?', $d['MENU_ID']);
+			
+			$checkedMenu = ($qMenu->query()->rowCount() > 0) ? true : false;
+			
 			$tree[$k] = array(
 					'text' => $d['NAME'],
 					'cls' => 'folder',
-					'checked' => false,
+					'checked' => $checkedMenu,
 					'expanded' => false,
 					'type' => 'menus',
 					'ids' => $d['MENU_ID']
 					);
+			
 			$data2 = $subMenuModel->getListByKey('MENU_ID', $d['MENU_ID']);
 			foreach($data2 as $_k=>$_d) {
+				
+				$qSubMenu = $privModel->select()
+				->where('GROUP_ID = ?', $id)
+				->where('TYPE = ?', 'submenus')
+				->where('ID = ?', $_d['SUB_MENU_ID']);
+				
+				$checkedSubMenu = ($qSubMenu->query()->rowCount() > 0) ? true : false;
+				
 				$tree[$k]['children'][] = array(
 						'text' => $_d['NAME'],
-						'checked' => false,
+						'checked' => $checkedSubMenu,
 						'expanded' => false,
 						'type' => 'submenus',
 						'ids' => $_d['SUB_MENU_ID']
 						);
+				
 				$data3 = $subMenuActionModel->getListByKey('SUB_MENU_ID', $_d['SUB_MENU_ID']);
 				foreach($data3 as $__k=>$__d) {
+					
+					$qSubMenuAction = $privModel->select()
+					->where('GROUP_ID = ?', $id)
+					->where('TYPE = ?', 'actions')
+					->where('ID = ?', $__d['SUB_MENU_ACTION_ID']);
+					
+					$checkedActions = ($qSubMenuAction->query()->rowCount() > 0) ? true : false;
+					
 					$tree[$k]['children'][$_k]['children'][] = array(
 							'text' => $__d['NAME'],
 							'leaf' => true,
-							'checked' => false,
+							'checked' => $checkedActions,
 							'type' => 'actions',
 							'ids' => $__d['SUB_MENU_ACTION_ID']
 							);
@@ -125,5 +185,58 @@ class Groups_RequestController extends MyIndo_Controller_Action
 		}
 		
 		echo Zend_Json::encode($tree);
+	}
+	
+	public function hasAccessAction()
+	{
+		if($this->isPost() && $this->isAjax() && isset($this->_posts['type']) && isset($this->_posts['groups']) &&
+				!empty($this->_posts['type']) && !empty($this->_posts['groups'])) {
+			
+			$groups = Zend_Json::decode($this->_posts['groups']);
+			
+			$privModel = new MyIndo_Ext_Privileges();
+			
+			/* Menus */
+			$modelMenus = new MyIndo_Ext_Menus();
+			$listMenus = $modelMenus->getList();
+			$menusAccess = array('data'=>array());
+			foreach($listMenus as $_k=>$_d) {
+				//$menusAccess['data'][$_k] = array('ID' => $_d['MENU_ID'], 'STATUS' => false);
+				$menusAccess['data'][$_k] = array(
+						'xtype' => 'button',
+						'text' => $modelMenus->getValueByKey('MENU_ID', $_d['MENU_ID'], 'NAME'),
+						'menu_id' => $_d['MENU_ID'],
+						'id' => 'main-menu-' . $_d['MENU_ID'],
+						'hidden' => true
+						);
+			}
+			$menus = array();
+			/* End of : Menus */
+			
+			foreach($groups as $k=>$d) {
+				if($this->_posts['type'] == 'menus') {
+					$q = $privModel->select()
+					->where('GROUP_ID = ?', $d)
+					->where('TYPE = ?', 'menus')
+					->order('ID ASC');
+					$x = $q->query()->fetchAll();
+					foreach($x as $_k=>$_d) {
+						foreach($menusAccess['data'] as $__k=>$__d) {
+							if($__d['menu_id'] == $_d['ID']) {
+								$menusAccess['data'][$__k]['hidden'] = false;
+							}
+						}
+					}
+					$this->_data['data']['items'] = $menusAccess;
+				}
+			}
+			
+		} else {
+			$this->_error_code = 901;
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }
