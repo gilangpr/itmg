@@ -53,9 +53,9 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			}
 		}
 		$lastId = $this->_model->getLastId();
-		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE ASC');
+		$listLimit = $this->_model->limitShareprices($this->_limit, $this->_start, 'DATE ASC');
 		
-		//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
+		$list = $this->_model->listShareprices();
 		
 		$t = array();
 		$t2 = array();
@@ -96,7 +96,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		}
 		
 		$this->_data['data']['items'] = $t;
-		$this->_data['data']['totalCount'] = $this->_model->distinctDate();
+		$this->_data['data']['totalCount'] = $i;
 		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
@@ -244,11 +244,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	
 public function uploadAction ()
 	{
-		
-		// file xls 	250 data 22.66 detik --
-		// file xlsx 	250 data 22.84 detik --
-		
-		
 		$data = array(
 				'data' => array()
 		);
@@ -273,7 +268,7 @@ public function uploadAction ()
 					$new_name = microtime() . $filExt ;
 					rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 					/* End of : Rename file */			
-					
+
 					// read file
 					try {
 						$inputFileName = $upload->getDestination() . '/' . $new_name;
@@ -306,52 +301,103 @@ public function uploadAction ()
 									$valValue = $cellValue->getValue();
 									
 									$cellNames = $worksheet->getCellByColumnAndRow($colValue, $rowNames);
-									$valNames = $cellNames->getValue();									
+									$valNames = $cellNames->getValue();
 									
-									$count = $this->_model->getCount($valNames, $dt);
- 									if ($count['count'] == 0) {
- 						
- 										// insert shareprices
- 										$sp = $this->_model->insert(array(
- 												'DATE' => $dt,
- 												'SHAREPRICES_NAME' => $valNames,
- 												'VALUE' => $valValue,
- 												'CREATED_DATE' => date('Y-m-d H:i:s')
- 										));
- 										
- 										// insert shareprices log
- 										$splog = $this->_modelLog->insert(array(
- 												'DATE' => $dt,
- 												'SHAREPRICES_NAME' => $valNames,
- 												'VALUE_BEFORE' => $valValue,
- 												'VALUE_AFTER' => $valValue,
- 												'CREATED_DATE' => date('Y-m-d H:i:s')
- 										));
- 									} else {
- 										// get value before log
- 										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
-								
- 										// get id log
- 										$splogid = $this->_modelLog->getPksp($dt, $valNames);
-										
- 										// update value before log
- 										$this->_modelLog->update(array(
- 												'VALUE_BEFORE' => $valbef,
- 										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+// 									$rowNames = 1;
+// 									for ($colNames = 1; $colNames < $highestColumnIndex; ++ $colNames) {
+// 										$cellNames = $worksheet->getCellByColumnAndRow($colNames, $rowNames);
+// 										$valNames = $cellNames->getValue();
+// 										//echo "cols . $colNames . rows " . $rowNames . " is .$valNames. and date .$dt. from column $col row $row \n";									
 											
- 										// update value after log
- 										$this->_modelLog->update(array(
- 												'VALUE_AFTER' => $valValue,
- 										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
-								
- 										// update value
- 										$spid = $this->_model->getPksp($dt, $valNames);
- 										$this->_model->update(array(
- 												'VALUE' => $valValue,
- 										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
- 									}
+// 	// 									// insert shareprices
+// 	// 									$sp = $this->_model->insert(array(
+// 	// 											'DATE' => $dt,
+// 	// 											'SHAREPRICES_NAME' => $valNames,
+// 	// 									));
+	
+// 										//echo "Date : $dt Name : $valNames \n";
+// 									}	
+									//echo "Date : $dt\n";
+									//echo "Name : $valNames\n";
+									$count = $this->_model->getCount($valNames, $dt);
+									if ($count['count'] == 0) {
+										// insert shareprices
+										$sp = $this->_model->insert(array(
+											'DATE' => $dt,
+											'SHAREPRICES_NAME' => $valNames,
+											'VALUE' => $valValue,
+											'CREATED_DATE' => date('Y-m-d H:i:s')
+										));
+										
+										// insert shareprices log
+										$splog = $this->_modelLog->insert(array(
+												'DATE' => $dt,
+												'SHAREPRICES_NAME' => $valNames,
+												'VALUE_BEFORE' => $valValue,
+												'VALUE_AFTER' => $valValue,
+												'CREATED_DATE' => date('Y-m-d H:i:s')
+										));
+										
+									} else {
+										// get value before log
+										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
+										
+										// get id log
+										$splogid = $this->_modelLog->getPksp($dt, $valNames);
+										
+										// update value before log
+										$this->_modelLog->update(array(
+												'VALUE_BEFORE' => $valbef,
+										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+											
+										// update value after log
+										$this->_modelLog->update(array(
+												'VALUE_AFTER' => $valValue,
+										),$this->_modelLog->getAdapter()->quoteInto('SHAREPRICES_LOG_ID = ?', $splogid));
+										
+										// update value
+										$spid = $this->_model->getPksp($dt, $valNames);
+										$this->_model->update(array(
+												'VALUE' => $valValue,
+										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
+									}
+									
+// 									$sp = $this->_model->insert(array(
+// 											'DATE' => $dt,
+// 											'SHAREPRICES_NAME' => $valNames,
+// 											'VALUE' => $valValue,
+// 											'CREATED_DATE' => date('Y-m-d H:i:s')
+// 									));
+									
+									//echo "Date : $dt Name : $valNames Value : $valValue\n";
 								}			
-							}													
+							}						
+								
+// 							for ($rowValue = 2; $rowValue <= $highestRow; ++ $rowValue) {
+// 								for ($colValue = 1; $colValue < $highestColumnIndex; ++ $colValue) {
+// 									$cellValue = $worksheet->getCellByColumnAndRow($colValue, $rowValue);
+// 									$valValue = $cellValue->getValue();
+										
+// 									//echo "row . $rowValue . column . $colValue . is = " . $valValue . "\n";
+// 									echo "value : $valValue \n";
+// 								}
+								
+// 							}
+// 							$r = -1;
+// 							$namedDataArray = array();
+// 							for ($row = 2; $row <= $highestRow; ++$row) {
+// 								$dataRow = $worksheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+// 								if ((isset($dataRow[$row]['A'])) && ($dataRow[$row]['A'] > '')) {
+// 									++$r;
+// 									foreach($headingsArray as $columnKey => $columnHeading) {
+// 										$namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+// 									}
+// 								}
+// 							}
+							
+// 							print_r($namedDataArray);
+// 							//$sp = $this->_model->insert($namedDataArray);
+								
 						}
 					}
 					catch (Exception $e) {

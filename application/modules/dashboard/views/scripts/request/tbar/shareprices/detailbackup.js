@@ -105,7 +105,7 @@ Ext.onReady(function() {
 	                            type: 'string'
 	                        },{
 	                            name: 'DATE',
-	                            type: 'datefield'
+	                            type: 'string'
 	                        },{
 	                            name: 'VALUE',
 	                            type: 'float'
@@ -143,7 +143,7 @@ Ext.onReady(function() {
 	                   
 	                    });
 						c.up().add({
-							title: 'Details Shareprices : ' + form.getForm()._fields.items[2].value,
+							title: 'Details Shareprices',
 							closable: true,
 							id: _id,
 							store: _xxstore,
@@ -198,8 +198,8 @@ Ext.onReady(function() {
 				                    }
 				                },
 				                style: {
-				                    fill: '#000',
-				                    stroke: '#DDD',
+				                    fill: '#38B8BF',
+				                    stroke: '#38B8BF',
 				                    'stroke-width': 3
 				                },
 				                markerConfig: {
@@ -207,8 +207,8 @@ Ext.onReady(function() {
 				                    size: 4,
 				                    radius: 4,
 				                    'stroke-width': 0,
-				                    fill: '#000',
-				                    stroke: '#000'
+				                    fill: '#38B8BF',
+				                    stroke: '#38B8BF'
 				                }
 				            }]	
 						});
