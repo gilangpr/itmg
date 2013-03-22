@@ -68,7 +68,7 @@
 	#detail3{
 		width: 899px;
 		position: relative;
-		min-height: 250px;
+		min-height: 350px;
 		border: 1px solid gray;
 	}
 	#dkiri{
@@ -80,7 +80,15 @@
 	#sector{
 		width: 448px;
 		float: left;
-		min-height: 250px;
+		min-height: 350px;
+		position: relative;
+		
+	}
+	#sector1{
+		width: 447px;
+		float: left;
+		border: 1px solid gray;
+		min-height: 296px;
 		position: relative;
 		
 	}
