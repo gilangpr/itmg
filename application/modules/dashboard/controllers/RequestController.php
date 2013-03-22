@@ -50,11 +50,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	{
 		if($this->getRequest()->isPost()) {
 			try {
-				
 				$treeStoreModel = new MyIndo_Ext_TreeStores();
 				$list = $treeStoreModel->getListByKey('NAME', $this->_p['name']);
 				$this->_data['data']['items'] = $treeStoreModel->parser($list, $this->view->groups);
-				
 			} catch( Exception $e ) {
 				$this->_error_code = $e->getCode();
 				$this->_error_message = $e->getMessage();
@@ -155,12 +153,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 		),array(
 			'text' => 'Volume',
 			'align' => 'center',
-			'dataIndex' => 'VOLUME',
-			'editor' => array(
-					'xtype' => 'numberfield',
-					'allowBlank' => false,
-					'minValue' => 0
-			)
+			'dataIndex' => 'VOLUME'
 		),array(
 			'text' => 'Percentage',
 			'align' => 'center',
@@ -241,11 +234,11 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
-			$columns[$k+1]['editor'] = array(
-					'xtype'=> 'numberfield',
-					'allowBlank' => false,
-					'minValue' => 0
-					);
+// 			$columns[$k+1]['editor'] = array(
+// 					'xtype'=> 'numberfield',
+// 					'allowBlank' => false,
+// 					'minValue' => 0
+// 					);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -262,6 +255,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$fields[$k+1]['name'] = 'VALUE_' . $d['TITLE'];
 			$fields[$k+1]['type'] = 'float';
 		}
+		$c = count($fields);
+		$fields[$c]['name'] = 'TITLE';
+		$fields[$c]['type'] = 'string';
 		return Zend_Json::encode($fields);
 	}
 	
@@ -397,7 +393,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
-				'text' => 'Tanjung Enim Systems',
+				'text' => '',
 				'dataIndex' => 'NAME'
 		));
 		foreach($list as $k=>$d) {

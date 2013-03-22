@@ -61,12 +61,25 @@ class Compositioncompany_RequestController extends Zend_Controller_Action
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
+				
+				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
 				$this->_model->insert(array(
 						'PEER_ID' => $peer_id,
 						'TITLE' => $this->_posts['TITLE'],
-						
+						'REPUBLIC_OF_INDONESIA' => $this->_posts['REPUBLIC_OF_INDONESIA'],
+						'DOMESTIC_INVESTOR' => $this->_posts['DOMESTIC_INVESTOR'],
+						'FOREIGN_INVESTOR' => $this->_posts['FOREIGN_INVESTOR'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 						));
+				} else {
+					$this->_model->update(array(
+						'REPUBLIC_OF_INDONESIA' => $this->_posts['REPUBLIC_OF_INDONESIA'],
+						'DOMESTIC_INVESTOR' => $this->_posts['DOMESTIC_INVESTOR'],
+						'FOREIGN_INVESTOR' => $this->_posts['FOREIGN_INVESTOR']
+					),$this->_model->getAdapter()->quoteInto('COMPOSITION_COMPANY_ID = ?',
+						$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
+					));
+				}
 			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'PEER_ID NOT FOUND';

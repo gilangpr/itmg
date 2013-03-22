@@ -62,55 +62,98 @@
 						<h3>Sector Holdings</h3>
 					</div>
 					
-					<?php 
-					foreach($this->list_SH as $sh) {
-					
-						echo $sh['TITLE']." ";
-						echo $sh['VALUE']."<br>";
-					}
-					 ?>
-					 <script type="text/javascript">
-					 	Ext.require('Ext.chart.*');
-						Ext.require('Ext.layout.container.Fit');
-
+					<script type="text/javascript">
+					 	//var c = Ext.getCmp('<?php echo $this->container ?>');
+						//var selected = c.getSelectionModel().getSelection();
+					 	/*
+						 * Sector Holdings
+						 */
+						
+						var storeSH = Ext.create('Ext.data.Store', {
+							model: 'SectorHolding',
+							storeId: 'SectorHoldings',
+							proxy: {
+								extraParams:{id:<?php echo $this->details['INVESTOR_ID'];?>},
+						        "type": "ajax",
+						        "api": {
+						            "read": "\/sectorholdings\/request\/read",
+						            "create": "\/sectorholdings\/request\/create",
+						            "update": "\/sectorholdings\/request\/update",
+						            "destroy": "\/sectorholdings\/request\/destroy"
+						        },
+						        "actionMethods": {
+						            "create": "POST",
+						            "destroy": "POST",
+						            "read": "POST",
+						            "update": "POST"
+						        },
+						        "reader": {
+						            "idProperty": "TITLE",
+						            "type": "json",
+						            "root": "data.items",
+						            "totalProperty": "data.totalCount"
+						        },
+						        "writer": {
+						            "type": "json",
+						            "root": "data",
+						            "writeAllFields": true
+						        }
+						    },
+						    sorter: {
+						        "property": "TITLE",
+						        "direction": "ASC"
+						    },
+						});
+						
+						storeSH.load();
+						
+						/*
+						 * End of : Sector Holdings
+						 */
+						
 						Ext.onReady(function () {
     						//store1.loadData(generateData(6, 20));
-
-					   
-					        panel = Ext.create('widget.panel', {
-					        width: 450,
-					        height: 300,
-					        title: 'Sector Holdings',
-					        renderTo: Ext.getBody(),
-					        //layout: 'fit',
-					        items: {
-					            xtype: 'chart',
-					            id: 'chartCmp',
-					            animate: true,
-					            //store: store1,
-					            shadow: true,
-					            legend: {
-					                position: 'right'
-					            },					            
-					            series: [{
-					                type: 'pie',
-					                field: "$sh['VALUE']",
-					                showInLegend: true,					            
-					                highlight: {
-					                  segment: {
-					                    margin: 20
-					                  }
-					                },
-					                label: {
-					                    field: "$sh['TITLE']",
-					                    display: 'none',
-					                    contrast: true,
-					                    font: '12px Arial'
-					                }
-					            }]
-					        }
-					    });
+    					var panel1 = Ext.create('widget.panel',{
+    					//region: 'north',
+						//border: false,
+						//maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+						//items: [{
+					    width: 400,
+					    height: 250,
+					   // title: 'Sector Holdings',					   
+					    renderTo: Ext.getBody(),
+					    layout: 'fit',
+					    items: [{
+								xtype: 'chart',
+								store: storeSH,
+								id:'chartCmp',
+								//width: 570,
+								//height: 300,
+								animate: true,
+								legend: {
+									position: 'right'
+								},
+								series: [{
+									type: 'pie',
+									field: 'VALUE',
+									showInLegend: true,
+									highlight: {
+										segment: {
+											margin: 20
+										}
+									},
+									label: {
+										field: 'TITLE',
+										contrast: true,
+										display: 'none',
+										font: '12px Arial'
+									}
+								}]
+							}]
+						//}]	
+					   });
 					});
+						
 					 </script>
 					
 				</div>
@@ -118,16 +161,51 @@
 					<div id="head">
 						<h3>Portfolio Distribution</h3>
 					</div>
-					<!--
-					<img src="<?php echo $this->baseUrl('/images/chart-1.png');?>" width="350" height="170" />
-					-->
-					<?php 
-					foreach($this->list_PD as $pd) {
-						
-						echo $pd['TITLE']." ";
-						echo $pd['VALUE']."<br>";
-					}
-					 ?>
+					<script type="text/javascript">
+					/*
+					 * Portfolio Distributions
+					 */
+					/*
+					var storePD = Ext.create('Ext.data.Store', {
+						model: 'PortfolioDistribution',
+						storeId: 'PortfolioDistributions',
+						proxy: {
+							extraParams:{id:<?php echo $this->details['INVESTOR_ID']; ?>},
+					        "type": "ajax",
+					        "api": {
+					            "read": "\/portfoliodistribution\/request\/read",
+					            "create": "\/portfoliodistribution\/request\/create",
+					            "update": "\/portfoliodistribution\/request\/update",
+					            "destroy": "\/portfoliodistribution\/request\/destroy"
+					        },
+					        "actionMethods": {
+					            "create": "POST",
+					            "destroy": "POST",
+					            "read": "POST",
+					            "update": "POST"
+					        },
+					        "reader": {
+					            "idProperty": "TITLE",
+					            "type": "json",
+					            "root": "data.items",
+					            "totalProperty": "data.totalCount"
+					        },
+					        "writer": {
+					            "type": "json",
+					            "root": "data",
+					            "writeAllFields": true
+					        }
+					    },
+					    sorter: {
+					        "property": "TITLE",
+					        "direction": "ASC"
+					    },
+					});
+					
+					storePD.load();
+					*/
+					</script>
+					
 				</div>
 			</div>
 			

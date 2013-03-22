@@ -131,6 +131,9 @@ var storeSR = Ext.create('Ext.data.Store',{
             type: 'json',
             root: 'data',
             writeAllFields: true
+        },
+        extraParams: {
+        	id: data.PEER_ID
         }
     },
     sorter: {
@@ -141,7 +144,7 @@ var storeSR = Ext.create('Ext.data.Store',{
 });
 storeSR.load({
     params: {
-        id: data.PEER_ID
+    	 id: data.PEER_ID
     }
 });
 //Model Stripping Ratio By Year
@@ -223,6 +226,9 @@ var storeASP = Ext.create('Ext.data.Store',{
             type: 'json',
             root: 'data',
             writeAllFields: true
+        },
+        extraParams: {
+        	id: data.PEER_ID
         }
     },
     sorter: {

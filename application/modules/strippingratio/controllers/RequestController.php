@@ -58,11 +58,11 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 		);
 		$modelPeer = new Application_Model_StrippingRatio();
 		try {
-			//INSERT STRIPPING RATIO DATA
+			/* INSERT STRIPPING RATIO DATA */
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				
-				//UPDATE IF TITLE IS EXIST
+				/* UPDATE IF TITLE IS EXIST */
 				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
 				$this->_model->insert(array(
 						'PEER_ID' => $peer_id,
@@ -74,7 +74,9 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 				));
 				} else {
 					$this->_model->update(array(
-							'VALUE' => $this->_posts['VALUE']
+							'SALES_VOLUME' => $this->_posts['SALES_VOLUME'],
+							'PRODUCTION_VOLUME' => $this->_posts['PRODUCTION_VOLUME'],
+							'COAL_TRANSPORT' => $this->_posts['COAL_TRANSPORT']
 					), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_ID = ?',
 							$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
 					));
@@ -120,6 +122,7 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 					$content[$i]['VALUE_' . $d['TITLE']] = $d[$_k];
 					$i++;
 				}
+				$content[$k]['TITLE'] = $d['TITLE'];
 			}
 			$data = array(
 					'data' => array(
@@ -140,13 +143,16 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 
 	public function updateAction()
 	{
-		//UPDATE STRIPPING RATIO DATA
+		/* UPDATE STRIPPING RATIO DATA */
 		$data = array(
 				'data' => array()
 		);
 		
-		$data = $this->getRequest()->getRawBody();//GET JSON DATA
-		$data = Zend_Json::decode($data);//CHANGE JSON DATA TO ARRAY
+		/* GET JSON DATA */
+		$data = $this->getRequest()->getRawBody();
+		
+		/* CHANGE JSON DATA TO ARRAY */
+		$data = Zend_Json::decode($data);
 		
 		foreach($data['data'] as $k=>$d) {
 			$t = explode('_', $k);
