@@ -140,7 +140,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 					'text' => $d['NAME'],
 					'cls' => 'folder',
 					'checked' => $checkedMenu,
-					'expanded' => false,
+					'expanded' => true,
 					'type' => 'menus',
 					'ids' => $d['MENU_ID']
 					);
@@ -158,7 +158,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 				$tree[$k]['children'][] = array(
 						'text' => $_d['NAME'],
 						'checked' => $checkedSubMenu,
-						'expanded' => false,
+						'expanded' => true,
 						'type' => 'submenus',
 						'ids' => $_d['SUB_MENU_ID']
 						);
@@ -201,7 +201,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 			$listMenus = $modelMenus->getList();
 			$menusAccess = array('data'=>array());
 			foreach($listMenus as $_k=>$_d) {
-				//$menusAccess['data'][$_k] = array('ID' => $_d['MENU_ID'], 'STATUS' => false);
+				
 				$menusAccess['data'][$_k] = array(
 						'xtype' => 'button',
 						'text' => $modelMenus->getValueByKey('MENU_ID', $_d['MENU_ID'], 'NAME'),

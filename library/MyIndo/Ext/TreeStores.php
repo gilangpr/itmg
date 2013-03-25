@@ -39,7 +39,7 @@ class MyIndo_Ext_TreeStores extends MyIndo_Ext_Abstract
 				}
 			}
 			/* End of : Privileges */
-			//if(in_array($d['TEXT'], $menus)) {
+			if(in_array($d['TEXT'], $menus)) {
 				$json['root']['children'][$i]['text'] = $d['TEXT'];
 				$json['root']['children'][$i]['id'] = $d['NAME'] . '-' . strtolower(str_replace(" ","-", $d['TEXT']));
 				$json['root']['children'][$i]['models'] = $model->parser($model->getDetailByKey('NAME', $d['MODEL']));
@@ -52,7 +52,7 @@ class MyIndo_Ext_TreeStores extends MyIndo_Ext_Abstract
 				
 				$json['root']['children'][$i]['contents'] = $content->parser($content->getDetailByKey($content->getPK(), $content_id), $groups);
 				$i++;
-			//}
+			}
 		}
 		
 		return $json;
