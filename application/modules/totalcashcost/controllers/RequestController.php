@@ -58,9 +58,12 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 		);
 		$modelPeer = new Application_Model_TotalCashCost();
 		try {
-			//Insert Data :
+			/* INSERT TOTAL CASH COST DATA */
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
+				
+				/*UPDATE IF TITLE IS EXIST */
+				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
 				$this->_model->insert(array(
 						'PEER_ID' => $peer_id,
 						'TITLE' => $this->_posts['TITLE'],
@@ -71,6 +74,18 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 						'CURRENCY' => $this->_posts['CURRENCY'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
+				} else {
+					$this->_model->update(array(
+						'ROYALTY_IDR' => $this->_posts['ROYALTY_IDR'],
+						'ROYALTY_USD' => $this->_posts['ROYALTY_USD'],
+						'TOTAL_IDR' => $this->_posts['TOTAL_IDR'],
+						'TOTAL_USD' => $this->_posts['TOTAL_USD'],
+						'CURRENCY' => $this->_posts['CURRENCY']
+					), $this->_model->getAdapter()->quoteInto('TOTAL_CASHCOST_ID = ?',
+						$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
+					));
+				}
+				
 			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'PEER_ID NOT FOUND';

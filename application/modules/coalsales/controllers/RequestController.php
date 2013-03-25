@@ -65,8 +65,8 @@ class Coalsales_RequestController extends Zend_Controller_Action
 					'PEER_ID' => $peer_id,
 					'TITLE' => $this->_post['TITLE'],
 					'TYPE' => $this->_post['TYPE'],
+					'COUNTRY' => $this->_post['COUNTRY'],
 					'VOLUME' => $this->_post['VOLUME'],
-					'PERCENTAGE' => $this->_post['PERCENTAGE'],
 					'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
 			} else {
@@ -79,6 +79,7 @@ class Coalsales_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 
 	public function readAction()
@@ -150,15 +151,32 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		$modelCoalsales = new Application_Model_Coalsales();
 		$peer_id = (isset($this->_post['id'])) ? $this->_post['id'] : 0;
 		if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
-			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
-			$list = $list->query()->fetchAll();
+			
+			$list = $this->_model->getListCS($peer_id);
+			
+// 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
+// 			$list = $list->query()->fetchAll();
 		
 			$data = array(
 					'data' => array(
 							'items' => $list,
-							'totalCount' => $this->_model->count()
+							'totalCount' => count($list)
 					)
-			);
+				);
+// 			$sum = 0;
+// 			foreach($list as $k=>$d) {
+// 				$sum += $d['VOLUME'];
+// 			}
+			
+// 			$data = array(
+// 					'data' => array(
+// 						'items' => array(
+// 							'NAME' => $d['COUNTRY'],
+// 							'VOLUME' => $d['VOLUME'],
+// 							'PERCENTAGE' => number_format(($d['VOLUME'] / $sum) * 100,2) . '%'
+// 						)
+// 					)	
+// 				);
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}

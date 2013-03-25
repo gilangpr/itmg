@@ -58,17 +58,30 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 		);
 		$modelPeer = new Application_Model_SellingPrice();
 		try {
-			//Insert Data :
+			/* INSERT AVERAGE SELLING PRICE DATA */
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
-				$this->_model->insert(array(
-						'PEER_ID' => $peer_id,
-						'TITLE' => $this->_posts['TITLE'],
-						'TYPE' => $this->_posts['TYPE'],
-						'VALUE_IDR' => $this->_posts['VALUE_IDR'],
-						'VALUE_USD' => $this->_posts['VALUE_USD'],
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
+		
+				/* UPDATE IF TITLE IS EXIST */
+				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'] . 'TYPE', $this->_posts['TYPE'])) {
+					$this->_model->insert(array(
+							'PEER_ID' => $peer_id,
+							'TITLE' => $this->_posts['TITLE'],
+							'TYPE' => $this->_posts['TYPE'],
+							'VALUE_IDR' => $this->_posts['VALUE_IDR'],
+							'VALUE_USD' => $this->_posts['VALUE_USD'],
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+				} else {
+					$this->_model->update(array(
+							'TYPE' => $this->_posts['TYPE'],
+							'VALUE_IDR' => $this->_posts['VALUE_IDR'],
+							'VALUE_USD' => $this->_posts['VALUE_USD']
+					), $this->_model->getAdapter()->quoteInto('SELLING_PRICE_ID = ?',
+							$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
+					));
+				}
+		
 			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'PEER_ID NOT FOUND';
@@ -121,22 +134,33 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 
 	public function updateAction()
 	{
+		/* UPDATE AVERAGE SELLING PRICE DATA */
 		$data = array(
 				'data' => array()
 		);
-
-		try {
-			// $posts = $this->getRequest()->getRawBody();
-			// $posts = Zend_Json::decode($posts);
-				
-			// $this->_model->update(array(
-			// 		'INVESTOR_TYPE' => $posts['data']['INVESTOR_TYPE']
-			// 		),
-			// 		$this->_model->getAdapter()->quoteInto('INVESTOR_TYPE_ID = ?', $posts['data']['INVESTOR_TYPE_ID']));
-		}catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
-			$this->_success = false;
+		
+		/* GET JSON DATA */
+		$data = $this->getRequest()->getRawBody();
+		
+		/* CHANGE JSON DATA TO ARRAY */
+		$data = Zend_Json::decode($data);
+		
+		foreach($data['data'] as $k=>$d) {
+			$t = explode('_', $k);
+			if(isset($t[0])) {
+				if($t[0] == 'VALUE_' . $d['TITLE']) {
+					if($this->_model->isExistByKey('TITLE', $t[1])) {
+						$id = $this->_model->getPkByKey('TITLE', $t[1]);
+						// 						$data['ids'][] = $id;
+						// 						$data['vals'][] = $d;
+						$this->_model->update(array(
+								'SALES_VOLUME' => $d,
+								'PRODUCTION_VOLUME' => $d,
+								'COAL_TRANSPORT' => $d
+						), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_ID = ?', $id));
+					}
+				}
+			}
 		}
 
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
