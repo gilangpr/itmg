@@ -40,7 +40,8 @@ class MyIndo_Ext_Stores extends MyIndo_Ext_Abstract
 					'sorters' => array(
 							'property' => $detail['SORTERS_PROPERTY'],
 							'direction' => $detail['SORTERS_DIRECTION']
-					)
+					),
+					'autoSync' => true
 			);
 		}
 		return $json;
