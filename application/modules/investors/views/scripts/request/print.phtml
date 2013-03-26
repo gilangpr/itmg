@@ -20,10 +20,16 @@
 					<div id="head">
 					<h3>Detail</h3>
 					</div>
-					Equity Asset : <div id="alignki"><?php echo $this->details['EQUITY_ASSETS']?></div><br/>
-					Investor Type : <div id="alignki"><?php echo $this->details['INVESTOR_TYPE']?></div><br/>
-					Style : <div id="alignki"><?php echo $this->details['STYLE'] ?></div><br/>
-					Latest Update : <div id="alignki"><?php echo $this->details['MODIFIED_DATE'] ?></div>
+					<div id="alignki">
+						<div id="title1"> Equity Asset : </div> 
+							<div id="isi"><?php echo $this->details['EQUITY_ASSETS']?></div>
+						<div id="title1"> Investor Type : </div> 
+							<div id="isi"><?php echo $this->details['INVESTOR_TYPE']?></div>
+						<div id="title1"> Style : </div> 
+							<div id="isi"><?php echo $this->details['STYLE'] ?></div>
+						<div id="title1"> Latest Update :  </div> 
+							<div id="isi"><?php echo $this->details['MODIFIED_DATE'] ?></div>		
+					</div>					
 				</div>
 				<div id="dkanan">
 					<div id="head">
@@ -40,8 +46,7 @@
 							Fax : <?php echo $this->details['FAX'] ?><br>
 							Website: <?php echo $this->details['WEBSITE'] ?>
 						</div> 
-					</div><br/>
-					
+					</div>					
 				</div>	
 			</div>
 			<div id="detail2">
@@ -56,15 +61,16 @@
 				</div>
 				<?php echo $this->details['INVESTMENT_STRATEGY'];?>
 			</div>
-			<div id="detail3">
-				<div id="sector">
-					<div id="head">
+			
+				<div id="detail3">
+					<div id="headSec">
 						<h3>Sector Holdings</h3>
 					</div>
-					<div id="sector1">
+					<div id="headPor">
+						<h3>Portfolio Distribution</h3>
+					</div>
+				</div>	
 					<script type="text/javascript">
-					 	//var c = Ext.getCmp('<?php echo $this->container ?>');
-						//var selected = c.getSelectionModel().getSelection();
 					 	/*
 						 * Sector Holdings
 						 */
@@ -108,20 +114,15 @@
 						    }
 						});
 						storeSE.load();
-					//});
-						
-						
-						
+					
 						/*
 						 * End of : Sector Holdings
 						 */
 					
-						//Ext.onReady(function () {
-    						//store1.loadData(generateData(6, 20));
     					var panel1 = Ext.create('widget.panel',{					   
 					    renderTo: Ext.getBody(),
-					    width: 350,
-						height: 170,
+					    width: 420,
+						height: 250,
 						style: {
 							float: 'left',
 							width: '50%'
@@ -152,17 +153,11 @@
 									}
 								}]
 							}]
-						//}]	
+							
 					   });
-					//});
 					
-					 </script>
-					</div>
-				</div>
-				<div id="portfolio">
-					<div id="head">
-						<h3>Portfolio Distribution</h3>
-					</div>
+					</script>
+										
 					<script type="text/javascript">
 					/*
 					 * Portfolio Distributions
@@ -208,12 +203,12 @@
 					
 					var panel2 = Ext.create('widget.panel',{					   
 					    renderTo: Ext.getBody(),
-					    width: 350,
+					    width: 420,
 					    style: {
 							float: 'right',
 							width: '50%'
 						},
-						height: 170,
+						height: 250,
 					    layout: 'fit',
 					    items: [{
 							xtype: 'chart',
@@ -257,13 +252,9 @@
 					            yField: 'VALUE'
 							}]
 						}]
-						//}]	
+					
 					   });
 					</script>
-					
-				</div>
-			</div>
-			
 		</div>
 	</body>
 </html>

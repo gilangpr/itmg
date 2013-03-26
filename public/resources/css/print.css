@@ -30,37 +30,119 @@
 		
 	}
 	#header{
-		width: 899px;
+		width: 890px;
 		min-height: 30px;
+		margin: 5px;
 		position: relative;
 		border: 1px solid gray;
 		text-shadow: 0.1em 0.1em 0.05em white;
 		background-color: #2eac2b;
-		font-color:green;
-		
+		/* Mozzila 3.6+ */
+		background: -moz-linear-gradient(top, #2eac2b ,#76e74b );
+		 /* Safari 4-5, Chrome 1-9 */ 
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		/* Safari 5.1, Chrome 10+ */ 
+		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		/* IE 10 */ 
+		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		/* Opera 11.10+ */ 
+		background: -o-linear-gradient(top, #2eac2b, #76e74b);
 	}
 	#head{
-		width:445px;
+		width:425px;
 		min-height: 20px;
-		margin-top: 0px;
+		margin: 5px;
 		color:black;
 		padding-left: 5px;
 		border: 1px solid gray;
 		text-shadow: 0.1em 0.1em 0.05em white;
 		position: relative;
-		background: #76e74b;
+		/*Mozzila*/
+		background: -moz-linear-gradient(top, #2eac2b, #76e74b);
+		 /* Safari 4-5, Chrome 1-9 */ 
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		/* Safari 5.1, Chrome 10+ */ 
+		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		/* IE 10 */ 
+		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		/* Opera 11.10+ */ 
+		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+	}
+	#headSec{
+		width:430px;
+		min-height: 40px;
+		margin: 5px;
+		color:black;
+		padding-left: 5px;
+		border: 1px solid gray;
+		float: left;
+		text-shadow: 0.1em 0.1em 0.05em white;
+		position: relative;
+		/*Mozzila*/
+		background: -moz-linear-gradient(top, #2eac2b, #76e74b);
+		 /* Safari 4-5, Chrome 1-9 */ 
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		/* Safari 5.1, Chrome 10+ */ 
+		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		/* IE 10 */ 
+		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		/* Opera 11.10+ */ 
+		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+	}
+	#headPor{
+		width:430px;
+		min-height: 40px;
+		margin: 5px;
+		color:black;
+		float: right;
+		padding-left: 5px;
+		border: 1px solid gray;
+		text-shadow: 0.1em 0.1em 0.05em white;
+		position: relative;
+		/*Mozzila*/
+		background: -moz-linear-gradient(top, #2eac2b, #76e74b);
+		 /* Safari 4-5, Chrome 1-9 */ 
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		/* Safari 5.1, Chrome 10+ */ 
+		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		/* IE 10 */ 
+		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		/* Opera 11.10+ */ 
+		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+	}
+	#head2{
+		width:875px;
+		min-height: 20px;
+		margin: 0px;
+		color:black;
+		padding-left: 5px;
+		border: 1px solid gray;
+		text-shadow: 0.1em 0.1em 0.05em white;
+		position: relative;
+		/*Mozzila*/
+		background: -moz-linear-gradient(top, #2eac2b, #76e74b);
+		 /* Safari 4-5, Chrome 1-9 */ 
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		/* Safari 5.1, Chrome 10+ */ 
+		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		/* IE 10 */ 
+		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		/* Opera 11.10+ */ 
+		background: -o-linear-gradient(top, #2eac2b, #76e74b);
 	}
 	#detail{
-		width: 899px;
+		width: 889px;
 		position: relative;
-		min-height: 130px;
+		margin: 5px;
+		min-height: 140px;
 		border: 1px solid gray;
 		background: #e6ecef;
 	}
 	#detail2{
-		width: 899px;
+		width: 880px;
 		position: relative;
-		margin-top: 0px;
+		margin: 5px;
+		padding: 5px;
 		border: 1px solid gray;
 		background: #e6ecef;
 		min-height: 100px;
@@ -68,11 +150,10 @@
 	#detail3{
 		width: 899px;
 		position: relative;
-		min-height: 350px;
-		border: 1px solid gray;
+		min-height: 65px;
 	}
 	#dkiri{
-		width: 448px;
+		width: 440px;
 		float: left;
 		position: relative;
 		
@@ -98,10 +179,10 @@
 		min-height: 250px;
 		position: relative;
 	}
-	#alignki{
-		text-align: right;
-		float: right;
-		margin-right: 100px;
+	#alignka{
+		text-align: left;
+		float: left;
+		margin-right: 0px;
 	}
 	#alignka{
 		text-align: right;
@@ -111,26 +192,31 @@
 	#address{
 		text-align: left;
 		float: left;
-		width: 225px;
+		width: 215px;
+		padding-left: 5px;
 	}
 	#phone{
 		text-align: right;
 		float: right;
-		width: 225px;
+		padding-right: 5px;
+		width: 215px;
 	}
 	#dkanan{
-		width: 450px;
+		width: 440px;
 		float: right;
 		position: relative;
 	}
-	#head2{
-		width:899px;
-		height: 20px;
-		margin-top: 0px;
-		color:white;
-		text-shadow: 0.1em 0.1em 0.05em white;
-		position: relative;
-		background: green;
+	#title1{
+		text-align: left;
+		float: left;
+		width: 215px;
+		padding-left: 5px;
+	}
+	#isi{
+		text-align: right;
+		float: right;
+		padding-right: 5px;
+		width: 215px;
 	}
 	img{
 		margin-top: 10px;
