@@ -8,13 +8,12 @@ function loadMenus() {
 		},
 		success: function(d) {
 			var json = Ext.decode(d.responseText);
-			
 			Ext.each(json.data.items.data, function(_e, _i){
 				json.data.items.data[_i].height = sd.nav.height;
 				json.data.items.data[_i].width = sd.nav.width;
 				json.data.items.data[_i].listeners =  {
 					click: function() {
-						loadContent(this);
+						loadContent(this, json.data.items.data[_i].hidden);
 					}
 				};
 			});
@@ -52,7 +51,7 @@ function closeLoadingWindow() {
 	var loading = Ext.getCmp('loading-window');
 	loading.close();
 }
-function loadContent(param1) {
+function loadContent(param1, editor) {
 	var tabp = Ext.getCmp('main-content');
 	if(!tabp.items.get(param1.text + '-tabs')) {
 		showLoadingWindow();
@@ -185,11 +184,13 @@ function loadContent(param1) {
 												});
 											}
 										});
-										
+									
 										if(records.raw.contents.xtype == 'gridpanel') {
 											tabcontent.columns = records.raw.contents.columns;
 											tabcontent.bbar = bbar;
-											tabcontent.plugins = [cellEditing]
+											if(editor) {
+												tabcontent.plugins = [cellEditing];
+											}
 										}
 										
 										store.loadPage(1);

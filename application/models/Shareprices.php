@@ -5,6 +5,13 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 	protected $_name = 'SHAREPRICES';
 	protected $_id = 'SHAREPRICES_ID';
 	
+	public function getListAll()
+	{
+		$select = $this->select();
+		$select->from(array($this->_name), array());
+		return $select->query()->fetchAll();
+	}
+	
 	public function getCount($name,$date)
 	{		
 		$select = $this->select();
@@ -28,12 +35,11 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		}
 	}
 	
-	public function getId($date, $k, $d)
+	public function getId($date, $k)
 	{
 		$q = $this->select()
 		->where('DATE = ?', $date)
-		->where('SHAREPRICES_NAME = ?', $k)
-		->where('VALUE = ?', $d);
+		->where('SHAREPRICES_NAME = ?', $k);
 		if($q->query()->rowCount() > 0) {
 			$x = $q->query()->fetch();
 			return $x[$this->_id];
@@ -46,7 +52,8 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 	public function distinctDate()
 	{
 		$q = $this->select()
-		->from($this->_name, array('*'));
+		->distinct()
+		->from($this->_name, 'DATE');
 		$rowset = $q->query()->fetchAll();
 		return count($rowset);
 	}
@@ -65,6 +72,13 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		$q = $this->select()
 		->from($this->_name, array('*'))
 		->limit($limit, $offset);
+		return $q->query()->fetchAll();
+	}
+	
+	public function listSharepricesbydate($date)
+	{
+		$q = $this->select()
+		->from('DATE = ?', $date);
 		return $q->query()->fetchAll();
 	}
 }
