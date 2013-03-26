@@ -930,6 +930,12 @@ if(selected.length > 0) {
 	}
 	c.up().setActiveTab(id);
 	$('body').css('overflow','hidden');
+	
+	
+	/* Investment Strategy */
+	
+	var hx = $('#investors-detail-investment-strategy-form-' + data.INVESTOR_ID).append('');
+	
 } else {
 	Ext.Msg.alert('Message', 'You did not select any Investor');
 }
