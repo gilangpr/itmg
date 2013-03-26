@@ -8,16 +8,19 @@ if(selected.length > 0) {
 			clicksToMoveEditor: 1,
 	        autoCancel: false
 	    });
-		var store = loadStore('ShareholdingAmounts');
+		var store = Ext.create("Ext.data.Store", {
+			model: "ShareholdingAmount",
+			storeId: "ShareholdingAmounts",
+			proxy:{"type":"ajax","api":{"read":"\/shareholdings\/request\/get-list-amount","create":"\/shareholdings\/request\/amount","update":"\/shareholdings\/request\/upamount","destroy":"\/shareholdings\/request\/des"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"SHAREHOLDING_AMOUNT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+			sorter: {"property":"SHAREHOLDING_AMOUNT_ID","direction":"ASC"}});
+		
 		store.load({
 			params: {
 				id: data.SHAREHOLDING_ID /* single param */
 			}
 		});
 		store.autoSync = true;
-		
-		// Bottom toolbar 
-		
+		// Bottom toolbar
 		var comboBbar2 = new Ext.form.ComboBox({
 		  name : 'perpageglistamount',
 		  width: 50,
@@ -51,7 +54,6 @@ if(selected.length > 0) {
 		}, this);
 		
 		// End of : bottom toolbar
-		
 		c.up().add(Ext.create('Ext.panel.Panel', {
 			title: 'Detail : ' + data.INVESTOR_NAME,
 			id: id,
@@ -73,8 +75,8 @@ if(selected.length > 0) {
 					editor: {
 						xtype: 'numberfield',
 						allowBlank: false,
-						minValue: 0
-					}
+						minValue: 0,
+						}
 				},{
 					text: 'Date',
 					dataIndex: 'DATE',

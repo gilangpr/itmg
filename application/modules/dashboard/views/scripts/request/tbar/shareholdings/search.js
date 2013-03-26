@@ -6,13 +6,6 @@ var storeSH = loadStore('Shareholdings');
 //		all: 1
 //	}
 //});
-storeSH.load({
-	extend: 'Ext.data.Model',
-	fields: [{
-		name: 'SHAREHOLDING_ID',
-		type: 'string'
-	}]
-});
     // Add the additional 'advanced' VTypes
     Ext.apply(Ext.form.field.VTypes, {
         daterange: function(val, field) {
@@ -43,12 +36,13 @@ storeSH.load({
 Ext.create('Ext.Window', {
 	title: 'Search Investor',
 	xtype: 'panel',
-	layout: 'border',
+	layout: 'anchor',
 	id: 'search-investor-main',
 	modal: true,
 	closable: true,
-	width: 310,
+	width: 400,
 	height: 163,
+	bodyPadding: 10,
 	resizable: false,
 	draggable: false,
 	items: [{
@@ -61,6 +55,9 @@ Ext.create('Ext.Window', {
 		items: [{
 			fieldLabel: 'Investor Name',
 			xtype: 'combobox',
+			pageSize: 10,
+			anchor: '100%',
+			width: 300,
 			emptyText: 'All',
 			id: 'investor-name',
 			name: 'INVESTOR_NAME',
@@ -70,6 +67,8 @@ Ext.create('Ext.Window', {
 		},{
 			fieldLabel:'Start Date',
 			xtype: 'datefield',
+			anchor: '100%',
+			width: 300,
 			name: 'START_DATE',
 			id: 'start-date',
 			vtype: 'daterange',
@@ -79,6 +78,8 @@ Ext.create('Ext.Window', {
 		},{
 			fieldLabel:'End Date',
 			xtype: 'datefield',
+			anchor: '100%',
+			width: 300,
 			name: 'END_DATE',
 			id: 'end-date',
 			vtype: 'daterange',
@@ -97,6 +98,9 @@ Ext.create('Ext.Window', {
 					Ext.define('Shareholding__', {
 						extend: 'Ext.data.Model',
 						fields: [{
+							name: 'INVESTOR_NAME',
+							type: 'string'
+						},{
 							name: 'AMOUNT',
 							type: 'string'
 						},{
@@ -137,7 +141,7 @@ Ext.create('Ext.Window', {
 					
 					});
 					c.up().add({
-						title: 'Search Result : ' + form.getForm()._fields.items[0].value,
+						title: 'Search Result',
 						closable: true,
 						id: _id,
 						store: _xxstore,
@@ -145,7 +149,8 @@ Ext.create('Ext.Window', {
 						height: c.up().getHeight() - 56,
 						columns: [{
 							text: 'INVESTOR NAME',
-							dataIndex: + form.getForm()._fields.items[0].value
+							dataIndex: 'INVESTOR_NAME',
+							width: 200
 						},{
 							text: 'AMOUNT',
 							dataIndex: 'AMOUNT'

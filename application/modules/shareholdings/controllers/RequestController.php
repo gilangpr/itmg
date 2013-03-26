@@ -1,5 +1,5 @@
 <?php 
-//ini_set('memory_limit', '-1');
+
 class Shareholdings_RequestController extends Zend_Controller_Action
 {
 	protected $_model;
@@ -184,15 +184,36 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			}
 		}
 		
-		$sum += $d['AMOUNT'];
+		//$sum += $d['AMOUNT'];
+		/* Add total */
+		$sum = array(
+				'AMOUNT'=> 0
+		);
+		foreach($list as $k=>$v) {
+			$sum['AMOUNT'] += $v['AMOUNT'];
+		}
+			
+		$c = count($list);
+		$list[$c]['TOTAL'] = 'TOTAL';
+		$list[$c]['AMOUNT'] = $sum['AMOUNT'];
+
+		/* End of : Add Total */
 		
-		$data = array(
+// 		$data = array(
+// 				'data' => array(
+// 						'items' => $list,
+// 						'total' => $sum,
+// 						'totalCount' => $this->_model->count()
+// 				)
+// 		);
+		 $data = array(
 				'data' => array(
 						'items' => $list,
-						'total' => $sum,
-						'totalCount' => $this->_model->count()
+						'TOTAL' => count($list),
+						'totalCount' => $this->_model->count(),
 				)
 		);
+		 
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -203,11 +224,17 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		);
 		try {
 			// Delete
+			$delAmount = new Application_Model_ShareholdingAmounts();
+			
+			$id = $this->_posts['SHAREHOLDING_ID'];
+			$where = $delAmount->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $id);
+			$delAmount->delete($where);
 			 			$this->_model->delete(
 			 					$this->_model->getAdapter()->quoteInto(
 			 							'SHAREHOLDING_ID = ?', $this->_posts['SHAREHOLDING_ID']
 		 							));
-		}catch(Exception $e) {
+			}
+			catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
@@ -282,7 +309,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-    public function uploadAction()
+   public function uploadAction()
 	{
 			
 		$data = array(
@@ -291,7 +318,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		// membaca file excel yang diupload
 		$upload = new Zend_File_Transfer_Adapter_Http();
 	
-		$upload->setDestination(APPLICATION_PATH . '/../public/uploads/shareholdings/');
+		$upload->setDestination(APPLICATION_PATH . '/../public/uploads');
 		$upload->addValidator('Extension',false,'xls,xlsx');
 		
 		if ($upload->isValid()) {
@@ -312,11 +339,9 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 			/* End of : Rename file */
 		} 
-		
 		try
 		{
 	
-
 			$inputFileName = $upload->getDestination() . '/' . $new_name;
 			$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
 			$objReader = PHPExcel_IOFactory::createReader($inputFileType);
@@ -324,6 +349,11 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$objPHPExcel = $objReader->load($inputFileName);
 			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
 		    $objWriter->setPreCalculateFormulas(false);
+		    //$objPHPExcel->setActiveSheetIndex(0);
+		    //$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+		    
+		    // get number of last Row
+
 
 			foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
 				$worksheetTitle     =  $worksheet->getTitle();
@@ -332,15 +362,19 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				//$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
 				$nrColumns = ord($highestColumn) - 64;
 				
-				$highestColumn++;
+                $highestColumn++;
 				for ($row = 2; $row < $highestRow + 1; $row++) {
 					
 					$val=array();
 					for ($col = 'B'; $col != $highestColumn; $col++) {
-						 $val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
+// 						 $val1 = $objPHPExcel->getActiveSheet()->getCell('B'. $row)->getValue();
+// 						 $val2 = $objPHPExcel->getActiveSheet()->getCell('C'. $row)->getValue();
+// 						 $val3 = $objPHPExcel->getActiveSheet()->getCell('D'. $row)->getValue();
+// 						 $val4 = $objPHPExcel->getActiveSheet()->getCell('E'. $row)->getValue();
+						$val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
 					};
 
-                    if(!is_null($val[0])){
+			 if(!is_null($val[0])){
 					if(!$this->_model->isExistByKey('INVESTOR_NAME', strtoupper($val[0]))) {
 						$id = $this->_model->insert(array(
 								'INVESTOR_NAME' => $val[0],
@@ -390,8 +424,8 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 								'DATE' => $date[0]
 						));
 					}
- 				}
- 				}
+				}
+				}
  			}
 		}
 		 
@@ -434,7 +468,9 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  				->from('SHAREHOLDING_AMOUNTS', array('*'))
  				//->join('SHAREHOLDINGS', 'SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'))
  				->where('DATE >= ?',  $start_date[0])
- 				->where('DATE <= ?',  $end_date[0]);
+ 				->where('DATE <= ?',  $end_date[0])
+ 				
+ 		         ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
  			}
  		}
  		         $list = $list->query()->fetchAll();

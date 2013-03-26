@@ -108,6 +108,14 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 		die;
 	
 	}
+	public function getName() {
+		
+		$select = $this->select();
+		$select->from(array($this->_name),array());//declare $_name => nama tabel
+		$select->columns('INVESTOR_NAME');
+		return $select->query()->fetchAll();
+		
+	}
 	
 	
 }

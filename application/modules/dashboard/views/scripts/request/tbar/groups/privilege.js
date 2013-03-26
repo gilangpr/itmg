@@ -11,12 +11,10 @@ if(selected.length > 0) {
 			waitMsg: 'Loading data, please wait..',
 			actionMethods: {
 				read: 'POST'
-			},
-			extraParams: {
-				id: data.GROUP_ID
 			}
 		}
 	});
+	
 	treeStore.load();
 	var menus = new Array();
 	var sub_menus = new Array();
@@ -39,7 +37,7 @@ if(selected.length > 0) {
 				maskConfig: {
 					msg: 'Loading tree, please wait..'
 				},
-				id: 'groups-access-right-tree-panel-' + id,
+				id: 'groups-access-right-tree-panel',
 				rootVisible: false,
 				useArrows: true,
 				store: treeStore,
@@ -51,13 +49,12 @@ if(selected.length > 0) {
 				iconCls: 'icon-accept',
 				listeners: {
 					click: function() {
-						var comp = Ext.getCmp('groups-access-right-tree-panel-' + id);
+						var comp = Ext.getCmp('groups-access-right-tree-panel');
 						var tst = comp.getChecked();
 						var posts = new Array();
 						Ext.each(tst, function(d) {
-							posts[posts.length] = {'id' : d.raw.ids, 'type' : d.raw.type};
+							posts[posts.length] = [d.raw.ids, d.raw.type];
 						});
-						showLoadingWindow();
 						Ext.Ajax.request({
 							url: sd.baseUrl + '/groups/request/privileges',
 							params: {
@@ -65,15 +62,38 @@ if(selected.length > 0) {
 								data: Ext.encode(posts)
 							},
 							success: function(_d) {
-								var json = Ext.decode(_d.responseText);
-								closeLoadingWindow();
+								
 							},
 							failure: function(_d) {
-								var json = Ext.decode(_d.responseText);
-								Ext.Msg.alert('Error', json.error_message);
-								closeLoadingWindow();
+								
 							}
 						});
+//						Ext.create('Ext.Window', {
+//							html: 'Are you sure want save changes ?',
+//							bodyPadding: '20 5 5 17',
+//							title: 'Confirmation',
+//							resizable: false,
+//							modal: true,
+//							closable: false,
+//							draggable: false,
+//							width: 300,
+//							height: 120,
+//							buttons: [{
+//								text: 'Yes',
+//								listeners: {
+//									click: function() {
+//										
+//									}
+//								}
+//							},{
+//								text: 'No',
+//								listeners: {
+//									click: function() {
+//										this.up().up().close();
+//									}
+//								}
+//							}]
+//						}).show();
 					}
 				}
 			}]
