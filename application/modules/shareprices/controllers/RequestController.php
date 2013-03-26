@@ -41,6 +41,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
+		
 		$spNameModel = new Application_Model_SharepricesName();
 		$spRes = $spNameModel->getList();
 		$spList = array();
@@ -51,18 +52,17 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				$i++;
 			}
 		}
-		$lastId = $this->_model->getLastId();		
-		$list = $this->_model->getListLimit(350, $this->_start, 'SHAREPRICES_ID ASC');		
+		$lastId = $this->_model->getLastId();
+		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE ASC');
 		
-		//$getDate = $this->_model->limitShareprices($this->_limit, $this->_start);	
-		//$list = $this->_model->getList();
+		//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
 		
 		$t = array();
 		$t2 = array();
 		$i = 0;
 		$temp = '';
 		$temp2 = '';
-		
+		$temp3 = '';
 		foreach($list as $k=>$d) {
 			if($temp == '') {
 				$temp = $d['DATE'];
@@ -75,9 +75,8 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			if(!isset($t[$i]['DATE'])) {
 				$t[$i]['DATE'] = $d['DATE'];
 			}
- 			$t[$i][$d['SHAREPRICES_NAME']] = $d['VALUE'];
+			$t[$i][$d['SHAREPRICES_NAME']] = $d['VALUE'];
 		}
-		
 		foreach($t as $k=>$d) {
 			foreach($spRes as $_k=>$_d) {
 				if(!isset($t[$k][$_d])) {
@@ -87,7 +86,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 					$temp2 .= '|';
 				}
 				if($t[$k][$_d] > 0) {
-					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d);
+					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d, $d[$_d]);//$d['DATE'] . '__' . $_d . '__' . (isset($d[$_d])) ? $d[$_d] : $lastId;
 				} else {
 					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d, 0);
 				}
@@ -243,8 +242,12 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-	public function uploadAction ()
+public function uploadAction ()
 	{
+		
+		// file xls 	250 data 22.66 detik --
+		// file xlsx 	250 data 22.84 detik --
+		
 		
 		$data = array(
 				'data' => array()
@@ -278,9 +281,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 						$objReader = PHPExcel_IOFactory::createReader($inputFileType);
 						$objReader->setReadDataOnly(true);
 						$objPHPExcel = $objReader->load($inputFileName);
-						$i=0;
 						foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-							$i++;
 							$worksheetTitle     = $worksheet->getTitle();
 							$highestRow         = $worksheet->getHighestRow();
 							$highestColumn      = $worksheet->getHighestColumn();
@@ -289,10 +290,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 							
 							$headingsArray = $worksheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
 							$headingsArray = $headingsArray[1];
-							
-							$fixRow = $highestRow - 1;
-							$fixCol = $highestColumnIndex - 1;
-							$jumlah = $fixRow * $fixCol;
 							
 							for ($row = 2; $row <= $highestRow; ++ $row) {
 								$val=array();
@@ -305,24 +302,21 @@ class Shareprices_RequestController extends Zend_Controller_Action
 								
 								$rowNames = 1;
 								for ($colValue = 1; $colValue < $highestColumnIndex; ++ $colValue) {
-									$i++;
 									$cellValue = $worksheet->getCellByColumnAndRow($colValue, $row);
 									$valValue = $cellValue->getValue();
 									
 									$cellNames = $worksheet->getCellByColumnAndRow($colValue, $rowNames);
-									$valNames = $cellNames->getValue();		
+									$valNames = $cellNames->getValue();									
 									
 									$count = $this->_model->getCount($valNames, $dt);
  									if ($count['count'] == 0) {
- 										$modShareName = new Application_Model_SharepricesName();
- 										$idShareName = $modShareName->getPkByKey('SHAREPRICES_NAME', $valNames);									
- 										//insert shareprices
+ 						
+ 										// insert shareprices
  										$sp = $this->_model->insert(array(
  												'DATE' => $dt,
  												'SHAREPRICES_NAME' => $valNames,
  												'VALUE' => $valValue,
- 												'CREATED_DATE' => date('Y-m-d H:i:s'),
- 												'SHAREPRICES_NAME_ID' => $idShareName
+ 												'CREATED_DATE' => date('Y-m-d H:i:s')
  										));
  										
  										// insert shareprices log
@@ -331,10 +325,8 @@ class Shareprices_RequestController extends Zend_Controller_Action
  												'SHAREPRICES_NAME' => $valNames,
  												'VALUE_BEFORE' => $valValue,
  												'VALUE_AFTER' => $valValue,
- 												'CREATED_DATE' => date('Y-m-d H:i:s'),
- 												'SHAREPRICES_NAME_ID' => $idShareName
+ 												'CREATED_DATE' => date('Y-m-d H:i:s')
  										));
- 										
  									} else {
  										// get value before log
  										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
@@ -358,10 +350,8 @@ class Shareprices_RequestController extends Zend_Controller_Action
  												'VALUE' => $valValue,
  										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
  									}
-								}	
-									
-							}							
-							
+								}			
+							}													
 						}
 					}
 					catch (Exception $e) {

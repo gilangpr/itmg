@@ -28,7 +28,7 @@ class Apps_JsController extends Zend_Controller_Action
 		foreach($data as $k=>$d) {
 			$parsed = $stores->parser($d);
 			$model = substr($parsed['storeName'], 0, strlen($parsed['storeName'])-1);
-			echo "Ext.create(\"Ext.data.Store\", {\n\tmodel: \"" . $model . "\",\n\tstoreId: \"" . $parsed['storeName'] . "\",\n\tproxy:" . Zend_Json::encode($parsed['proxy']) . ",\n\tsorter: " . Zend_Json::encode($parsed['sorters']) . ",\n\tautoSync: true});\n";
+			echo "Ext.create(\"Ext.data.Store\", {\n\tmodel: \"" . $model . "\",\n\tstoreId: \"" . $parsed['storeName'] . "\",\n\tproxy:" . Zend_Json::encode($parsed['proxy']) . ",\n\tsorter: " . Zend_Json::encode($parsed['sorters']) . "});\n";
 		}
 	}
 }

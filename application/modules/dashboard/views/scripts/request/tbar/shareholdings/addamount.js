@@ -11,6 +11,7 @@ if(!c.up().items.get(id)) {
 	});
 Ext.create('Ext.Window', {
 	title: 'Add Amount',
+	layout: 'anchor',
 	width: 400,
 	height: 165,
 	closable: true,
@@ -60,6 +61,8 @@ Ext.create('Ext.Window', {
 		items: [{
 			xtype: 'combobox',
 			fieldLabel: 'Investor Name',
+			pageSize: 10,
+			anchor: '100%',
 			name: 'INVESTOR_NAME',
 			store: Ext.data.StoreManager.lookup('Shareholdings'),
 			displayField: 'INVESTOR_NAME',
