@@ -11,7 +11,7 @@ Ext.create('Ext.Window', {
 	height: 98,
 	resizable: false,
 	draggable: false,
-	closable: false,
+	closable: true,
 	modal: true,
 	buttons: [{
 		text: 'Save',
@@ -43,7 +43,7 @@ Ext.create('Ext.Window', {
 		text: 'Cancel',
 		listeners: {
 			click: function() {
-				if(confirm('Cancel ?')) {
+				{
 					this.up().up().close();
 				}
 			}

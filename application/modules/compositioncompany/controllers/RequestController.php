@@ -124,9 +124,11 @@ class Compositioncompany_RequestController extends Zend_Controller_Action
 							$sum[$d['TITLE']] = $d[$_k];
 						} else {
 							$sum[$d['TITLE']]+= $d[$_k];
-						}
+					}
 				}
+				$content[$k]['TITLE'] = $d['TITLE'];
 			}
+			
 			$i = 0;
 			$j = 0;
 			$temp = array();

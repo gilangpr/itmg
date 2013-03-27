@@ -110,18 +110,12 @@ class Dashboard_RequestController extends Zend_Controller_Action
 		$columns = array(array(
 				'flex' => 1,
 				'text' => '',
-				'dataIndex' => 'NAME',
-				//'columns' => array()
+				'dataIndex' => 'NAME'
 				));
 		foreach($list as $k=>$d) {
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
-			$columns[$k+1]['editor'] = array(
-					'xtype'=> 'numberfield',
-					'allowBlank' => false,
-					'minValue' => 0
-			);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -138,6 +132,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$fields[$k+1]['name'] = 'VALUE_' . $d['TITLE'];
 			$fields[$k+1]['type'] = 'float';
 		}
+		$c = count($fields);
+		$fields[$c]['name'] = 'TITLE';
+		$fields[$c]['type'] = 'string';
 		return Zend_Json::encode($fields);
 	}
 
@@ -234,11 +231,6 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
-// 			$columns[$k+1]['editor'] = array(
-// 					'xtype'=> 'numberfield',
-// 					'allowBlank' => false,
-// 					'minValue' => 0
-// 					);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -308,11 +300,6 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$columns[$k+1]['text'] = $d['TITLE'];
 			$columns[$k+1]['dataIndex'] = 'VALUE_' . $d['TITLE'];
 			$columns[$k+1]['align'] = 'center';
-			$columns[$k+1]['editor'] = array(
-					'xtype'=> 'numberfield',
-					'allowBlank' => false,
-					'minValue' => 0
-			);
 		}
 		return Zend_Json::encode($columns);
 	}
@@ -329,6 +316,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$fields[$k+1]['name'] = 'VALUE_' . $d['TITLE'];
 			$fields[$k+1]['type'] = 'float';
 		}
+		$c = count($fields);
+		$fields[$c]['name'] = 'TITLE';
+		$fields[$c]['type'] = 'string';
 		return Zend_Json::encode($fields);
 	}
 
@@ -384,6 +374,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$fields[$idx+1]['name'] = 'PERCENTAGE_' . $d['TITLE'];
 			$fields[$idx+1]['type'] = 'string';
 		}
+		$c = count($fields);
+		$fields[$c]['name'] = 'TITLE';
+		$fields[$c]['type'] = 'string';
 		return Zend_Json::encode($fields);
 	}
 	
@@ -421,6 +414,9 @@ class Dashboard_RequestController extends Zend_Controller_Action
 			$fields[$k+1]['name'] = 'VALUE_' . $d['TITLE'];
 			$fields[$k+1]['type'] = 'float';
 		}
+		$c = count($fields);
+		$fields[$c]['name'] = 'TITLE';
+		$fields[$c]['type'] = 'string';
 		return Zend_Json::encode($fields);
 	}
 }

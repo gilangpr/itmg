@@ -17,6 +17,7 @@ if(selected.length > 0) {
 			}
 		}
 	});
+	
 	treeStore.load();
 	var menus = new Array();
 	var sub_menus = new Array();
@@ -34,6 +35,7 @@ if(selected.length > 0) {
 				title: 'Access Right',
 				xtype: 'treepanel',
 				waitMsgTarget: true,
+				id: 'treepanel-' + id,
 				closable: true,
 				mask: true,
 				maskConfig: {
@@ -81,5 +83,5 @@ if(selected.length > 0) {
 	}
 	c.up().setActiveTab(id);
 } else {
-	Ext.Msg.alert('Message', 'You did not select any Investor');
+	Ext.Msg.alert('Message', 'You did not select any Group');
 }
