@@ -110,15 +110,57 @@ Ext.onReady(function() {
 						Ext.define('Shareprice__', {
 	                        extend: 'Ext.data.Model',
 	                        fields: [{
-	                            name: 'SHAREPRICES_NAME',
-	                            type: 'string'
-	                        },{
-	                            name: 'DATE',
-	                            type: 'string'
-	                        },{
-	                            name: 'VALUE',
-	                            type: 'float'
-	                        }]
+	                        	name: "DATE",
+                                type: "string"
+                            }, {
+                                name: "IDS",
+                                type: "string"
+                            }, {
+                                name: "MODIFIED_DATE",
+                                type: "string"
+                            }, {
+                                name: "JKSE",
+                                type: "float"
+                            }, {
+                                name: "ITMG",
+                                type: "float"
+                            }, {
+                                name: "PTBA",
+                                type: "float"
+                            }, {
+                                name: "BUMI",
+                                type: "float"
+                            }, {
+                                name: "ADRO",
+                                type: "float"
+                            }, {
+                                name: "BYAN",
+                                type: "float"
+                            }, {
+                                name: "BRAU",
+                                type: "float"
+                            }, {
+                                name: "HRUM",
+                                type: "float"
+                            }, {
+                                name: "BORN",
+                                type: "float"
+                            }, {
+                                name: "KKGI",
+                                type: "float"
+                            }, {
+                                name: "ARII",
+                                type: "float"
+                            }, {
+                                name: "GEMS",
+                                type: "float"
+                            }, {
+                                name: "TOBA",
+                                type: "float"
+                            }, {
+                                name: "BSSR",
+                                type: "float"
+                            }]
 	                    });
 						var _xxstore = Ext.create("Ext.data.Store", {
 							model: "Shareprice__",
@@ -132,11 +174,11 @@ Ext.onReady(function() {
 	                                "read": "POST"
 	                            },
 	                            "reader": {
-	                                "idProperty": "SHAREPRICES_ID",
-	                                "type": "json",
-	                                "root": "data.items",
-	                                "totalProperty": "data.totalCount"
-	                            }
+                                    "idProperty": "DATE",
+                                    "type": "json",
+                                    "root": "data.items",
+                                    "totalProperty": "data.totalCount"
+                                }
 	                        },
 	                        sorter: {
 	                            "property": "SHAREPRICES_ID",
@@ -157,16 +199,198 @@ Ext.onReady(function() {
 	                        id: _id,
 	                        store: _xxstore,
 	                        xtype: 'gridpanel',
-	                        columns: [{
-	                            text: 'Name',
-	                            dataIndex: 'SHAREPRICES_NAME'
-	                        },{
-	                            text: 'Date',
-	                            dataIndex: 'DATE'
-	                        },{
-	                            text: 'Value',
-	                            dataIndex: 'VALUE'
-	                        }]
+	                        "columns": [{
+                                "text": "Date",
+                                "dataIndex": "DATE",
+                                "align": "center",
+                                "width": 125,
+                                "flex": 1,
+                                "dataType": "string",
+                                "visible": false
+                            }, {
+                                "text": "JKSE",
+                                "dataIndex": "JKSE",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "ITMG",
+                                "dataIndex": "ITMG",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "PTBA",
+                                "dataIndex": "PTBA",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "BUMI",
+                                "dataIndex": "BUMI",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "ADRO",
+                                "dataIndex": "ADRO",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "BYAN",
+                                "dataIndex": "BYAN",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "BRAU",
+                                "dataIndex": "BRAU",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "HRUM",
+                                "dataIndex": "HRUM",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "BORN",
+                                "dataIndex": "BORN",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "KKGI",
+                                "dataIndex": "KKGI",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "ARII",
+                                "dataIndex": "ARII",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "GEMS",
+                                "dataIndex": "GEMS",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "TOBA",
+                                "dataIndex": "TOBA",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }, {
+                                "text": "BSSR",
+                                "dataIndex": "BSSR",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 0,
+                                "dataType": "float",
+                                "visible": false,
+                                "editor": {
+                                    "xtype": "numberfield",
+                                    "allowBlank": false,
+                                    "minValue": 0
+                                }
+                            }
+                        ]
 	                    });
 	                    c.up().setActiveTab(_id);
 	                    form.up().close();

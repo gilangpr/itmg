@@ -43,10 +43,18 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		}
 	}
 	
+	public function getName($date)
+	{
+		$q = $this->select()
+		->where('DATE = ?', $date);
+		return $q->query()->fetchAll();
+	}
+	
 	public function distinctDate()
 	{
 		$q = $this->select()
-		->from($this->_name, array('*'));
+		->from($this->_name, array('*'))
+		->group(array('DATE'));
 		$rowset = $q->query()->fetchAll();
 		return count($rowset);
 	}

@@ -96,6 +96,8 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	{
 		$this->_model2 = new MyIndo_Ext_ContentColumns();
 		$this->_model3 = new MyIndo_Ext_ModelFields();
+		$this->_model4 = new Application_Model_Shareprices();
+		$this->_model5 = new Application_Model_SharepricesLog();
 		$data = array(
 				'data' => array()
 		);
@@ -121,6 +123,15 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			),
 					$this->_model3->getAdapter()->quoteInto('MODEL_FIELD_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 			
+			$this->_model4->update(array(
+					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+			),
+					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+			
+			$this->_model4->update(array(
+					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+			),
+					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 			
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
