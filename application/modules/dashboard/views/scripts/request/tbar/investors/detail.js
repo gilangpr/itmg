@@ -222,6 +222,18 @@ if(selected.length > 0) {
 						float: 'left',
 						width: '50%'
 					},
+					tbar:[{
+						xtype: 'button',
+						text: 'Print Page',
+						iconCls: 'icon-print',
+						listeners: {
+							click: function() {
+								//var myWindow = window.open('', '', 'width=900,height=900');
+								window.open(sd.baseUrl + '/investors/request/print/id/' + data.INVESTOR_ID, '_blank');
+							   
+							}
+						}
+					}],
 					items: [{
 						xtype: 'form',
 						layout: 'form',
