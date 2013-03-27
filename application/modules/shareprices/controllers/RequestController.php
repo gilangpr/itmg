@@ -400,38 +400,97 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	{		
 		$searchModel = new Application_Model_Shareprices();
 		$getSdate = explode('T', $this->_posts['START_DATE']);
-		$getEdate = explode('T', $this->_posts['END_DATE']);
-		
-		$name = array($this->_posts['SHAREPRICES_NAME']);
+		$getEdate = explode('T', $this->_posts['END_DATE']);		
 		$n = explode(', ', strtoupper($this->_posts['SHAREPRICES_NAME']));
+		$ShareName = strtoupper($this->_posts['SHAREPRICES_NAME']);
 		
-		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $name)) {
+		
+		
+		//echo count($n);
+		$c = count($n)-1;
+		if ($c == 0) {
+			$spNameModel = new Application_Model_SharepricesName();
+			$spRes = $spNameModel->getList();
+			$spList = array();
+			$i = 0;
+			foreach($spRes as $k=>$d) {
+				if(!isset($spRes[$d['SHAREPRICES_NAME']])) {
+					$spRes[$i] = $d['SHAREPRICES_NAME'];
+					$i++;
+				}
+			}
+			$lastId = $this->_model->getLastId();
 			$listSearch = $searchModel->select()
-			->where('SHAREPRICES_NAME = ?' ,$nAme)
+			->where('SHAREPRICES_NAME = ?' ,$ShareName)
 			->where('DATE >= ?' ,$getSdate[0])
 			->where('DATE <= ?' ,$getEdate[0]);
-			$list = $listSearch->query()->fetchall();	
-		} else if (count($n) == 2){
-			$listSearch = $searchModel->select()
-			->where('DATE >= ?' ,$getSdate[0])
-			->where('DATE <= ?' ,$getEdate[0])
-			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%'");
 			$list = $listSearch->query()->fetchall();
-		}	else if (count($n) == 3){
-			$listSearch = $searchModel->select()
-			->where('DATE >= ?' ,$getSdate[0])
-			->where('DATE <= ?' ,$getEdate[0])
-			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%' OR SHAREPRICES_NAME LIKE '%$n[2]%'");
-			$list = $listSearch->query()->fetchall();
-		}			
+			
+			//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
+			
+			$t = array();
+			$t2 = array();
+			$i = 0;
+			$temp = '';
+			$temp2 = '';
+			foreach($list as $k=>$d) {
+				if($temp == '') {
+					$temp = $d['DATE'];
+				}
+				if($temp != $d['DATE']) {
+					$i++;
+					$temp = $d['DATE'];
+					$t2 = array();
+				}
+				if(!isset($t[$i]['DATE'])) {
+					$t[$i]['DATE'] = $d['DATE'];
+				}
+				$nameSp = $this->_model->searchDate($d['DATE'], $ShareName);
+				foreach ($nameSp as $_k=>$_d)
+				{
+					$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+				}
+			}
+			
+		} else {
+			for ($j=0; $j<=$c; $j++) {
+				$spNameModel = new Application_Model_SharepricesName();
+				$spRes = $spNameModel->getList();
+				$spList = array();
+				$i = 0;
+				foreach($spRes as $k=>$d) {
+					if(!isset($spRes[$d['SHAREPRICES_NAME']])) {
+						$spRes[$i] = $d['SHAREPRICES_NAME'];
+						$i++;
+					}
+				}
+			}
+		}
 		
-		$data = array(
-				'data' => array(
-						'items' => $list,
-						'totalCount' => count($list)
-				)
-		);
 		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+// 		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $name)) {
+// 			$listSearch = $searchModel->select()
+// 			->where('SHAREPRICES_NAME = ?' ,$nAme)
+// 			->where('DATE >= ?' ,$getSdate[0])
+// 			->where('DATE <= ?' ,$getEdate[0]);
+// 			$list = $listSearch->query()->fetchall();	
+// 		} else if (count($n) == 2){
+// 			$listSearch = $searchModel->select()
+// 			->where('DATE >= ?' ,$getSdate[0])
+// 			->where('DATE <= ?' ,$getEdate[0])
+// 			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%'");
+// 			$list = $listSearch->query()->fetchall();
+// 		}	else if (count($n) == 3){
+// 			$listSearch = $searchModel->select()
+// 			->where('DATE >= ?' ,$getSdate[0])
+// 			->where('DATE <= ?' ,$getEdate[0])
+// 			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%' OR SHAREPRICES_NAME LIKE '%$n[2]%'");
+// 			$list = $listSearch->query()->fetchall();
+// 		}			
+		
+		$this->_data['data']['items'] = $t;
+		$this->_data['data']['totalCount'] = $i;
+		
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

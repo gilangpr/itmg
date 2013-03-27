@@ -68,11 +68,16 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		return $q->query()->fetchAll();
 	}
 	
-	public function listShareprices($limit, $offset)
+	public function searchDate($date, $name)
 	{
 		$q = $this->select()
-		->from($this->_name, array('*'))
-		->limit($limit, $offset);
-		return $q->query()->fetchAll();
+		->where('DATE = ?', $date)
+		->where('SHAREPRICES_NAME = ?', $name);
+		if($q->query()->rowCount() > 0) {
+			return $q->query()->fetchAll();
+		} else {
+			//return $this->getLastId() + 1;
+			return NULL;
+		}
 	}
 }
