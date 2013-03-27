@@ -173,6 +173,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 		}
 		$sum = 0;
+		$max_id = 0;
 		foreach($list as $k=>$d) {
 			$sum += $d['AMOUNT'];
 
@@ -182,34 +183,24 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			if($sum > 0) {
 				$list[$k]['PERCENTAGE'] = number_format(($d['AMOUNT'] / $sum) * 100,2);
 			}
+			if($max_id >= (int)$d['SHAREHOLDING_ID']) {
+				$max_id = (int)$d['SHAREHOLDING_ID'];
+			}
 		}
-		
+		$max_id++;
 		//$sum += $d['AMOUNT'];
 		/* Add total */
-		$sum = array(
-				'AMOUNT'=> 0
-		);
-		foreach($list as $k=>$v) {
-			$sum['AMOUNT'] += $v['AMOUNT'];
-		}
-			
+		
 		$c = count($list);
-		$list[$c]['TOTAL'] = 'TOTAL';
-		$list[$c]['AMOUNT'] = $sum['AMOUNT'];
-
+		//$list[$c]['SHAREHOLDING_ID'] = $max_id;
+		//$list[$c]['AMOUNT'] = $modelSA->getSum();
+		//$list[$c]['AMOUNT'] = $sum['AMOUNT'];
+		
 		/* End of : Add Total */
 		
-// 		$data = array(
-// 				'data' => array(
-// 						'items' => $list,
-// 						'total' => $sum,
-// 						'totalCount' => $this->_model->count()
-// 				)
-// 		);
 		 $data = array(
 				'data' => array(
 						'items' => $list,
-						'TOTAL' => count($list),
 						'totalCount' => $this->_model->count(),
 				)
 		);
