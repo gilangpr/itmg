@@ -2,9 +2,11 @@
 
 class Groups_RequestController extends MyIndo_Controller_Action
 {
+	protected $_aclEnabled;
 	public function init()
 	{	
 		$this->getInit(new Application_Model_Groups());
+		$this->_aclEnabled = true;
 	}
 	
 	public function readAction()
@@ -23,6 +25,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 		
 		$this->_data['data']['items'] = $this->_list;
 		$this->_data['data']['totalCount'] = $this->_count;
+		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -140,7 +143,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 					'text' => $d['NAME'],
 					'cls' => 'folder',
 					'checked' => $checkedMenu,
-					'expanded' => false,
+					'expanded' => true,
 					'type' => 'menus',
 					'ids' => $d['MENU_ID']
 					);
@@ -158,7 +161,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 				$tree[$k]['children'][] = array(
 						'text' => $_d['NAME'],
 						'checked' => $checkedSubMenu,
-						'expanded' => false,
+						'expanded' => true,
 						'type' => 'submenus',
 						'ids' => $_d['SUB_MENU_ID']
 						);
@@ -207,7 +210,7 @@ class Groups_RequestController extends MyIndo_Controller_Action
 						'text' => $modelMenus->getValueByKey('MENU_ID', $_d['MENU_ID'], 'NAME'),
 						'menu_id' => $_d['MENU_ID'],
 						'id' => 'main-menu-' . $_d['MENU_ID'],
-						'hidden' => true
+						'hidden' => $this->_aclEnabled
 						);
 			}
 			$menus = array();

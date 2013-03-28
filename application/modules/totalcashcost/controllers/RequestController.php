@@ -128,6 +128,7 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 						$content[$i]['VALUE_' . $d['TITLE']] = $d[$_k];
 						$i++;
 				}
+				$content[$k]['TITLE'] = $d['TITLE'];
 			}
 			$data = array(
 				'data' => array(

@@ -39,6 +39,9 @@ var storeFP = Ext.create('Ext.data.Store',{
             type: 'json',
             root: 'data',
             writeAllFields: true
+        },
+        extraParams: {
+        	id: data.PEER_ID
         }
     },
     sorter: {
@@ -52,6 +55,57 @@ storeFP.load({
         id: data.PEER_ID
     }
 });
+
+//Model Financial Performances 2
+Ext.define('FinancialPerformance', {
+    extend: 'Ext.data.Model',
+    fields: fpFields
+});
+//Store Financial Performances 2
+var storeFP2 = Ext.create('Ext.data.Store',{
+    storeId: 'FinancialPerformances',
+    model: 'FinancialPerformance',
+    proxy: {
+        type: 'ajax',
+        api: {
+            read: '/financialperform/request/read',
+            create: '/financialperform/request/create',
+            update: '/financialperform/request/update',
+            destroy: '/financialperform/request/destroy'
+        },
+        actionMethods: {
+            create: 'POST',
+            destroy: 'POST',
+            read: 'POST',
+            update: 'POST'
+        },
+        reader: {
+            idProperty: 'FINANCIAL_PERFORM_ID',
+            type: 'json',
+            root: 'data.items',
+            totalProperty: 'data.totalCount'
+        },
+        writer: {
+            type: 'json',
+            root: 'data',
+            writeAllFields: true
+        },
+        extraParams: {
+        	id: data.PEER_ID
+        }
+    },
+    sorter: {
+        property: 'FINANCIAL_PERFORM_ID',
+        direction: 'ASC'
+    },
+    autoSync: true
+});
+storeFP2.load({
+    params: {
+        id: data.PEER_ID
+    }
+});
+
 //Model Coal Sales Distribution
 Ext.define('CoalSalesDistribution', {
     extend: 'Ext.data.Model',
@@ -276,6 +330,9 @@ var storeCSY = Ext.create('Ext.data.Store',{
             type: 'json',
             root: 'data',
             writeAllFields: true
+        },
+        extraParams: {
+        	id: data.PEER_ID
         }
     },
     sorter: {
@@ -323,6 +380,9 @@ var storeFOB = Ext.create('Ext.data.Store',{
             type: 'json',
             root: 'data',
             writeAllFields: true
+        },
+        extraParams: {
+        	id: data.PEER_ID
         }
     },
     sorter: {

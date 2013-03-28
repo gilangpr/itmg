@@ -25,7 +25,7 @@ if(selected.length > 0) {
     if(!c.up().items.get(id)){
         var data = selected[0].data;
         var maxWidth = 221;
-        //Store Resources and Reserves
+//        /* Store Resources and Reserves */
 //        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 //			clicksToMoveEditor: 1,
 //	        autoCancel: false
@@ -376,7 +376,7 @@ if(selected.length > 0) {
                         				            anchor: '100%'
                         				        },
                         						items: [{
-                        							fieldLabel: 'TITLE',
+                        							fieldLabel: 'Title',
                                                     allowBlank: false,
                                                     xtype: 'combobox',
                                                     name: 'TITLE',
@@ -498,7 +498,7 @@ if(selected.length > 0) {
                     items: [{
                         xtype: 'gridpanel',
                         border: false,
-                        plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                        //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                         minHeight: 120,
                         store: storeASP,
                         id: 'asp-grid',
@@ -611,12 +611,134 @@ if(selected.length > 0) {
                         		click: function(){
                         			Ext.create('Ext.Window', {
                         				title: 'Edit Average Selling Price',
-                        				id: 'edit-average-selling_price',
+                        				id: 'edit-average-selling-price',
                         				draggable: false,
                         				modal: true,
                         				width: 300,
                         				align: 'center',
-                        				resizable: false
+                        				resizable: false,
+                        				items: [{
+                        					xtype: 'panel',
+                        					border: false,
+                        					items: [{
+                        						xtype: 'form',
+                        						layout: 'form',
+                        						id: 'edit-average-selling-price-form',
+                        						border: false,
+                        						bodyPadding: '5 5 5 5',
+                        						defaultType: 'combobox',
+                        						waitMsgTarget: true,
+                        						items: [{
+                        							fieldLabel: 'Title',
+                        							allowBlank: false,
+                        							xtype: 'combobox',
+                        							name: 'TITLE',
+                        							store: storeASP,
+                        							mode: 'local',
+                        							id: 'asp-title',
+                        							emptyText: ' - Select - ',
+                        							listWidth: 40,
+                        							triggerAction: 'all',
+                        							displayField: 'TITLE',
+                        							editable: false,
+                        							forceSelection: true,
+                        							listeners: {
+                        								change: function() {
+                        									var _p = this.value;
+                        									if(this.value !='null' && this.value !='') {
+                        										var _f = Ext.getCmp('edit-average-selling-price-form');
+                        										if(typeof(_f) !='undefined') {
+                        											var _g = Ext.getCmp('asp-grid');
+                        											Ext.each(_g.store.data.items, function(_v) {
+                        												/* Value IDR */
+                        												if(_v.data.NAME == 'Domestic (IDR)') {
+                        													var x = eval('_v.data.VALUE_' + _p);
+                        													Ext.getCmp('asp-value-idr').setValue(x);
+                        												}
+                        												/* Value IDR */
+                        												
+                        												/* Value USD */
+                        												if(_v.data.NAME == 'Export (USD)') {
+                        													var x = eval('_v.data.VALUE_' + _p);
+                        													Ext.getCmp('asp-value-usd').setValue(x);
+                        												}
+                        												/* Value USD */
+                        											});
+                        										}
+                        									}
+                        								}
+                        							}
+                        						},{
+                        							fieldLabel: 'Type',
+                                                    allowBlank: false,
+                                                    id: 'asp-type',
+                                                    xtype: 'combobox',
+                                                    name: 'TYPE',
+                                                    store: new Ext.data.ArrayStore({fields:['type'],data:[['Export'],['Domestic']]}),
+                                                    mode : 'local',
+                                                    value: 'Export',
+                                                    listWidth : 40,
+                                                    triggerAction : 'all',
+                                                    displayField  : 'type',
+                                                    valueField    : 'type',
+                                                    editable      : false,
+                                                    forceSelection: true
+                        						},{
+                        							fieldLabel: 'Value IDR',
+                        							xtype: 'numberfield',
+                        							allowBlank: false,
+                        							id: 'asp-value-idr',
+                        							name: 'VALUE_IDR',
+                        							minValue: 0,
+                        							value: 0
+                        						},{
+                        							fieldLabel: 'Value USD',
+                        							xtype: 'numberfield',
+                        							allowBlank: false,
+                        							id: 'asp-value-usd',
+                        							name: 'VALUE_USD',
+                        							minValue: 0,
+                        							value: 0
+                        						}]
+                        					}],
+                        					buttons: [{
+                        						text: 'Save',
+                        						listeners: {
+                        							click: function() {
+                        								var form = Ext.getCmp('edit-average-selling-price-form').getForm();
+                        								var store = loadStore('SellingPrices');
+                        								
+                        								if(form.isValid()) {
+                        									form.submit({
+                        									url: sd.baseUrl + '/sellingprice/request/create/id/' + data.PEER_ID,
+                        									success: function(d) {
+                        										var json = Ext.decode(d.responseText);
+                        										form.reset();
+                        										store.load({
+                        											params: {
+                        												id: data.PEER_NAME_ID
+                        											}
+                        										});
+                        										Ext.Msg.alert('Success', 'Data has been saved');
+                        										Ext.getCmp('edit-average-selling-price').close();
+                        									},
+                        									failure: function(data) {
+                        										var json = Ext.decode(data.responseText);
+                        										Ext.Msg.alert('Error', json.error_message);
+                        									}
+                        									});
+                        								}
+                        							}
+                        						}
+                        					},{
+                        						text: 'Cancel',
+                        						listeners: {
+                        							click: function() {
+                        								Ext.getCmp('edit-average-selling-price').close();
+                        							}
+                        						}
+                        					}]
+                        				}]
                         			}).show();
                         		}
                         	}
@@ -626,8 +748,9 @@ if(selected.length > 0) {
                     title: 'Financial Performance',
                     collapsible: true,
                     border: false,
-                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                    //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     xtype: 'gridpanel',
+                    id: 'fp-grid',
                     minHeight: 240,
                     store: storeFP,
                     columns: fpColumns,
@@ -776,13 +899,279 @@ if(selected.length > 0) {
                                 }).show();
                             }
                         }
+                    },{
+                    	xtype: 'button',
+                    	text: 'Edit Financial Performance',
+                    	iconCls: 'icon-accept',
+                    	listeners: {
+                    		click: function() {
+                    			Ext.create ('Ext.Window', {
+                    				title: 'Edit Financial Performance',
+                    				 id:  'edit-financial-performance',
+                    				 draggable: false,
+                    				 modal: true,
+                    				 width: 300,
+                    				 align: 'center',
+                    				 resizable: false,
+                    				 items: [{
+                    					 xtype: 'panel',
+                    					 border: false,
+                    					 items: [{
+                    						 xtype: 'form',
+                    						 layout: 'form',
+                    						 id: 'edit-financial-performance-form',
+                    						 border: false,
+                    						 bodyPadding: '5 5 5 5',
+                    						 defaultType: 'textfield',
+                    						 waitMsgTarget: true,
+                    						 fieldDefaults: {
+                    							 labelAlign: 'left',
+                    							 labelWidth: '150',
+                    							 anchor: '100%'
+                    						 },
+                    						 items: [{
+                    							 fieldLabel: 'Title',
+                                                 allowBlank: false,
+                                                 xtype: 'combobox',
+                                                 name: 'TITLE',
+                                                 store: storeFP2,
+                                                 mode : 'local',
+                                                 id: 'fp-title',
+                                                 emptyText: ' - Select - ',
+                                                 listWidth : 40,
+                                                 //triggerAction : 'all',
+                                                 displayField  : 'TITLE',
+                                                 editable      : false,
+                                                 forceSelection: true,
+                                                 listeners: {
+                                                	 change: function() {
+                                                		 var _p = this.value;
+                                                		 if(this.value != 'null' && this.value !='') {
+                                                			 
+                                                			 var _f = Ext.getCmp('edit-financial-performance-form');
+                                                			 if(typeof(_f) !='undefined') {
+                                                				 var _g = Ext.getCmp('fp-grid');
+                                                				 console.log(_g);
+                                                				 Ext.each(_g.store.data.items, function(_v) {
+                                                					/* Revenues*/
+                                                					 if(_v.data.NAME == 'Revenue') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-revenue').setValue(x);
+                                                					 }
+                                                					
+                                                					 /* Gross Profit */
+                                                					 if(_v.data.NAME == 'Gross Profit') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-gross-profit').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* EBIT */
+                                                					 if(_v.data.NAME == 'EBIT') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-ebit').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* EBITDA */
+                                                					 if(_v.data.NAME == 'EBITDA') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-ebitda').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Net Profit */
+                                                					 if(_v.data.NAME == 'Net Profit') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-net-profit').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Total Assets */
+                                                					 if(_v.data.NAME == 'Total Assets') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-total-assets').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Cash */
+                                                					 if(_v.data.NAME == 'Cash') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-cash').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Gross Profit Margin */
+                                                					 if(_v.data.NAME == 'Gross Profit Margin (%)'){
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-gross-profit-margin').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* EBIT Margin */
+                                                					 if(_v.data.NAME == 'EBIT Margin (%)'){
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-ebit-margin').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Net Profit Margin */
+                                                					 if(_v.data.NAME == 'Net Profit Margin (%)') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-net-profit-margin').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Return On Assets */
+                                                					 if(_v.data.NAME == 'Return On Assets (%)'){
+                                                						 var x = eval('_v.data.VALUE_' +_p);
+                                                						 Ext.getCmp('fp-return-assets').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Return On Equity */
+                                                					 if(_v.data.NAME == 'Return On Equity (%)'){
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-return-equity').setValue(x);
+                                                					 }
+                                                					 
+                                                					 /* Return On Investment */
+                                                					 if(_v.data.NAME == 'Return On Investment (%)') {
+                                                						 var x = eval('_v.data.VALUE_' + _p);
+                                                						 Ext.getCmp('fp-return-investment').setValue(x);
+                                                					 }
+                                                				 });
+                                                			 }
+                                                		 }
+                                                	 }
+                                                 }
+                    						 },{
+                    							 fieldLabel: 'Revenue',
+                    							 id: 'fp-revenue',
+                    							 allowBlank: false,
+                    							 xtype: 'numberfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'REVENUE'
+                    						 },{
+                    							 fieldLabel: 'Gross Profit',
+                    							 id: 'fp-gross-profit',
+                    							 allowBlank: false,
+                    							 xtype: 'numberfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'GROSS_PROFIT'
+                    						 },{
+                    							 fieldLabel: 'EBIT',
+                    							 id: 'fp-ebit',
+                    							 allowBlank: false,
+                    							 xtype: 'numberfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'EBIT'
+                    						 },{
+                    							 fieldLabel: 'EBITDA',
+                    							 id: 'fp-ebitda',
+                    							 allowBlank: false,
+                    							 xtype: 'numberfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'EBITDA'
+                    						 },{
+                    							 fieldLabel: 'Net Profit',
+                    							 id: 'fp-net-profit',
+                    							 allowBlank: false,
+                    							 xtype: 'numbe });rfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'NET_PROFIT'
+                    						 },{
+                    							 fieldLabel: 'Total Assets',
+                    							 id: 'fp-total-assets',
+                    							 allowBlank: false,
+                    							 xtype: 'numberfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'TOTAL_ASSETS'
+                    						 },{
+                    							 fieldLabel: 'Cash',
+                    							 id: 'fp-cash',
+                    							 allowBlank: false,
+                    							 xtype: 'numberfield',
+                    							 minValue: 0,
+                    							 value: 0,
+                    							 name: 'CASH'
+                    						 },{
+                    							 fieldLabel: 'Gross Profit Margin (%)',
+                    							 id: 'fp-gross-profit-margin',
+                    							 allowBlank: false,
+                    							 name: 'GROSS_PROFIT_MARGIN'
+                    						 },{
+                    							 fieldLabel: 'EBIT Margin (%)',
+                    							 id: 'fp-ebit-margin',
+                    							 allowBlank: false,
+                    							 name: 'EBIT_MARGIN'
+                    						 },{
+                    							 fieldLabel: 'Net Profit Margin (%)',
+                    							 id: 'fp-net-profit-margin',
+                    							 allowBlank: false,
+                    							 name: 'NET_PROFIT_MARGIN'
+                    						 },{
+                    							 fieldLabel: 'Return On Assets (%)',
+                    							 id: 'fp-return-assets',
+                    							 allowBlank: false,
+                    							 name: 'RETURN_ASSET'
+                    						 },{
+                    							 fieldLabel: 'Return On Equity (%)',
+                    							 id: 'fp-return-equity',
+                    							 allowBlank: false,
+                    							 name: 'RETURN_EQUITY'
+                    						 },{
+                    							 fieldLabel: 'Return On Investment (%)',
+                    							 id: 'fp-return-investment',
+                    							 allowBlank: false,
+                    							 name: 'RETURN_INVESTMENT'
+                    						 }]
+                    					 }],
+                    					 buttons: [{
+                    						 text: 'Save',
+                    						 listeners: {
+                    							 click: function() {
+                    								var form = Ext.getCmp('edit-financial-performance-form').getForm();
+                    								var store = loadStore('FinancialPerformances');
+                    								 
+                    								if(form.isValid()) {
+                    									form.submit ({
+                    									url: sd.baseUrl	+ '/financialperform/request/create/id/' + data.PEER_ID,
+                    									success: function(d) {
+                    										var json = Ext.decode(d.responseText);
+                    										form.reset();
+                    										store.load({
+                    											params: {
+                    												id: data.PEER_ID
+                    											}
+                    										});
+                    										Ext.Msg.alert('Success', 'Data has been saved');
+                    										Ext.getCmp('edit-financial-performance').close();
+                    									},
+                    									failure: function(data) {
+                    										var json = Ext.decode(data.responseText);
+                    										Ext.Msg.alert('Error', json.error_message);
+                    									}
+                    									});
+                    								 }
+                    							 }
+                    						 }
+                    					 },{
+                    						 text: 'Cancel',
+                    						 listeners: {
+                    							 click: function() {
+                    								 Ext.getCmp('edit-financial-performance').close();
+                    							 }
+                    						 }
+                    					 }]
+                    				 }]
+                    			}).show();
+                    		}
+                    	}
                     }]
                 },{
                     title: 'Total Cash Cost (FOB)',
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
+                    id: 'fob-grid',
+                    //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                 	store: storeFOB,
                     columns: fobColumns,
                     minHeight: 150,
@@ -900,6 +1289,174 @@ if(selected.length > 0) {
                     			}).show();
                     		}
                     	}
+                    },{
+                    	xtype: 'button',
+                    	text: 'Edit Total Cash Cost',
+                    	iconCls: 'icon-accept',
+                    	listeners: {
+                    		click: function() {
+                    			Ext.create('Ext.Window', {
+                    				title: 'Edit Total Cash Cost',
+                    				id: 'edit-total-cash-cost',
+                    				draggable: false,
+                    				modal: true,
+                    				width: 300,
+                    				align: 'center',
+                    				resizable: false,
+                    				items: [{
+                    					xtype: 'panel',
+                    					border: false,
+                    					items: [{
+                    						xtype: 'form',
+                    						layout: 'form',
+                    						id: 'edit-total-cash-cost-form',
+                    						border: false,
+                    						bodyPadding: '5 5 5 5',
+                    						waitMsgTarget: true,
+                    						fieldDefaults: {
+                    							labelAlign: 'left',
+                    							labelWidth: 160,
+                    							anchor: '100%'
+                    						},
+                    						items: [{
+                    							fieldLabel: 'Title',
+                    							allowBlank: false,
+                                                xtype: 'combobox',
+                                                name: 'TITLE',
+                                                store: storeFOB,
+                                                mode : 'local',
+                                                id: 'fob-title',
+                                                emptyText: ' - Select - ',
+                                                listWidth : 40,
+                                                triggerAction : 'all',
+                                                displayField  : 'TITLE',
+                                                editable      : false,
+                                                forceSelection: true,
+                                                listeners: {
+                                                	change: function () {
+	                                                	var _p = this.value;
+	                                                	if(this.value !='null' && this.value !=''){
+	                                                		var _f = Ext.getCmp('edit-total-cash-cost-form');
+	                                                		if(typeof(_f) !='undefined') {
+	                                                			var _g = Ext.getCmp('fob-grid');
+	                                                			Ext.each(_g.store.data.items, function(_v) {
+	                                                				/* Royalty IDR */
+	                                                				 if(_v.data.NAME == 'Ex. Royalty (IDR)') {
+	                                                					 var x = eval('_v.data.VALUE_' + _p);
+	                                                					 Ext.getCmp('fob-royalty-idr').setValue(x);
+	                                                				 }
+	                                                				 
+	                                                				 /* Royalty USD */
+	                                                				 if(_v.data.NAME == 'Ex. Royalty (USD)') {
+	                                                					 var x = eval('_v.data.VALUE_' + _p);
+	                                                					 Ext.getCmp('fob-royalty-usd').setValue(x);
+	                                                				 }
+	                                                				 
+	                                                				 /* Total IDR */
+	                                                				 if(_v.data.NAME == 'Total (IDR)') {
+	                                                					 var x = eval('_v.data.VALUE_' + _p);
+	                                                					 Ext.getCmp('fob-total-idr').setValue(x);
+	                                                				 }
+	                                                				 
+	                                                				 /* Total USD */
+	                                                				 if(_v.data.NAME == 'Total (USD)') {
+	                                                					 var x = eval('_v.data.VALUE_' + _p);
+	                                                					 Ext.getCmp('fob-total-usd').setValue(x);
+	                                                				 }
+	                                                				 
+	                                                				 /* Currency */
+	                                                				 if(_v.data.NAME == 'Currency 1 USD =') {
+	                                                					 var x = eval('_v.data.VALUE_' + _p);
+	                                                					 Ext.getCmp('fob-currency').setValue(x);
+	                                                				 }
+	                                                			}) ;
+	                                                		}
+	                                                	}
+                                                	}
+                                                }
+                    						},{  
+                    							fieldLabel: 'Ex. Royalty (IDR)',
+                    							id: 'fob-royalty-idr',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'ROYALTY_IDR'
+                    						},{
+                    							fieldLabel: 'Ex. Royalty (USD)',
+                    							id: 'fob-royalty-usd',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'ROYALTY_USD'
+                    						},{
+                    							fieldLabel: 'Total (IDR)',
+                    							id: 'fob-total-idr',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'TOTAL_IDR'
+                    						},{
+                    							fieldLabel: 'Total (USD)',
+                    							id: 'fob-total-usd',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'TOTAL_USD'
+                    						},{
+                    							fieldLabel: 'Currency 1 USD',
+                    							id: 'fob-currency',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'CURRENCY'
+                    						}]
+                    					}],
+                    					buttons : [{
+                    						text: 'Save',
+                    						listeners: {
+                    							click: function() {
+                    								var form = Ext.getCmp('edit-total-cash-cost-form').getForm();
+                    								var store = loadStore('TotalCashCosts');
+                    								
+                    								if(form.isValid()) {
+                    									form.submit ({
+                    										url: sd.baseUrl + '/totalcashcost/request/create/id/' + data.PEER_ID,
+                    										success: function(d) {
+                    											var json = Ext.decode(d.responseText);
+                                                                form.reset();
+                                                                store.load({
+                                                                    params: {
+                                                                        id: data.PEER_ID
+                                                                    }
+                                                                }); // Refresh grid data
+                                                                Ext.Msg.alert('Success', 'Data has been saved');
+                                                                Ext.getCmp('edit-total-cash-cost').close();
+                    										},
+                    										failure: function(){
+                    											var json = Ext.decode(data.responseText);
+                            									Ext.Msg.alert('Error', json.error_message);
+                    										}
+                    									});
+                    								}
+                    							}
+                    						}
+                    					},{
+                    						text: 'Cancel',
+                							listeners: {
+                								click: function() {
+                									Ext.getCmp('edit-total-cash-cost').close();
+                								}
+                							}
+                    					}]
+                    				}]
+                    			}).show();
+                    		}
+                    	}
                     }]
                 },{ //Reserves & Resources
                     title: 'Reserves & Resources',
@@ -908,6 +1465,7 @@ if(selected.length > 0) {
                     xtype: 'gridpanel',
                     plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     store: storeRR,
+                    id: 'rr-grid',
                     minHeight: 130,
                     tbar: [{
                         xtype: 'button',
@@ -937,7 +1495,7 @@ if(selected.length > 0) {
                                             items: [{
                                                 fieldLabel: 'Mine',
                                                 allowBlank: false,
-                                                name: 'MINE'
+                                                name: 'MINE'                                             
                                             },{
                                                 fieldLabel: 'Resources',
                                                 allowBlank: false,
@@ -1022,7 +1580,62 @@ if(selected.length > 0) {
                         iconCls: 'icon-stop',
                         listeners: {
                             click: function() {
-
+                            	var _c = Ext.getCmp('rr-grid');
+                            	var _selected = _c.getSelectionModel().getSelection();
+                            	if(_selected.length > 0) {
+                            		var _data = _selected[0].data;
+                            		Ext.create('Ext.Window', {
+                            			html: 'Are you sure want do delete selected item(s) ?',
+                            			bodyPadding: '5 5 5 5',
+                            			modal: true,
+                            			id: 'delete-reserves-resource-window',
+                            			title: 'Confirmation',
+                            			resizable: false,
+                            			closable: false,
+                            			draggabel: false,
+                            			width: 300,
+                            			height: 120,
+                            			buttons: [{
+                            				text: 'Yes',
+                            				listeners: {
+                            					click: function() {
+                            						showLoadingWindow();
+                                                    this.up().up().close();
+                                                    Ext.Ajax.request({
+                                                          url: sd.baseUrl + '/peerrs/request/destroy',
+                                                          params: {
+                                                                id: _data.RESERVES_RESOURCES_ID
+                                                          },
+                                                          success: function(d) {
+                                                                var json = Ext.decode(d.responseText);
+                                                                closeLoadingWindow();
+                                                                storeRR.load({
+                                                                      params: {
+                                                                            id: data.PEER_ID
+                                                                      }
+                                                                });
+                                                                Ext.Msg.alert('Message', 'Data successfully deleted.');
+                                                          },
+                                                          failure: function(d) {
+                                                                var json = Ext.decode(d.responseText);
+                                                                closeLoadingWindow();
+                                                                Ext.Msg.alert('Error', json.error_message);
+                                                          }
+                                                    });
+                            					}
+                            				}
+                            			},{
+                            				text: 'No',
+                            				listeners: {
+                            					click: function() {
+                            						Ext.getCmp ('delete-reserves-resource-window').close();
+                            					}
+                            				}
+                            			}]
+                            		}).show();
+                            	} else {
+                            		Ext.Msg.alert('Error', 'You did not select any Mine.');
+                            	}
                             }
                         }
                     }],
@@ -1100,9 +1713,9 @@ if(selected.length > 0) {
                 },{
                     title: 'Composition of the Company\'s Shareholders at the End of the Year',
                     collapsible: true,
+                    id: 'csy-grid',
                     border: false,
                     xtype: 'gridpanel',
-                    plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     minHeight: 150,
                     columns: csyColumns,
                     store: storeCSY,
@@ -1204,13 +1817,154 @@ if(selected.length > 0) {
                                 }).show();
                             }
                         }
+                    },{
+                    	xtype: 'button',
+                    	text: 'Edit Company Composition',
+                    	iconCls: 'icon-accept',
+                    	listeners: {
+                    		click: function() {
+                    			Ext.create('Ext.Window', {
+                    				title: 'Edit Company Composition',
+                    				id: 'edit-company-composition',
+                    				draggable: false,
+                    				modal: true,
+                    				width: 360,
+                    				align: 'center',
+                    				resizable: false,
+                    				items: [{
+                    					xtype: 'panel',
+                    					border: false,
+                    					items: [{
+                    						xtype: 'form',
+                    						layout: 'form',
+                    						id: 'edit-company-composition-form',
+                    						border: false,
+                    						bodyPadding: '5 5 5 5',
+                    						defaultType: 'textfield',
+                    						waitMsgTarget: true,
+                    						fieldDefaults: {
+                    							labelAlign: 'left',
+                    							labelWidth: '150',
+                    							anchor: '100%'
+                    						},
+                    						items: [{
+                    							fieldLabel: 'Title',
+                    							xtype: 'combobox',
+                    							allowBlank: false,
+                    							name: 'TITLE',
+                    							store: storeCSY,
+                    							mode: 'local',
+                    							id: 'csy-title',
+                    							emptyText: ' - Select - ',
+                    							listWidth: 40,
+                    							triggerAction: 'all',
+                    							displayField: 'TITLE',
+                    							editable: false,
+                    							forceSelection: true,
+                    							listeners: {
+                    								change: function() {
+                    									var _p = this.value;
+                    									if(this.value !='null' && this.value !=''){
+                    										var _f = Ext.getCmp('edit-company-composition-form');
+                    										if(typeof(_f) !='undefined') {
+                    											var _g = Ext.getCmp('csy-grid');
+                    											Ext.each(_g.store.data.items, function(_v) {
+                    												
+                    												/* Republic Of Indonesia */
+                    												if(_v.data.NAME == 'Republic Of Indonesia') {
+                    													var x = eval('_v.data.VALUE_' + _p);
+                    					                            	Ext.getCmp('csy-republic-indonesia').setValue(x);
+                    					                            }
+                    												
+                    												/* Domestic Investor */
+                    												if(_v.data.NAME == 'Domestic Investor') {
+                    													var x = eval('_v.data.VALUE_' + _p);
+                    					                            	Ext.getCmp('csy-domestic-investor').setValue(x);
+                    					                            }
+                    												
+                    												/* Foreign Investor */
+                    												if(_v.data.NAME == 'Foreign Investor') {
+                    													var x = eval('_v.data.VALUE_' + _p);
+                    					                            	Ext.getCmp('csy-foreign-investor').setValue(x);
+                    					                            }
+                    											});
+                    										}
+                    									}
+                    								}
+                    							}
+                    						},{
+                    							fieldLabel: 'Republic Of Indonesia',
+                    							id: 'csy-republic-indonesia',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'REPUBLIC_OF_INDONESIA'
+                    						},{
+                    							fieldLabel: 'Domestic Investor',
+                    							id: 'csy-domestic-investor',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'DOMESTIC_INVESTOR'
+                    						},{
+                    							fieldLabel: 'Foreign Investor',
+                    							id: 'csy-foreign-investor',
+                    							allowBlank: false,
+                    							xtype: 'numberfield',
+                    							minValue: 0,
+                    							value: 0,
+                    							name: 'FOREIGN_INVESTOR'
+                    						}]
+                    					}],
+                    					buttons: [{
+                    						text: 'Save',
+                    						listeners: {
+                    							click: function() {
+                    								var form = Ext.getCmp('edit-company-composition-form').getForm();
+                    								var store = loadStore('CompositionCompanys');
+                    								
+                    								if(form.isValid()) {
+                    									form.submit({
+                    										url: sd.baseUrl + '/compositioncompany/request/create/id/' + data.PEER_ID,
+                    										success: function(d) {
+                    											var json = Ext.decode(d.responseText);
+                    											form.reset();
+                    											store.load({
+                    												params: {
+                    													id: data.PEER_ID
+                    												}
+                    											});
+                    											Ext.Msg.alert('Success', 'Data has been saved');
+                    											Ext.getCmp('edit-company-composition').close();
+                    										},
+                    										failure: function(data) {
+                    											var json = Ext.decode(data.responseText);
+                    											Ext.Msg.alert('Error', json.error_message);
+                    										}
+                    									});
+                    								}
+                    							}
+                    						}
+                    					},{
+                    						text: 'Cancel',
+                    						listeners: {
+                    							click: function() {
+                    								Ext.getCmp('edit-company-composition').close();
+                    							}
+                    						}
+                    					}]
+                    				}]
+                    			}).show();
+                    		}
+                    	}
                     }]
                 },{
                     title: 'Coal Sales Distribution 9M11',
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     minHeight: 130,
                     columns: csdColumns,
                     store: storeCSD
@@ -1219,7 +1973,6 @@ if(selected.length > 0) {
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',
-                    //plugins: [new Ext.grid.plugin.RowEditing({clicksToMoveEditor: 1, autoCancel: false})],
                     store: storeCSD_BC,
                     columns: csd_bcColumns,
                     minHeight: 200,

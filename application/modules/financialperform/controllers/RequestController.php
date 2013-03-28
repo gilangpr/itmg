@@ -137,7 +137,7 @@ class Financialperform_RequestController extends Zend_Controller_Action
 					'RETURN_ASSET' => array('title' => 'Return On Assets (%)'),
 					'RETURN_EQUITY' => array('title' => 'Return On Equity (%)'),
 					'RETURN_INVESTMENT' => array('title' => 'Return On Investment (%)')
-					);
+			);
 			$content = array();
 			$i = 0;
 			$j = 0;
@@ -151,6 +151,7 @@ class Financialperform_RequestController extends Zend_Controller_Action
 						$content[$i]['VALUE_' . $d['TITLE']] = $d[$_k];
 						$i++;
 				}
+				$content[$k]['TITLE'] = $d['TITLE'];
 			}
 			$data = array(
 				'data' => array(
@@ -177,17 +178,30 @@ class Financialperform_RequestController extends Zend_Controller_Action
 				);
 		
 		try {
-// 			$posts = $this->getRequest()->getRawBody();
-// 			$posts = Zend_Json::decode($posts);
-				
-// 			$this->_model->update(array(
-// 					//'TITLE' => $posts['data']['TITLE'],
-// 					'REVENUE' => $posts['data']['REVENUE'],
-// 					'GROSS_PROFIT' => $posts['data']['GROSS_PROFIT'],
-// 					'EBIT' => $posts['data']['EBIT']
-// 			),
-// 					$this->_model->getAdapter()->quoteInto('FINANCIAL_PERFORM_ID = ?', $posts['data']['FINANCIAL_PERFORM_ID'])
-// 					);
+			$peer_id = $this->_getParam('id', 0);
+			if($modelPeer->isExistByKey(PEER_ID, $peer_id)) {
+				$this->_model->update(array(
+						'REVENUE' => $this->_posts['REVENUE'],
+						'GROSS_PROFIT' => $this->_posts['GROSS_PROFIT'],
+						'EBIT' => $this->_posts['EBIT'],
+						'EBITDA' => $this->_posts['EBITDA'],
+						'NET_PROFIT' => $this->_posts['NET_PROFIT'],
+						'TOTAL_ASSETS' => $this->_posts['TOTAL_ASSETS'],
+						'CASH' => $this->_posts['CASH'],
+						'GROSS_PROFIT_MARGIN' => $this->_posts['GROSS_PROFIT_MARGIN'],
+						'EBIT_MARGIN' => $this->_posts['EBIT_MARGIN'],
+						'NET_PROFIT_MARGIN' => $this->_posts['NET_PROFIT_MARGIN'],
+						'RETURN_ASSET' => $this->_posts['RETURN_ASSET'],
+						'RETURN_EQUITY' => $this->_posts['RETURN_EQUITY'],
+						'RETURN_INVESTMENT' => $this->_posts['RETURN_INVESTMENT']
+				),$this->_model->getAdapter()->quoteInto('FINANCIAL_PERFORM_ID = ?',
+						$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
+				));
+			} else {
+				$this->_error_code = 404;
+				$this->_error_message = 'PEER_ID NOT FOUND';
+				$this->_success = false;
+			}
 		}
 		catch (Exception $e) {
 			$this->_error_code = $e->getCode();

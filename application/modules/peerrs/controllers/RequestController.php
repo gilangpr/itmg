@@ -74,7 +74,7 @@ class Peerrs_RequestController extends Zend_Controller_Action
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
 			$list = $list->query()->fetchAll();
-			
+						
 			/* Add total */
 			$sum = array(
 					'RESOURCES'=> 0,
@@ -113,47 +113,30 @@ class Peerrs_RequestController extends Zend_Controller_Action
 	
 	public function updateAction()
 	{
-		$data = array(
+	$data = array(
 				'data' => array()
 		);
+
+		$data = $this->getRequest()->getRawBody();//mengambil data json
+		$data = Zend_Json::decode($data);//merubah data json menjadi array
+		$id = $data['data']['RESERVES_RESOURCES_ID'];
 		
-		$data = $this->getRequest()->getRawBody();//GET JSON DATA
-		$data = Zend_Json::decode($data);//CHANGE JSON DATA TO ARRAY
-		
-		foreach($data['data'] as $k=>$d) {
-			$t = explode('_', $k);
-			if(isset($t[0])) {
-				if($t[0] == 'VALUE') {
-					if($this->_model->isExistByKey('TITLE', $t[1])) {
-						$id = $this->_model->getPkByKey('TITLE', $t[1]);
-						$data['ids'][] = $id;
-						$data['vals'][] = $d;
-						$this->_model->update(array(
-								'MINE' => $d,
-								'RESOURCES' => $d,
-								'RESERVES' => $d,
-								'AREA' => $d,
-								'CV' => $d,
-								
-						), $this->_model->getAdapter()->quoteInto('RESERVES_RESOURCES_ID = ?', $id));
-					}
-				}
-			}
-		}
-		
-// 		try {
-// 			// $posts = $this->getRequest()->getRawBody();
-// 			// $posts = Zend_Json::decode($posts);
+		try {
+			$this->_model->update(array(
+					'MINE' => $data['data']['MINE'],
+					'RESOURCES' => $data['data']['RESOURCES'],
+					'RESERVES' => $data['data']['RESERVES'],
+					'AREA' => $data['data']['AREA'],
+					'CV' => $data['data']['CV'],
+					'LOCATION' => $data['data']['LOCATION'],
+					'LICENSE' => $data['data']['LICENSE'],
+					),$this->_model->getAdapter()->quoteInto('RESERVES_RESOURCES_ID = ?', $id));
 			
-// 			// $this->_model->update(array(
-// 			// 		'INVESTOR_TYPE' => $posts['data']['INVESTOR_TYPE']
-// 			// 		),
-// 			// 		$this->_model->getAdapter()->quoteInto('INVESTOR_TYPE_ID = ?', $posts['data']['INVESTOR_TYPE_ID']));
-// 		}catch(Exception $e) {
-// 			$this->_error_code = $e->getCode();
-// 			$this->_error_message = $e->getMessage();
-// 			$this->_success = false;
-// 		}
+		}catch(Exception $e) {
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
@@ -164,11 +147,11 @@ class Peerrs_RequestController extends Zend_Controller_Action
 				'data' => array()
 				);
 		try {
-			// Delete
- 			// $this->_model->delete(
- 			// 		$this->_model->getAdapter()->quoteInto(
- 			// 				'INVESTOR_TYPE_ID = ?', $this->_posts['INVESTOR_TYPE_ID']
- 			// 				));
+			/* Delete */
+ 			$this->_model->delete(
+ 					$this->_model->getAdapter()->quoteInto(
+ 							'RESERVES_RESOURCES_ID = ?', $this->_posts['RESERVES_RESOURCES_ID']
+ 							));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

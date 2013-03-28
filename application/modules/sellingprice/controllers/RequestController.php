@@ -63,7 +63,7 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 		
 				/* UPDATE IF TITLE IS EXIST */
-				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'] . 'TYPE', $this->_posts['TYPE'])) {
+				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
 					$this->_model->insert(array(
 							'PEER_ID' => $peer_id,
 							'TITLE' => $this->_posts['TITLE'],
@@ -106,12 +106,21 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 			$list = $list->query()->fetchAll();
 
 			$content = array();
+			$i = 0;
+			$j = 0;
 			
-			foreach($list as $k=>$d) {
-				for($i=0;$i<2;$i++) {
-					$content[$i]['NAME'] = ($i==0) ? 'Export (USD)' : 'Domestic (IDR)';
-					//$content[$i]['NAME'] = ($i==0) ? 'IDR' : 'USD';
-					$content[$i]['VALUE_' . $list[$k]['TITLE']] = ($i==0) ? $list[$k]['VALUE_USD'] : $list[$k]['VALUE_IDR'];
+			foreach($list as $k=>$d){
+				if($j != $k) {
+					$i = 0;
+					$j = $k;
+				}
+				foreach($list as $k=>$d) {
+					for($i=0;$i<2;$i++) {
+						$content[$i]['NAME'] = ($i==0) ? 'Export (USD)' : 'Domestic (IDR)';
+						//$content[$i]['NAME'] = ($i==0) ? 'IDR' : 'USD';
+						$content[$i]['VALUE_' . $list[$k]['TITLE']] = ($i==0) ? $list[$k]['VALUE_USD'] : $list[$k]['VALUE_IDR'];
+					}
+					$content[$k]['TITLE'] = $d['TITLE'];
 				}
 			}
 

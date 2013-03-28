@@ -43,10 +43,18 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		}
 	}
 	
+	public function getName($date)
+	{
+		$q = $this->select()
+		->where('DATE = ?', $date);
+		return $q->query()->fetchAll();
+	}
+	
 	public function distinctDate()
 	{
 		$q = $this->select()
-		->from($this->_name, array('*'));
+		->from($this->_name, array('*'))
+		->group(array('DATE'));
 		$rowset = $q->query()->fetchAll();
 		return count($rowset);
 	}
@@ -60,11 +68,16 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		return $q->query()->fetchAll();
 	}
 	
-	public function listShareprices($limit, $offset)
+	public function searchDate($date, $name)
 	{
 		$q = $this->select()
-		->from($this->_name, array('*'))
-		->limit($limit, $offset);
-		return $q->query()->fetchAll();
+		->where('DATE = ?', $date)
+		->where('SHAREPRICES_NAME = ?', $name);
+		if($q->query()->rowCount() > 0) {
+			return $q->query()->fetchAll();
+		} else {
+			//return $this->getLastId() + 1;
+			return NULL;
+		}
 	}
 }
