@@ -183,11 +183,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 		}
 		$sum = 0;
-<<<<<<< HEAD
-		
-=======
 		$max_id = 0;
->>>>>>> e9779122a9f4e0f750b46d74cf2cfc9904b1d82d
 		foreach($list as $k=>$d) {
 			$sum += $d['AMOUNT'];
 
@@ -202,14 +198,12 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				$max_id = (int)$d['SHAREHOLDING_ID'];
 			}
 		}
-<<<<<<< HEAD
 				
 		$c = count($list);
 		$list[$c]['SHAREHOLDING_ID'] = $lastId+1;
 		$list[$c]['INVESTOR_NAME'] = 'TOTAL';
 		$list[$c]['AMOUNT'] = $jml;
 		$list[$c]['PERCENTAGE'] = 100;
-=======
 		$max_id++;
 		//$sum += $d['AMOUNT'];
 		/* Add total */
@@ -220,15 +214,11 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		//$list[$c]['AMOUNT'] = $sum['AMOUNT'];
 		
 		/* End of : Add Total */
->>>>>>> e9779122a9f4e0f750b46d74cf2cfc9904b1d82d
 		
 		 $data = array(
 				'data' => array(
 						'items' => $list,
-<<<<<<< HEAD
 						'Total' => count($list),
-=======
->>>>>>> e9779122a9f4e0f750b46d74cf2cfc9904b1d82d
 						'totalCount' => $this->_model->count(),
 				));
 						 
