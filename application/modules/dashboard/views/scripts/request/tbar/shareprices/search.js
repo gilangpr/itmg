@@ -1,7 +1,7 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSP = loadStore('SharepricesNames');
 Ext.require('Ext.chart.*');
-Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox']);
+Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox',  'Ext.form.field.Number']);
 Ext.onReady(function() {
 	
 	// Add the additional 'advanced' VTypes
@@ -110,15 +110,51 @@ Ext.onReady(function() {
 						Ext.define('Shareprice__', {
 	                        extend: 'Ext.data.Model',
 	                        fields: [{
-	                            name: 'SHAREPRICES_NAME',
-	                            type: 'string'
-	                        },{
-	                            name: 'DATE',
-	                            type: 'string'
-	                        },{
-	                            name: 'VALUE',
-	                            type: 'float'
-	                        }]
+	                        	name: "DATE",
+                                type: "string"
+                            },{
+                                name: "JKSE",
+                                type: "float"
+                            },{
+                                name: "ITMG",
+                                type: "float"
+                            },{
+                                name: "PTBA",
+                                type: "float"
+                            },{
+                                name: "BUMI",
+                                type: "float"
+                            },{
+                                name: "ADRO",
+                                type: "float"
+                            },{
+                                name: "BYAN",
+                                type: "float"
+                            },{
+                                name: "BRAU",
+                                type: "float"
+                            },{
+                                name: "HRUM",
+                                type: "float"
+                            },{
+                                name: "BORN",
+                                type: "float"
+                            },{
+                                name: "KKGI",
+                                type: "float"
+                            },{
+                                name: "ARII",
+                                type: "float"
+                            },{
+                                name: "GEMS",
+                                type: "float"
+                            },{
+                                name: "TOBA",
+                                type: "float"
+                            },{
+                                name: "BSSR",
+                                type: "float"
+                            }]
 	                    });
 						var _xxstore = Ext.create("Ext.data.Store", {
 							model: "Shareprice__",
@@ -132,11 +168,11 @@ Ext.onReady(function() {
 	                                "read": "POST"
 	                            },
 	                            "reader": {
-	                                "idProperty": "SHAREPRICES_ID",
-	                                "type": "json",
-	                                "root": "data.items",
-	                                "totalProperty": "data.totalCount"
-	                            }
+                                    "idProperty": "DATE",
+                                    "type": "json",
+                                    "root": "data.items",
+                                    "totalProperty": "data.totalCount"
+                                }
 	                        },
 	                        sorter: {
 	                            "property": "SHAREPRICES_ID",
@@ -157,16 +193,141 @@ Ext.onReady(function() {
 	                        id: _id,
 	                        store: _xxstore,
 	                        xtype: 'gridpanel',
-	                        columns: [{
-	                            text: 'Name',
-	                            dataIndex: 'SHAREPRICES_NAME'
-	                        },{
-	                            text: 'Date',
-	                            dataIndex: 'DATE'
-	                        },{
-	                            text: 'Value',
-	                            dataIndex: 'VALUE'
-	                        }]
+	                        "columns": [{
+                                "text": "Date",
+                                "dataIndex": "DATE",
+                                "align": "center",
+                                "width": 125,
+                                "flex": 0,
+                                "dataType": "string",
+                                "visible": false
+                            },{
+                                "text": "JKSE",
+                                "dataIndex": "JKSE",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,00/i')
+                            },{
+                                "text": "ITMG",
+                                "dataIndex": "ITMG",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "PTBA",
+                                "dataIndex": "PTBA",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "BUMI",
+                                "dataIndex": "BUMI",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "ADRO",
+                                "dataIndex": "ADRO",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "BYAN",
+                                "dataIndex": "BYAN",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "BRAU",
+                                "dataIndex": "BRAU",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "HRUM",
+                                "dataIndex": "HRUM",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "BORN",
+                                "dataIndex": "BORN",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "KKGI",
+                                "dataIndex": "KKGI",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "ARII",
+                                "dataIndex": "ARII",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "GEMS",
+                                "dataIndex": "GEMS",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "TOBA",
+                                "dataIndex": "TOBA",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
+                                "text": "BSSR",
+                                "dataIndex": "BSSR",
+                                "align": "center",
+                                "width": 75,
+                                "flex": 1,
+                                "dataType": "float",
+                                "visible": false,
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            }]
 	                    });
 	                    c.up().setActiveTab(_id);
 	                    form.up().close();
