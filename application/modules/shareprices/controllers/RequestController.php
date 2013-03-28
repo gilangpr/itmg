@@ -54,7 +54,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$lastId = $this->_model->getLastId();
 		$list = $this->_model->limitShareprices($this->_limit, $this->_start, 'DATE ASC');
 		
-		//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
 		
 		$t = array();
 		$t2 = array();
@@ -78,7 +77,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			{
 				$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
 			}
-			//$t[$i][$d['SHAREPRICES_NAME']] = $d['VALUE'];
 		}
 		foreach($t as $k=>$d) {
 			foreach($spRes as $_k=>$_d) {
@@ -89,9 +87,9 @@ class Shareprices_RequestController extends Zend_Controller_Action
 					$temp2 .= '|';
 				}
 				if($t[$k][$_d] > 0) {
-					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d, $d[$_d]);//$d['DATE'] . '__' . $_d . '__' . (isset($d[$_d])) ? $d[$_d] : $lastId;
+					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d);
 				} else {
-					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d, 0);
+					$temp2 .= $_d . '_' . $this->_model->getId($d['DATE'], $_d);
 				}
 			}
 			$t[$k]['IDS'] = $temp2;
@@ -402,8 +400,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$getSdate = explode('T', $this->_posts['START_DATE']);
 		$getEdate = explode('T', $this->_posts['END_DATE']);		
 		$n = explode(', ', strtoupper($this->_posts['SHAREPRICES_NAME']));
-		$ShareName = strtoupper($this->_posts['SHAREPRICES_NAME']);
-		
+		$ShareName = strtoupper($this->_posts['SHAREPRICES_NAME']);		
 		
 		
 		//echo count($n);
@@ -421,12 +418,12 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			}
 			$lastId = $this->_model->getLastId();
 			$listSearch = $searchModel->select()
-			->where('SHAREPRICES_NAME = ?' ,$ShareName)
-			->where('DATE >= ?' ,$getSdate[0])
-			->where('DATE <= ?' ,$getEdate[0]);
+				->where('SHAREPRICES_NAME = ?' ,$ShareName)
+				->where('DATE >= ?' ,$getSdate[0])
+				->where('DATE <= ?' ,$getEdate[0]);
 			$list = $listSearch->query()->fetchall();
-			
-			//$list = $this->_model->listShareprices($this->_limit, $this->_start, 'DATE ASC');
+			$startDate = $getSdate[0];
+			$endDate = $getEdate[0];
 			
 			$t = array();
 			$t2 = array();
@@ -453,40 +450,54 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			}
 			
 		} else {
-			for ($j=0; $j<=$c; $j++) {
-				$spNameModel = new Application_Model_SharepricesName();
-				$spRes = $spNameModel->getList();
-				$spList = array();
-				$i = 0;
-				foreach($spRes as $k=>$d) {
-					if(!isset($spRes[$d['SHAREPRICES_NAME']])) {
-						$spRes[$i] = $d['SHAREPRICES_NAME'];
-						$i++;
-					}
+			$ncount = count($n)-1;
+			$spNameModel = new Application_Model_SharepricesName();
+			$spRes = $spNameModel->getList();
+			$spList = array();
+			$i = 0;
+			foreach($spRes as $k=>$d) {
+				if(!isset($spRes[$d['SHAREPRICES_NAME']])) {
+					$spRes[$i] = $d['SHAREPRICES_NAME'];
+					$i++;
 				}
-			}
+			}				
+			$where = array();
+			foreach($n as $k):
+			    $where[] = "SHAREPRICES_NAME LIKE '%" . $k . "%'";
+			endforeach;
+			$where = implode(' OR ', $where);
+			$listSearchS = $searchModel->select()
+				->where('DATE >= ?' ,$getSdate[0])
+				->where('DATE <= ?' ,$getEdate[0])
+				->where($where);
+			$list = $listSearchS->query()->fetchall();
+			$t = array();
+			$t2 = array();
+			$i = 0;
+			$temp = '';
+			$temp2 = '';
+			foreach($list as $k=>$d) {
+				if($temp == '') {
+					$temp = $d['DATE'];
+				}
+				if($temp != $d['DATE']) {
+					$i++;
+					$temp = $d['DATE'];
+					$t2 = array();
+				}
+				if(!isset($t[$i]['DATE'])) {
+					$t[$i]['DATE'] = $d['DATE'];
+				}
+				for ($countn = 0; $countn <= $ncount; $countn++)
+				{
+					$nameSp = $this->_model->searchDate($d['DATE'], $n[$countn]);
+					foreach ($nameSp as $_k=>$_d)
+					{
+						$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+					}
+				}			
+			}					
 		}
-		
-		
-// 		if ($searchModel->isExistByKey('SHAREPRICES_NAME', $name)) {
-// 			$listSearch = $searchModel->select()
-// 			->where('SHAREPRICES_NAME = ?' ,$nAme)
-// 			->where('DATE >= ?' ,$getSdate[0])
-// 			->where('DATE <= ?' ,$getEdate[0]);
-// 			$list = $listSearch->query()->fetchall();	
-// 		} else if (count($n) == 2){
-// 			$listSearch = $searchModel->select()
-// 			->where('DATE >= ?' ,$getSdate[0])
-// 			->where('DATE <= ?' ,$getEdate[0])
-// 			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%'");
-// 			$list = $listSearch->query()->fetchall();
-// 		}	else if (count($n) == 3){
-// 			$listSearch = $searchModel->select()
-// 			->where('DATE >= ?' ,$getSdate[0])
-// 			->where('DATE <= ?' ,$getEdate[0])
-// 			->where("SHAREPRICES_NAME LIKE '%$n[0]%' OR SHAREPRICES_NAME LIKE '%$n[1]%' OR SHAREPRICES_NAME LIKE '%$n[2]%'");
-// 			$list = $listSearch->query()->fetchall();
-// 		}			
 		
 		$this->_data['data']['items'] = $t;
 		$this->_data['data']['totalCount'] = $i;

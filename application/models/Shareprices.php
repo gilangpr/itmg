@@ -28,12 +28,11 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		}
 	}
 	
-	public function getId($date, $k, $d)
+	public function getId($date, $k)
 	{
 		$q = $this->select()
 		->where('DATE = ?', $date)
-		->where('SHAREPRICES_NAME = ?', $k)
-		->where('VALUE = ?', $d);
+		->where('SHAREPRICES_NAME = ?', $k);
 		if($q->query()->rowCount() > 0) {
 			$x = $q->query()->fetch();
 			return $x[$this->_id];
@@ -79,5 +78,15 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 			//return $this->getLastId() + 1;
 			return NULL;
 		}
+	}
+	
+	public function searchVal($nameSearch, $dates, $daten)
+	{
+		$q = $this->select()
+		->from($this->_name, array('*'))
+		->where('SHAREPRICES_NAME = ?', $nameSearch)
+		->where('DATE = >=', $dates)
+		->where('DATE = <=', $daten);
+		return $q->query()->fetchAll();
 	}
 }

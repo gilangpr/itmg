@@ -1,7 +1,7 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSP = loadStore('SharepricesNames');
 Ext.require('Ext.chart.*');
-Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox']);
+Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox',  'Ext.form.field.Number']);
 Ext.onReady(function() {
 	
 	// Add the additional 'advanced' VTypes
@@ -112,52 +112,46 @@ Ext.onReady(function() {
 	                        fields: [{
 	                        	name: "DATE",
                                 type: "string"
-                            }, {
-                                name: "IDS",
-                                type: "string"
-                            }, {
-                                name: "MODIFIED_DATE",
-                                type: "string"
-                            }, {
+                            },{
                                 name: "JKSE",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "ITMG",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "PTBA",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "BUMI",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "ADRO",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "BYAN",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "BRAU",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "HRUM",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "BORN",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "KKGI",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "ARII",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "GEMS",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "TOBA",
                                 type: "float"
-                            }, {
+                            },{
                                 name: "BSSR",
                                 type: "float"
                             }]
@@ -204,193 +198,136 @@ Ext.onReady(function() {
                                 "dataIndex": "DATE",
                                 "align": "center",
                                 "width": 125,
-                                "flex": 1,
+                                "flex": 0,
                                 "dataType": "string",
                                 "visible": false
-                            }, {
+                            },{
                                 "text": "JKSE",
                                 "dataIndex": "JKSE",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,00/i')
+                            },{
                                 "text": "ITMG",
                                 "dataIndex": "ITMG",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "PTBA",
                                 "dataIndex": "PTBA",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "BUMI",
                                 "dataIndex": "BUMI",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "ADRO",
                                 "dataIndex": "ADRO",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "BYAN",
                                 "dataIndex": "BYAN",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "BRAU",
                                 "dataIndex": "BRAU",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "HRUM",
                                 "dataIndex": "HRUM",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "BORN",
                                 "dataIndex": "BORN",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "KKGI",
                                 "dataIndex": "KKGI",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "ARII",
                                 "dataIndex": "ARII",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "GEMS",
                                 "dataIndex": "GEMS",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "TOBA",
                                 "dataIndex": "TOBA",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }, {
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            },{
                                 "text": "BSSR",
                                 "dataIndex": "BSSR",
                                 "align": "center",
                                 "width": 75,
-                                "flex": 0,
+                                "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                "editor": {
-                                    "xtype": "numberfield",
-                                    "allowBlank": false,
-                                    "minValue": 0
-                                }
-                            }
-                        ]
+                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                            }]
 	                    });
 	                    c.up().setActiveTab(_id);
 	                    form.up().close();
