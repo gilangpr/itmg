@@ -65,14 +65,17 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 				
 			 //echo $select->__toString();
 	}
-	public function getId($name)
+	public function getId()
 	{
-		//$uid = mysql_query("SELECT SHAREHOLDING_ID FROM 'SHAREHOLDINGS' WHERE INVESTOR_NAME='$name'");
-		//echo uid;
-		$select = $this->select('SHAREHOLDING_ID')
-		->from('SHAREHOLDINGS')
-	    ->where('INVESTOR_NAME =? ', $name);
-		return $select->query()->fetch();
+// 		$uid = mysql_query("SELECT MAX(SHAREHOLDING_ID) FROM 'SHAREHOLDINGS'");
+// 		echo uid;
+// 		$select = $this->select();
+// 		$select->from('SHAREHOLDINGS',('max(SHAREHOLDING_ID)'));
+//         return $select->query()->fetch();
+//         $sql = 'SELECT max(SHAREHOLDING_ID) FROM user';
+//         $query = $this->getAdapter()->query($sql);
+//         $result = $query->fetchAll();
+//         return $result[0]['max(id)'];
 
 	}
 	
