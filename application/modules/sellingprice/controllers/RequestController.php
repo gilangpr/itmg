@@ -100,7 +100,7 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 	{
 		$modelPeer = new Application_Model_SellingPrice();
 		$peer_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
-		$peer_id = 1;
+		
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
 			$list = $list->query()->fetchAll();

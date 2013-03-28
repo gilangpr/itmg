@@ -17,8 +17,34 @@ var fobFields = <?php echo $this->fobFields?>;
 var csd_bcColumns = <?php echo $this->csd_bcColumns?>;
 var csd_bcFields = <?php echo $this->csd_bcFields?>;
 //var nmbr = Ext.util.Format.number;
+Ext.require(['Ext.form.field.Number']);
 
 storePEERS = loadStore('Peers');
+
+/* Composition */
+csyColumns[1].columns[0].renderer = Ext.util.Format.numberRenderer('0.,00/i');
+csyColumns[2].columns[0].renderer = Ext.util.Format.numberRenderer('0.,00/i');
+
+/* Total Cash Cost (FOB) */
+Ext.each(fobColumns,function(_e, _i) {
+    if(_i > 0) {
+        fobColumns[_i].renderer = Ext.util.Format.numberRenderer('0.,00/i');
+    }
+});
+
+/* Finanction Performances */
+Ext.each(fpColumns, function(_e, _i) {
+    if(_i > 0) {
+        fpColumns[_i].renderer = Ext.util.Format.numberRenderer('0.,00/i');
+    }
+});
+
+/* Average Selling Price */
+Ext.each(aspColumns, function(_e, _i) {
+    if(_i > 0) {
+        aspColumns[_i].renderer = Ext.util.Format.numberRenderer('0.,00/i');
+    }
+});
 
 if(selected.length > 0) {
     var id = 'peers-detail' + selected[0].id;
@@ -1654,6 +1680,7 @@ if(selected.length > 0) {
                         text: 'Resources <br /> (Mil. Tons)',
                         align: 'center',
                         dataIndex: 'RESOURCES',
+                        renderer: Ext.util.Format.numberRenderer('0.,00/i'),
                         editor: {
                         	xtype: 'numberfield',
                         	allowBlank: false,
@@ -1664,6 +1691,7 @@ if(selected.length > 0) {
                         text: 'Reserves <br /> (Mil. Tons)',
                         align: 'center',
                         dataIndex: 'RESERVES',
+                        renderer: Ext.util.Format.numberRenderer('0.,00/i'),
                         editor: {
                         	xtype: 'numberfield',
                         	allowBlank: false,
@@ -1674,6 +1702,7 @@ if(selected.length > 0) {
                         text: 'Area (Ha)',
                         align: 'center',
                         dataIndex: 'AREA',
+                        renderer: Ext.util.Format.numberRenderer('0.,00/i'),
                         editor: {
                         	xtype: 'numberfield',
                         	allowBlank: false,

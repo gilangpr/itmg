@@ -145,7 +145,7 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-	//ACTION READ FOR COAL SALES DISTRIBUTION BY COUNTRY
+	/* ACTION READ FOR COAL SALES DISTRIBUTION BY COUNTRY */
 	public function read2Action()
 	{
 		$modelCoalsales = new Application_Model_Coalsales();

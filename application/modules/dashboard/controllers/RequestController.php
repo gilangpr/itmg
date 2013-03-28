@@ -377,6 +377,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 		$c = count($fields);
 		$fields[$c]['name'] = 'TITLE';
 		$fields[$c]['type'] = 'string';
+		
 		return Zend_Json::encode($fields);
 	}
 	
