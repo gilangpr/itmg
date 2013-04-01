@@ -198,19 +198,21 @@ class Groups_RequestController extends MyIndo_Controller_Action
 			$groups = Zend_Json::decode($this->_posts['groups']);
 			
 			$privModel = new MyIndo_Ext_Privileges();
+			$subMenuModel = new MyIndo_Ext_SubMenus();
+			$subMenuActionModel = new MyIndo_Ext_SubMenuActions();
 			
 			/* Menus */
 			$modelMenus = new MyIndo_Ext_Menus();
 			$listMenus = $modelMenus->getList();
 			$menusAccess = array('data'=>array());
 			foreach($listMenus as $_k=>$_d) {
-				//$menusAccess['data'][$_k] = array('ID' => $_d['MENU_ID'], 'STATUS' => false);
 				$menusAccess['data'][$_k] = array(
 						'xtype' => 'button',
 						'text' => $modelMenus->getValueByKey('MENU_ID', $_d['MENU_ID'], 'NAME'),
 						'menu_id' => $_d['MENU_ID'],
 						'id' => 'main-menu-' . $_d['MENU_ID'],
-						'hidden' => $this->_aclEnabled
+						'hidden' => $this->_aclEnabled,
+						'editor' => ($this->_aclEnabled) ? false : true
 						);
 			}
 			$menus = array();
@@ -223,13 +225,20 @@ class Groups_RequestController extends MyIndo_Controller_Action
 					->where('TYPE = ?', 'menus')
 					->order('ID ASC');
 					$x = $q->query()->fetchAll();
+					
 					foreach($x as $_k=>$_d) {
 						foreach($menusAccess['data'] as $__k=>$__d) {
 							if($__d['menu_id'] == $_d['ID']) {
 								$menusAccess['data'][$__k]['hidden'] = false;
 							}
+							$sub_menu_id = $subMenuModel->getPkByKey('MENU_ID', $__d['menu_id']);
+							$sub_menu_action_id = $subMenuActionModel->getIdEdit($sub_menu_id);
+							if($sub_menu_action_id > 0 && !$menusAccess['data'][$__k]['editor']) {
+								$menusAccess['data'][$__k]['editor'] = $privModel->hasAccessEditor($d, $sub_menu_action_id);
+							}
 						}
 					}
+					
 					$this->_data['data']['items'] = $menusAccess;
 				}
 			}

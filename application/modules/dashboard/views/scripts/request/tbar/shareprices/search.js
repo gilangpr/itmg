@@ -39,7 +39,7 @@ Ext.onReady(function() {
 		layout: 'border',
 		id: 'search-shareprices-main',
 		width: 395,
-		height: 250,
+		height: 174,
 		modal: true,
 		closable: true,
 		resizable: false,
