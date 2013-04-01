@@ -93,7 +93,8 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		$select->from(array('SHAREHOLDING_AMOUNTS'),array());//declare $_name => nama tabel
 		$select->columns('AMOUNT');
 		return $select->query()->fetchAll();
-
+	}
+	
 	public function getSum()
 	{
 		try {

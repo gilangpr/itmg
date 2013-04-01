@@ -12,6 +12,13 @@ class MyIndo_Tools_Ldap
 		);
 		$ldap = new Zend_Ldap();
 		$ldap->setOptions($options);
+		
+		$config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/ldap.ini',
+				'production');
+		$options2 = $config->toArray();
+		
+		$adapter = new Zend_Auth_Adapter_Ldap($ldap, $username, $password);
+		$adapter->authenticate($adapter);
 		try {
 			return $ldap->bind($username,$password);
 		}catch(Zend_Ldap_Exception $e) {

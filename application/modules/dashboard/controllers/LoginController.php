@@ -2,10 +2,12 @@
 
 class Dashboard_LoginController extends Zend_Controller_Action
 {
+	protected $_isLdap;
 	public function init()
 	{
 		$layout = $this->_helper->layout();
 		$layout->setLayout('login');
+		$this->_isLdap = false;
 	}
 	
 	protected function _getAuthAdapter() {
@@ -22,27 +24,42 @@ class Dashboard_LoginController extends Zend_Controller_Action
 	protected function _loginProcess($data)
 	{
 		try {
-			$adapter = $this->_getAuthAdapter();
-			$adapter->setIdentity($data['USERNAME']);
-			$adapter->setCredential(MyIndo_Tools_Return::makePassword($data['PASSWORD']));
-
-			$select = $adapter->getDbSelect();
-			$select->where('ACTIVE = 1');
-			
-			$auth = Zend_Auth::getInstance();
-			
-			$result = $auth->authenticate($adapter);
-			 
-			if($result->isValid()) {
-				return array(
-						'message' => 'Welcome back, ' . $data['USERNAME'] . '.',
-						'status' => true
-				);
+			if(!$this->_isLdap) {
+				$adapter = $this->_getAuthAdapter();
+				$adapter->setIdentity($data['USERNAME']);
+				$adapter->setCredential(MyIndo_Tools_Return::makePassword($data['PASSWORD']));
+	
+				$select = $adapter->getDbSelect();
+				$select->where('ACTIVE = 1');
+				
+				$auth = Zend_Auth::getInstance();
+				
+				$result = $auth->authenticate($adapter);
+				 
+				if($result->isValid()) {
+					return array(
+							'message' => 'Welcome back, ' . $data['USERNAME'] . '.',
+							'status' => true
+					);
+				} else {
+					return array(
+							'message' => 'Invalid Username or Password',
+							'status' => false
+					);
+				}
 			} else {
-				return array(
-						'message' => 'Invalid Username or Password',
-						'status' => false
-				);
+				if(MyIndo_Tools_Ldap::ldapConnect($data['USERNAME'], $data['PASSWORD'])) {
+					
+					return array(
+							'message' => 'Welcome back, ' . $data['USERNAME'] . '.',
+							'status' => true
+					);
+				} else {
+					return array(
+							'message' => 'Invalid Username or Password',
+							'status' => false
+					);
+				}
 			}
 		}catch(Exception $e) {
 			return array(
