@@ -39,7 +39,7 @@ Ext.onReady(function() {
 		layout: 'border',
 		id: 'search-shareprices-main',
 		width: 395,
-		height: 250,
+		height: 174,
 		modal: true,
 		closable: true,
 		resizable: false,
@@ -218,7 +218,7 @@ Ext.onReady(function() {
                                 "flex": 1,
                                 "dataType": "float",
                                 "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
+                                "renderer": Ext.util.Format.numberRenderer('0.,/i')
                             },{
                                 "text": "PTBA",
                                 "dataIndex": "PTBA",

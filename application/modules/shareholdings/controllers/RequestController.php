@@ -204,7 +204,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$list[$c]['INVESTOR_NAME'] = 'TOTAL';
 		$list[$c]['AMOUNT'] = $jml;
 		$list[$c]['PERCENTAGE'] = 100;
-		$max_id++;
+		$max_id++; 
 		//$sum += $d['AMOUNT'];
 		/* Add total */
 		
@@ -214,7 +214,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		//$list[$c]['AMOUNT'] = $sum['AMOUNT'];
 		
 		/* End of : Add Total */
-		
 		 $data = array(
 				'data' => array(
 						'items' => $list,
