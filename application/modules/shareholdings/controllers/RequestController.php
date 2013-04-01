@@ -168,11 +168,26 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		//tampil dari 2 join tabel shareholdings and shareholding amounts
 		$modelSA = new Application_Model_ShareholdingAmounts();
 		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
-
+        $lastId = $this->_model->getLastId();
+        /* start sum amount */
+        $data = $modelSA->getTotal();
+        $jml = 0;
+        
+        foreach ($data as $k => $v) {
+        	foreach ($v as $key => $value) {
+        		$jml += $value;
+        	}
+        }
+        /* end sum amount */
 		foreach($list as $k=>$d) {
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 		}
 		$sum = 0;
+<<<<<<< HEAD
+		
+=======
+		$max_id = 0;
+>>>>>>> e9779122a9f4e0f750b46d74cf2cfc9904b1d82d
 		foreach($list as $k=>$d) {
 			$sum += $d['AMOUNT'];
 
@@ -180,40 +195,43 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		
 		foreach($list as $k=>$d) {
 			if($sum > 0) {
-				$list[$k]['PERCENTAGE'] = number_format(($d['AMOUNT'] / $sum) * 100,2);
+               $list[$k]['PERCENTAGE'] = number_format(($d['AMOUNT'] / $sum) * 100,2);
+
+			}
+			if($max_id >= (int)$d['SHAREHOLDING_ID']) {
+				$max_id = (int)$d['SHAREHOLDING_ID'];
 			}
 		}
-		
+<<<<<<< HEAD
+				
+		$c = count($list);
+		$list[$c]['SHAREHOLDING_ID'] = $lastId+1;
+		$list[$c]['INVESTOR_NAME'] = 'TOTAL';
+		$list[$c]['AMOUNT'] = $jml;
+		$list[$c]['PERCENTAGE'] = 100;
+=======
+		$max_id++;
 		//$sum += $d['AMOUNT'];
 		/* Add total */
-		$sum = array(
-				'AMOUNT'=> 0
-		);
-		foreach($list as $k=>$v) {
-			$sum['AMOUNT'] += $v['AMOUNT'];
-		}
-			
-		$c = count($list);
-		$list[$c]['TOTAL'] = 'TOTAL';
-		$list[$c]['AMOUNT'] = $sum['AMOUNT'];
-
-		/* End of : Add Total */
 		
-// 		$data = array(
-// 				'data' => array(
-// 						'items' => $list,
-// 						'total' => $sum,
-// 						'totalCount' => $this->_model->count()
-// 				)
-// 		);
+		$c = count($list);
+		//$list[$c]['SHAREHOLDING_ID'] = $max_id;
+		//$list[$c]['AMOUNT'] = $modelSA->getSum();
+		//$list[$c]['AMOUNT'] = $sum['AMOUNT'];
+		
+		/* End of : Add Total */
+>>>>>>> e9779122a9f4e0f750b46d74cf2cfc9904b1d82d
+		
 		 $data = array(
 				'data' => array(
 						'items' => $list,
-						'TOTAL' => count($list),
+<<<<<<< HEAD
+						'Total' => count($list),
+=======
+>>>>>>> e9779122a9f4e0f750b46d74cf2cfc9904b1d82d
 						'totalCount' => $this->_model->count(),
-				)
-		);
-		 
+				));
+						 
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -315,12 +333,12 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
+
 		// membaca file excel yang diupload
-		$upload = new Zend_File_Transfer_Adapter_Http();
-	
+		$upload = new Zend_File_Transfer_Adapter_Http();	
 		$upload->setDestination(APPLICATION_PATH . '/../public/uploads');
 		$upload->addValidator('Extension',false,'xls,xlsx');
-		
+        
 		if ($upload->isValid()) {
 	
 			$upload->receive();
@@ -338,10 +356,10 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$new_name = microtime() . $filExt ;
 			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 			/* End of : Rename file */
-		} 
+		}
+		
 		try
 		{
-	
 			$inputFileName = $upload->getDestination() . '/' . $new_name;
 			$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
 			$objReader = PHPExcel_IOFactory::createReader($inputFileType);
@@ -375,6 +393,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 					};
 
 			 if(!is_null($val[0])){
+			 	
 					if(!$this->_model->isExistByKey('INVESTOR_NAME', strtoupper($val[0]))) {
 						$id = $this->_model->insert(array(
 								'INVESTOR_NAME' => $val[0],
@@ -428,14 +447,13 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				}
  			}
 		}
-		 
 		catch (Exception $e) {
 			 
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
-		} 
-	    
+		}
+		
 		if(file_exists($upload->getDestination() . '/' . $new_name)) {
 			unlink($upload->getDestination() . '/' . $new_name);
 		}

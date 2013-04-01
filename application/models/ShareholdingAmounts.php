@@ -86,4 +86,23 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		->where('SHAREHOLDING_AMOUNT_ID = ?', $sid);
 		return $select->query()->fetch();
 	}
+	
+	public function getTotal()
+	{
+		$select = $this->select();
+		$select->from(array('SHAREHOLDING_AMOUNTS'),array());//declare $_name => nama tabel
+		$select->columns('AMOUNT');
+		return $select->query()->fetchAll();
+
+	public function getSum()
+	{
+		try {
+			$q = $this->select()
+			->from($this->_name, array('sum(AMOUNT) as TOTAL'));
+			$x = $q->query()->fetch();
+			return $x['TOTAL'];
+		} catch(Exception $e) {
+			return 0;
+		}
+	}
 }
