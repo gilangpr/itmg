@@ -33,7 +33,7 @@ function loadContent(content) {
 	var tabp = Ext.getCmp('main-content');
 	
 	if(id == 'Investors') {
-		showInvestorSearch();
+		showInvestorSearch2();
 	} else if(id == 'Shareholdings') {
 		showShareholdingSearch();
 	} else if(id == 'Peers') {
@@ -68,192 +68,6 @@ function convert(obj) {
 	});
 	console.log(obj);
 	return obj;
-}
-
-function getInvestorStore() {
-	Ext.Ajax.request({
-		url: sd.baseUrl + '/investors/executive/get-list-investors',
-		success: function(data) {
-			var json = Ext.decode(data.responseText);
-			investorStore = json.data.items;
-			getLocationStore();
-		}
-	});
-}
-
-function getLocationStore() {
-	Ext.Ajax.request({
-		url: sd.baseUrl + '/investors/executive/get-list-locations',
-		success: function(data) {
-			var json = Ext.decode(data.responseText);
-			locationStore = json.data.items;
-			getInvestorTypeStore();
-		}
-	});
-}
-
-function getInvestorTypeStore() {
-	Ext.Ajax.request({
-		url: sd.baseUrl + '/investors/executive/get-list-investortype',
-		success: function(data) {
-			var json = Ext.decode(data.responseText);
-			investorTypeStore = json.data.items;
-			getContactStore();
-		}
-	});
-}
-
-function getContactStore() {
-	Ext.Ajax.request({
-		url: sd.baseUrl + '/investors/executive/get-list-contacts',
-		success: function(data) {
-			var json = Ext.decode(data.responseText);
-			contactStore = json.data.items;
-			loadInvestorSearch();
-			closeLoadingWindow();
-		}
-	});
-}
-
-
-function loadInvestorSearch() {
-	Ext.create('Ext.Window', {
-		title: 'Search Investor',
-		xtype: 'panel',
-		layout: 'border',
-		id: 'search-investor-main',
-		modal: true,
-		closable: true,
-		width: 740,
-		height: 154,
-		resizable: false,
-		draggable: false,
-		buttons: [{
-			text: 'Search',
-			listeners: {
-				click: function() {
-					var form1 = Ext.getCmp('search-investor-form-left').getForm();
-					var form2 = Ext.getCmp('search-investor-form-right').getForm();
-					
-					if(form1.isValid() && form2.isValid()) {
-						var obj3 = {};
-						var val1 = form1.getValues();
-						var val2 = form2.getValues();
-						for(var attrname in val1) {
-							obj3[attrname] = val1[attrname];
-						}
-						for(var attrname in val2) {
-							obj3[attrname] = val2[attrname];
-						}
-						//showLoadingWindow();
-						Ext.Ajax.request({
-							url: sd.baseUrl + '/investors/request/search',
-							params: obj3,
-							success: function(data) {
-								
-								//closeLoadingWindow();
-							},
-							failure: function(data) {
-								
-								//closeLoadingWindow();
-							}
-						});
-					}
-				}
-			}
-		},{
-			text: 'Cancel',
-			listeners: {
-				click: function() {
-					var p = Ext.getCmp('search-investor-main');
-					if(confirm('Cancel Search ?')) {
-						p.close();
-					}
-				}
-			}
-		}],
-		items: [{
-			region: 'west',
-			border: false,
-			width: '50%',
-			items: [{
-				xtype: 'form',
-				layout: 'form',
-				border: false,
-				id: 'search-investor-form-left',
-				bodyPadding: '5 5 5 5',
-				defaultType: 'combobox',
-				items: [{
-					fieldLabel: 'Company Name',
-					emptyText: 'All',
-					name: 'COMPANY_NAME',
-					store: investorStore,
-					value: 'All',
-					typeAhead: true,
-					allowBlank: false
-				},{
-					fieldLabel: 'Contact Person',
-					emptyText: 'All',
-					typeAhead: true,
-					store: contactStore,
-					value: 'All',
-					name: 'CONTACT PERSON',
-					allowBlank: false
-				},{
-					fieldLabel: 'Equity Assets',
-					emptyText: 'All',
-					name: 'EQUITY_ASSETS',
-					store: [['Small','Small'],['Medium','Medium'],['Large','Large']],
-					value: 'Small',
-					editable: false,
-					allowBlank: false
-				}]
-			}]
-		},{
-			region: 'east',
-			border: false,
-			width: '50%',
-			items: [{
-				xtype: 'form',
-				layout: 'form',
-				border: false,
-				id: 'search-investor-form-right',
-				bodyPadding: '5 5 5 5',
-				defaultType: 'combobox',
-				items: [{
-					fieldLabel: 'Investor Type',
-					emptyText: 'All',
-					name: 'INVESTOR_TYPE',
-					store: investorTypeStore,
-					value: 'All',
-					typeAhead: true,
-					allowBlank: false
-				},{
-					fieldLabel: 'Location',
-					emptyText: 'All',
-					name: 'LOCATION',
-					store: locationStore,
-					value: 'All',
-					typeAhead: true,
-					allowBlank: false
-				},{
-					fieldLabel: 'Format',
-					emptyText: 'List',
-					name: 'FORMAT',
-					store: [['List','List'],['Detail','Detail']],
-					value: 'List',
-					editable: false,
-					allowBlank: false
-				}]
-			}]
-		}]
-	}).show();
-}
-
-function showInvestorSearch() {
-	
-	showLoadingWindow();
-	getInvestorStore();
 }
 
 function showShareholdingSearch() {
@@ -316,9 +130,7 @@ function showShareholdingSearch() {
 			text: 'Cancel',
 			listeners: {
 				click: function() {
-					if(confirm('Cancel Search ?')) {
-						this.up().up().close();
-					}
+					this.up().up().close();
 				}
 			}
 		}]
@@ -333,7 +145,11 @@ function showPeerSearch() {
 		url: sd.baseUrl + '/peers/executive/get-list-peers',
 		success: function(data) {
 			var json = Ext.decode(data.responseText);
-			peerStore = json.data.items;
+			var peerStore = Ext.create("Ext.data.Store", {
+				model: "Peer",
+				storeId: "Peers",
+				proxy:{"type":"ajax","api":{"read":"\/peers\/executive\/get-list-peers","create":"\/peers\/request\/create","update":"\/peers\/request\/update","destroy":"\/peers\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"PEER_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+				sorter: {"property":"PEER_ID","direction":"ASC"}});
 			
 			/* --- */
 			Ext.create('Ext.Window', {
@@ -352,8 +168,32 @@ function showPeerSearch() {
 						xtype: 'combobox',
 						fieldLabel: 'Company',
 						store: peerStore,
-						name: 'COMPANY'
+						name: 'COMPANY',
+						displayField: 'PEER_NAME',
+						emptyText: 'All'
 					}]
+				}],
+				buttons: [{
+					text: 'Search',
+					listeners: {
+						click: function() {
+							var f = Ext.getCmp('peers-search-form').getForm();
+							console.log(f);
+							peerStore.load({
+								params: {
+									COMPANY_NAME: f._fields.items[0].value,
+									TYPE: 'SEARCH'
+								}
+							});
+						}
+					}
+				},{
+					text: 'Cancel',
+					listeners: {
+						click: function() {
+							this.up().up().close();
+						}
+					}
 				}]
 			}).show();
 			/* 000 */

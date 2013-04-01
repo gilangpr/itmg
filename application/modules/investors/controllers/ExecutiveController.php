@@ -102,8 +102,8 @@ class Investors_ExecutiveController extends Zend_Controller_Action
     	$list = $this->_contacts->getList();
     	
     	foreach($list as $k=>$d) {
-    		$this->_arr[$k+1][0] = $d['FNAME'] . '_' . $d['LNAME'];
-    		$this->_arr[$k+1][1] = $d['FNAME'] . ' ' . $d['LNAME'];
+    		$this->_arr[$k+1][0] = $d['NAME'];
+    		$this->_arr[$k+1][1] = $d['NAME'];
     	}
     	
     	$data['data']['items'] = $this->_arr;
