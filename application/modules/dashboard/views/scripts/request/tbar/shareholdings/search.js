@@ -41,8 +41,7 @@ Ext.create('Ext.Window', {
 	modal: true,
 	closable: true,
 	width: 400,
-	height: 163,
-	bodyPadding: 10,
+	height: 153,
 	resizable: false,
 	draggable: false,
 	items: [{
