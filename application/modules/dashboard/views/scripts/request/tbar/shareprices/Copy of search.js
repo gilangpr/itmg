@@ -187,7 +187,6 @@ Ext.onReady(function() {
 		                     }
 	                   
 	                    });
-						
 						c.up().add({
 	                        title: 'Search Result : ' + form.getForm()._fields.items[3].value, 
 	                        closable: true,
