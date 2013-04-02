@@ -198,7 +198,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				} else {
 
 					$snId = new Application_Model_SharepricesName();
-					$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $name);
+					$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $temp[0]);
 					
 					//insert shareprices
 					$this->_model->insert(array(
