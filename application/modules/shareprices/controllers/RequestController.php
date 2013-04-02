@@ -399,7 +399,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$searchModel = new Application_Model_Shareprices();
 		$getSdate = explode('T', $this->_posts['START_DATE']);
 		$getEdate = explode('T', $this->_posts['END_DATE']);		
-		$n = explode(', ', strtoupper($this->_posts['SHAREPRICES_NAME']));
+		$n = explode(',', strtoupper($this->_posts['SHAREPRICES_NAME']));
 		$ShareName = strtoupper($this->_posts['SHAREPRICES_NAME']);		
 		
 		

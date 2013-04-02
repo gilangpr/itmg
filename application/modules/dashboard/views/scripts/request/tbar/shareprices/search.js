@@ -39,7 +39,7 @@ Ext.onReady(function() {
 		layout: 'border',
 		id: 'search-shareprices-main',
 		width: 395,
-		height: 174,
+		height: 250,
 		modal: true,
 		closable: true,
 		resizable: false,
@@ -93,13 +93,32 @@ Ext.onReady(function() {
 				multiSelect: true,
 				emptyText: 'Select shareprices name'
 			},{
-				xtype: 'textfield',
-				fieldLabel: 'Shareprices Name',
+				id: 'sharepricesnamefield',
+				xtype: 'checkboxgroup',
+			    fieldLabel: 'Shareprices Name',
 				labelWidth: 140,
-				store: storeSP,
-				displayField: 'SHAREPRICES_NAME',
+				width: 370,
+				columns: 4,
+				items: [
+				        {boxLabel: 'JKSE', name: 'JKSE', inputValue: 'JKSE'},
+				        {boxLabel: 'ITMG', name: 'ITMG', inputValue: 'ITMG'},
+				        {boxLabel: 'PTBA', name: 'PTBA', inputValue: 'PTBA'},
+				        {boxLabel: 'BUMI', name: 'BUMI', inputValue: 'BUMI'},
+				        {boxLabel: 'ADRO', name: 'ADRO', inputValue: 'ADRO'},
+				        {boxLabel: 'BYAN', name: 'BYAN', inputValue: 'BYAN'},
+				        {boxLabel: 'BRAU', name: 'BRAU', inputValue: 'BRAU'},
+				        {boxLabel: 'HRUM', name: 'HRUM', inputValue: 'HRUM'},
+				        {boxLabel: 'BORN', name: 'BORN', inputValue: 'BORN'},
+				        {boxLabel: 'KKGI', name: 'KKGI', inputValue: 'KKGI'},
+				        {boxLabel: 'ARII', name: 'ARII', inputValue: 'ARII'},
+				        {boxLabel: 'GEMS', name: 'GEMS', inputValue: 'GEMS'},
+				        {boxLabel: 'TOBA', name: 'TOBA', inputValue: 'TOBA'},
+				        {boxLabel: 'BSSR', name: 'BSSR', inputValue: 'BSSR'}
+
+				        ]
 			}]
 		}],
+		
 		buttons: [{
 			text: 'Search',
 			listeners: {
@@ -179,9 +198,10 @@ Ext.onReady(function() {
 	                            "direction": "ASC"
 	                        }
 						});
+
 						_xxstore.load({
 							 params: {
-		                            'SHAREPRICES_NAME': form.getForm()._fields.items[3].value,
+		                            'SHAREPRICES_NAME': Ext.getCmp('sharepricesnamefield').getValue(),
 				                    'START_DATE': form.getForm()._fields.items[0].value,
 		                            'END_DATE': form.getForm()._fields.items[1].value
 		                     }
@@ -189,7 +209,7 @@ Ext.onReady(function() {
 	                    });
 						
 						c.up().add({
-	                        title: 'Search Result : ' + form.getForm()._fields.items[3].value, 
+	                        title: 'Search Result : ' + Ext.getCmp('sharepricesnamefield').getValue(), 
 	                        closable: true,
 	                        id: _id,
 	                        store: _xxstore,

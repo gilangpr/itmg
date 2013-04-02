@@ -39,7 +39,7 @@ Ext.onReady(function() {
 		layout: 'border',
 		id: 'search-shareprices-main',
 		width: 395,
-		height: 174,
+		height: 150,
 		modal: true,
 		closable: true,
 		resizable: false,
@@ -92,12 +92,6 @@ Ext.onReady(function() {
 				minChars: 2,
 				multiSelect: true,
 				emptyText: 'Select shareprices name'
-			},{
-				xtype: 'textfield',
-				fieldLabel: 'Shareprices Name',
-				labelWidth: 140,
-				store: storeSP,
-				displayField: 'SHAREPRICES_NAME',
 			}]
 		}],
 		buttons: [{
@@ -181,14 +175,15 @@ Ext.onReady(function() {
 						});
 						_xxstore.load({
 							 params: {
-		                            'SHAREPRICES_NAME': form.getForm()._fields.items[3].value,
+		                            'SHAREPRICES_NAME': '' +form.getForm()._fields.items[2].value,
 				                    'START_DATE': form.getForm()._fields.items[0].value,
 		                            'END_DATE': form.getForm()._fields.items[1].value
 		                     }
 	                   
 	                    });
+						
 						c.up().add({
-	                        title: 'Search Result : ' + form.getForm()._fields.items[3].value, 
+	                        title: 'Search Result : ' + form.getForm()._fields.items[2].value, 
 	                        closable: true,
 	                        id: _id,
 	                        store: _xxstore,
