@@ -1,3 +1,28 @@
+Date.prototype.customFormat = function(formatString){
+    var YYYY,YY,MMMM,MMM,MM,M,DDDD,DDD,DD,D,hhh,hh,h,mm,m,ss,s,ampm,AMPM,dMod,th;
+    var dateObject = this;
+    YY = ((YYYY=dateObject.getFullYear())+"").slice(-2);
+    MM = (M=dateObject.getMonth()+1)<10?('0'+M):M;
+    MMM = (MMMM=["January","February","March","April","May","June","July","August","September","October","November","December"][M-1]).substring(0,3);
+    DD = (D=dateObject.getDate())<10?('0'+D):D;
+    DDD = (DDDD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dateObject.getDay()]).substring(0,3);
+    th=(D>=10&&D<=20)?'th':((dMod=D%10)==1)?'st':(dMod==2)?'nd':(dMod==3)?'rd':'th';
+    formatString = formatString.replace("#YYYY#",YYYY).replace("#YY#",YY).replace("#MMMM#",MMMM).replace("#MMM#",MMM).replace("#MM#",MM).replace("#M#",M).replace("#DDDD#",DDDD).replace("#DDD#",DDD).replace("#DD#",DD).replace("#D#",D).replace("#th#",th);
+
+    h=(hhh=dateObject.getHours());
+    if (h==0) h=24;
+    if (h>12) h-=12;
+    hh = h<10?('0'+h):h;
+    AMPM=(ampm=hhh<12?'am':'pm').toUpperCase();
+    mm=(m=dateObject.getMinutes())<10?('0'+m):m;
+    ss=(s=dateObject.getSeconds())<10?('0'+s):s;
+    return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
+}
+
+var SP_START_DATE = '1900-01-01';
+var SP_END_DATE = '2013-12-12';
+var SP_NAMES = new Array();
+
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSP = loadStore('SharepricesNames');
 Ext.require('Ext.chart.*');
@@ -39,7 +64,7 @@ Ext.onReady(function() {
 		layout: 'border',
 		id: 'search-shareprices-main',
 		width: 395,
-		height: 250,
+		height: 150,
 		modal: true,
 		closable: true,
 		resizable: false,
@@ -92,267 +117,69 @@ Ext.onReady(function() {
 				minChars: 2,
 				multiSelect: true,
 				emptyText: 'Select shareprices name'
-			},{
-				id: 'sharepricesnamefield',
-				xtype: 'checkboxgroup',
-			    fieldLabel: 'Shareprices Name',
-				labelWidth: 140,
-				width: 370,
-				columns: 4,
-				items: [
-				        {boxLabel: 'JKSE', name: 'JKSE', inputValue: 'JKSE'},
-				        {boxLabel: 'ITMG', name: 'ITMG', inputValue: 'ITMG'},
-				        {boxLabel: 'PTBA', name: 'PTBA', inputValue: 'PTBA'},
-				        {boxLabel: 'BUMI', name: 'BUMI', inputValue: 'BUMI'},
-				        {boxLabel: 'ADRO', name: 'ADRO', inputValue: 'ADRO'},
-				        {boxLabel: 'BYAN', name: 'BYAN', inputValue: 'BYAN'},
-				        {boxLabel: 'BRAU', name: 'BRAU', inputValue: 'BRAU'},
-				        {boxLabel: 'HRUM', name: 'HRUM', inputValue: 'HRUM'},
-				        {boxLabel: 'BORN', name: 'BORN', inputValue: 'BORN'},
-				        {boxLabel: 'KKGI', name: 'KKGI', inputValue: 'KKGI'},
-				        {boxLabel: 'ARII', name: 'ARII', inputValue: 'ARII'},
-				        {boxLabel: 'GEMS', name: 'GEMS', inputValue: 'GEMS'},
-				        {boxLabel: 'TOBA', name: 'TOBA', inputValue: 'TOBA'},
-				        {boxLabel: 'BSSR', name: 'BSSR', inputValue: 'BSSR'}
-
-				        ]
 			}]
 		}],
-		
 		buttons: [{
 			text: 'Search',
 			listeners: {
 				click: function() {
-					var form = Ext.getCmp('search-shareprices-form');
+					var f = Ext.getCmp('search-shareprices-form');
 					var _id = 'shareprices-search-result-' + Math.random();
-					if(form.getForm().isValid()) {
-						Ext.define('Shareprice__', {
-	                        extend: 'Ext.data.Model',
-	                        fields: [{
-	                        	name: "DATE",
-                                type: "string"
-                            },{
-                                name: "JKSE",
-                                type: "float"
-                            },{
-                                name: "ITMG",
-                                type: "float"
-                            },{
-                                name: "PTBA",
-                                type: "float"
-                            },{
-                                name: "BUMI",
-                                type: "float"
-                            },{
-                                name: "ADRO",
-                                type: "float"
-                            },{
-                                name: "BYAN",
-                                type: "float"
-                            },{
-                                name: "BRAU",
-                                type: "float"
-                            },{
-                                name: "HRUM",
-                                type: "float"
-                            },{
-                                name: "BORN",
-                                type: "float"
-                            },{
-                                name: "KKGI",
-                                type: "float"
-                            },{
-                                name: "ARII",
-                                type: "float"
-                            },{
-                                name: "GEMS",
-                                type: "float"
-                            },{
-                                name: "TOBA",
-                                type: "float"
-                            },{
-                                name: "BSSR",
-                                type: "float"
-                            }]
-	                    });
-						var _xxstore = Ext.create("Ext.data.Store", {
-							model: "Shareprice__",
-	                        storeId: "Shareprices__",
-	                        proxy: {
-	                            "type": "ajax",
-	                            "api": {
-	                                "read": sd.baseUrl + '/shareprices/request/search'
-	                            },
-	                            "actionMethods": {
-	                                "read": "POST"
-	                            },
-	                            "reader": {
-                                    "idProperty": "DATE",
-                                    "type": "json",
-                                    "root": "data.items",
-                                    "totalProperty": "data.totalCount"
-                                }
-	                        },
-	                        sorter: {
-	                            "property": "SHAREPRICES_ID",
-	                            "direction": "ASC"
-	                        }
+					if(f.getForm().isValid()) {
+						Ext.each(f.getForm()._fields.items, function(d, i) {
+							if(i == 0) {
+								var l = new Date(Date.parse(d.getValue()));
+								SP_START_DATE = l.customFormat('#YYYY#-#MM#-#DD#');
+							} else if(i == 1) {
+								var l = new Date(Date.parse(d.getValue()));
+								SP_END_DATE = l.customFormat('#YYYY#-#MM#-#DD#');
+							} else {
+								SP_NAMES = d.getValue();
+							}
 						});
-
-						_xxstore.load({
-							 params: {
-		                            'SHAREPRICES_NAME': Ext.getCmp('sharepricesnamefield').getValue(),
-				                    'START_DATE': form.getForm()._fields.items[0].value,
-		                            'END_DATE': form.getForm()._fields.items[1].value
-		                     }
-	                   
-	                    });
-						
-						c.up().add({
-	                        title: 'Search Result : ' + Ext.getCmp('sharepricesnamefield').getValue(), 
-	                        closable: true,
-	                        id: _id,
-	                        store: _xxstore,
-	                        xtype: 'gridpanel',
-	                        "columns": [{
-                                "text": "Date",
-                                "dataIndex": "DATE",
-                                "align": "center",
-                                "width": 125,
-                                "flex": 0,
-                                "dataType": "string",
-                                "visible": false
-                            },{
-                                "text": "JKSE",
-                                "dataIndex": "JKSE",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,00/i')
-                            },{
-                                "text": "ITMG",
-                                "dataIndex": "ITMG",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                "renderer": Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "PTBA",
-                                "dataIndex": "PTBA",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "BUMI",
-                                "dataIndex": "BUMI",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "ADRO",
-                                "dataIndex": "ADRO",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "BYAN",
-                                "dataIndex": "BYAN",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "BRAU",
-                                "dataIndex": "BRAU",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "HRUM",
-                                "dataIndex": "HRUM",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "BORN",
-                                "dataIndex": "BORN",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "KKGI",
-                                "dataIndex": "KKGI",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "ARII",
-                                "dataIndex": "ARII",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "GEMS",
-                                "dataIndex": "GEMS",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "TOBA",
-                                "dataIndex": "TOBA",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            },{
-                                "text": "BSSR",
-                                "dataIndex": "BSSR",
-                                "align": "center",
-                                "width": 75,
-                                "flex": 1,
-                                "dataType": "float",
-                                "visible": false,
-                                renderer: Ext.util.Format.numberRenderer('0.,/i')
-                            }]
-	                    });
-	                    c.up().setActiveTab(_id);
-	                    form.up().close();
-
+						var _storeShareprices = Ext.create("Ext.data.Store", {
+							model: "Shareprice",
+							storeId: "Shareprices",
+							proxy:{"type":"ajax","api":{"read":"\/shareprices\/request\/search","create":"\/shareprices\/request\/create","update":"\/shareprices\/request\/update","destroy":"\/shareprices\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
+								extraParams: {
+									SP_START_DATE: SP_START_DATE,
+									SP_END_DATE: SP_END_DATE,
+									SP_NAMES: Ext.encode(SP_NAMES)
+								}},
+							sorter: {"property":"SHAREPRICES_ID","direction":"ASC"}});
+						showLoadingWindow();
+						_storeShareprices.load({
+							callback: function(d,i,e,f) {
+								var json = Ext.decode(i.response.responseText);
+								var cols = [{
+									text: 'DATE',
+									dataIndex: 'DATE',
+									flex: 1
+								}];
+								var series = new Array();
+								for(var i=0;i<json.data.names.length;i++) {
+									cols[i+1] = {
+											flex: 1,
+											dataIndex: json.data.names[i],
+											text: json.data.names[i],
+											renderer: Ext.util.Format.numberRenderer('0.,00/i')
+									};
+								}
+								c.up().add({
+									title: 'Shareprices Search Result',
+									closable: true,
+			                        id: _id,
+			                        autoScroll: true,
+									xtype: 'gridpanel',
+									border: false,
+									store: _storeShareprices,
+									columns: cols
+								});
+								c.up().setActiveTab(_id);
+								closeLoadingWindow();
+							}
+						});						
+						f.up().close();
 					}
 				}
 			}
