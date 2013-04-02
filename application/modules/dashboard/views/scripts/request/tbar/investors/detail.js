@@ -211,18 +211,7 @@ if(selected.length > 0) {
 			closable: true,
 			autoScroll: true,
 			waitMsgTarget: true,
-			items: [{
-				region: 'north',
-				maxWidth: Ext.getBody().getViewSize().width - maxWidth,
-				border: false,
-				items: [{
-					title: 'Detail Investor',
-					border: false,
-					style: {
-						float: 'left',
-						width: '50%'
-					},
-					tbar:[{
+			tbar:[{
 						xtype: 'button',
 						text: 'Print Page',
 						iconCls: 'icon-print',
@@ -234,6 +223,18 @@ if(selected.length > 0) {
 							}
 						}
 					}],
+			items: [{
+				region: 'north',
+				maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+				border: false,
+				items: [{
+					title: 'Detail Investor',
+					border: false,
+					style: {
+						float: 'left',
+						width: '50%'
+					},
+					
 					items: [{
 						xtype: 'form',
 						layout: 'form',
