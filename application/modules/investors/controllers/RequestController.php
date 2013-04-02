@@ -136,7 +136,6 @@ class Investors_RequestController extends Zend_Controller_Action
 			/* Model */
 			
 			/* End of : Models */
-			//die($q);
 			$x = $q->query()->fetchAll();
 			
 			$data['data']['items'] = $x;
