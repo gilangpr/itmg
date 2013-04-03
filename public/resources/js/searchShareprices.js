@@ -23,12 +23,8 @@ var SP_START_DATE = '1900-01-01';
 var SP_END_DATE = '2013-12-12';
 var SP_NAMES = new Array();
 
-var c = Ext.getCmp('<?php echo $this->container ?>');
-var storeSP = loadStore('SharepricesNames');
-Ext.require('Ext.chart.*');
-Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox',  'Ext.form.field.Number']);
-Ext.onReady(function() {
-	
+function showSharepricesSearch() {
+	var storeSP = loadStore('SharepricesNames');
 	// Add the additional 'advanced' VTypes
 	Ext.apply(Ext.form.field.VTypes, {
 		daterange: function(val, field) {
@@ -57,7 +53,6 @@ Ext.onReady(function() {
 		},
 		daterangeText: 'Start date must be less than end date',
 	});
-	
 	Ext.create('Ext.Window', {
 		title: 'Search Shareprices',
 		xtype: 'panel',
@@ -86,7 +81,7 @@ Ext.onReady(function() {
 		        itemId: 'startdt',
 		        vtype: 'daterange',
 		        endDateField: 'enddt',
-		        emptyText: 'End Date',
+		        emptyText: 'Start Date',
 				labelWidth: 140,
 				width: 320,
 				allowBlank: false
@@ -99,7 +94,7 @@ Ext.onReady(function() {
 	            itemId: 'enddt',
 	            vtype: 'daterange',
 	            startDateField: 'startdt',
-	            emptyText: 'Start Date',
+	            emptyText: 'End Date',
 				labelWidth: 140,
 				width: 320,
 				allowBlank: false
@@ -107,13 +102,13 @@ Ext.onReady(function() {
 				xtype: 'combobox',
 				id: 'combo',
 				fieldLabel: 'Shareprices Name',
-				name: 'SHAREPRICES_NAME',
+				name: 'SHAREPRICES_NAME[]',
 				labelWidth: 140,
 				width: 370,
 				store: storeSP,
 				displayField: 'SHAREPRICES_NAME',
 				typeAhead: true,
-				allowBlank: true,
+				allowBlank: false,
 				minChars: 2,
 				multiSelect: true,
 				emptyText: 'Select shareprices name'
@@ -123,10 +118,9 @@ Ext.onReady(function() {
 			text: 'Search',
 			listeners: {
 				click: function() {
-					var f = Ext.getCmp('search-shareprices-form');
-					var _id = 'shareprices-search-result-' + Math.random();
-					if(f.getForm().isValid()) {
-						Ext.each(f.getForm()._fields.items, function(d, i) {
+					var f = Ext.getCmp('search-shareprices-form').getForm();
+					if(f.isValid()) {
+						Ext.each(f._fields.items, function(d, i) {
 							if(i == 0) {
 								var l = new Date(Date.parse(d.getValue()));
 								SP_START_DATE = l.customFormat('#YYYY#-#MM#-#DD#');
@@ -140,7 +134,7 @@ Ext.onReady(function() {
 						var _storeShareprices = Ext.create("Ext.data.Store", {
 							model: "Shareprice",
 							storeId: "Shareprices",
-							proxy:{"type":"ajax","api":{"read":"\/shareprices\/request\/search","create":"\/shareprices\/request\/create","update":"\/shareprices\/request\/update","destroy":"\/shareprices\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
+							proxy:{"type":"ajax","api":{"read":"\/shareprices\/executive\/read","create":"\/shareprices\/request\/create","update":"\/shareprices\/request\/update","destroy":"\/shareprices\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
 								extraParams: {
 									SP_START_DATE: SP_START_DATE,
 									SP_END_DATE: SP_END_DATE,
@@ -151,35 +145,103 @@ Ext.onReady(function() {
 						_storeShareprices.load({
 							callback: function(d,i,e,f) {
 								var json = Ext.decode(i.response.responseText);
-								var cols = [{
-									text: 'DATE',
-									dataIndex: 'DATE',
-									flex: 1
-								}];
-								var series = new Array();
-								for(var i=0;i<json.data.names.length;i++) {
-									cols[i+1] = {
-											flex: 1,
-											dataIndex: json.data.names[i],
-											text: json.data.names[i],
-											renderer: Ext.util.Format.numberRenderer('0.,00/i')
-									};
+
+								var c = Ext.getCmp('main-content');
+								var xyz = Math.random();
+								var id = 'shareprices-search-result-' + xyz;
+								if(!c.items.get(id)) {
+									var cols = [{
+										text: 'DATE',
+										dataIndex: 'DATE',
+										flex: 1
+									}];
+									var series = new Array();
+									for(var i=0;i<json.data.names.length;i++) {
+										cols[i+1] = {
+												flex: 1,
+												dataIndex: json.data.names[i],
+												text: json.data.names[i],
+												renderer: Ext.util.Format.numberRenderer('0.,/i')
+										};
+										series[i] = {
+												type: 'line',
+												highlight: {
+													size: 7,
+													radius: 7
+												},
+												axis: 'left',
+												xField: 'DATE',
+												yField: json.data.names[i],
+								                markerConfig: {
+								                    type: 'circle',
+								                    size: 4,
+								                    radius: 4,
+								                    'stroke-width': 0
+								                }
+										};
+									}
+									c.add({
+										title: 'Shareprices Search Result',
+										closable: true,
+										id: id,
+										autoScroll: true,
+										xtype: 'panel',
+										layout: 'border',
+										items: [{
+											region: 'north',
+											minHeight: 170,
+											maxHeight: 170,
+											autoScroll: true,
+											xtype: 'gridpanel',
+											border: false,
+											store: _storeShareprices,
+											columns: cols
+										},{
+											region: 'north',
+											title: 'Chart',
+											minHeight: 270,
+											maxHeight: 270,
+											width: 500,
+											border: false,
+											xtype: 'chart',
+											style: 'background: #fff',
+											animate: true,
+											store: _storeShareprices,
+											shadow: true,
+											theme: 'Category1',
+											legend: {
+												position: 'right'
+											},
+											axes: [{
+												type: 'Numeric',
+												minimum: 0,
+												position: 'left',
+												fields: json.data.names,
+												title: 'Shareprices',
+												minorTickSteps: 1,
+												grid: {
+													odd: {
+														opacity: 1,
+														fill: '#ddd',
+														stroke: '#bbb',
+														'stroke-width': 0.5
+													}
+												}
+											},{
+												type: 'Category',
+												position: 'bottom',
+												fields: ['DATE'],
+												title: 'Date'
+											}],
+											series: series
+										}]
+									});
 								}
-								c.up().add({
-									title: 'Shareprices Search Result',
-									closable: true,
-			                        id: _id,
-			                        autoScroll: true,
-									xtype: 'gridpanel',
-									border: false,
-									store: _storeShareprices,
-									columns: cols
-								});
-								c.up().setActiveTab(_id);
+								c.setActiveTab(id);
 								closeLoadingWindow();
 							}
-						});						
-						f.up().close();
+						});
+						Ext.getCmp('search-shareprices-main').close();
 					}
 				}
 			}
@@ -192,5 +254,4 @@ Ext.onReady(function() {
 			}
 		}]
 	}).show();
-	
-});
+}
