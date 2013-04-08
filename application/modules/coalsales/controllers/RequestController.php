@@ -189,4 +189,60 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
+	public function read3Action()
+	{
+		$modelCS = new Application_Model_Coalsales();
+		$modelCST = new Application_Model_CoalSalesTitle();
+		$data = array(
+				'data' => array(
+						'items' => array(),
+						'totalCount' => 0
+						)
+				);
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			if(isset($this->_post['id'])) {
+				if($modelCS->isExistByKey('PEER_ID', $this->_post['id'])) {
+					
+					$peer_id = $this->_post['id'];
+					$q = $this->_model->select()
+					->setIntegrityCheck(false)
+					->from('COAL_SALES_DISTRIBUTION', array('*'))
+					->where('PEER_ID = ?', $peer_id)
+					->join('COAL_SALES_DISTRIBUTION_TITLE','COAL_SALES_DISTRIBUTION.TITLE = COAL_SALES_DISTRIBUTION_TITLE.TITLE', array('*'))
+					->order('COAL_SALES_DISTRIBUTION_TITLE.CREATED_DATE DESC');
+					
+					if($q->query()->rowCount() > 0) {
+						$list = $q->query()->fetch();
+						$lastTitle = $list['TITLE'];
+						
+						$list = $modelCS->select()
+						//->from('COAL_SALES_DISTRIBUTION', array('COUNTRY','VOLUME','sum(VOLUME) as TOTAL'))
+						->where('PEER_ID = ?', $peer_id)
+						->where('TITLE = ?', $lastTitle);
+						//->group(array('COUNTRY'));
+						
+						$list = $list->query()->fetchAll();
+						$total = 0;
+						foreach($list as $k=>$d) {
+							$total += $d['VOLUME'];
+						}
+						foreach($list as $k=>$d) {
+							$list[$k]['PERCENTAGE'] = number_format(($d['VOLUME'] / $total) * 100,2) . '%';
+						}
+						
+						$data = array(
+								'data' => array(
+										'items' => $list,
+										'totalCount' => count($list)
+								)
+						);
+					}
+					
+				}
+			}
+		}
+		
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
 }

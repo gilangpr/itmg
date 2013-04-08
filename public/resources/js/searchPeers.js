@@ -384,6 +384,9 @@ function loadPeerDetail(data, detail) {
 		},{
 			name: 'PERCENTAGE',
 			type: 'string'
+		},{
+			name: 'COUNTRY',
+			type: 'string'
 		}];
 	});
 	Ext.define('CoalSalesDistribution', {
@@ -392,6 +395,8 @@ function loadPeerDetail(data, detail) {
 	});
 	var storeCSD = Ext.create("Ext.data.Store",{storeId:"CoalSalesDistributions",model:"CoalSalesDistribution",proxy:{type:"ajax",api:{read:"/coalsales/request/read",create:"/coalsales/request/create",update:"/coalsales/request/update",destroy:"/coalsales/request/destroy"},actionMethods:{create:"POST",destroy:"POST",read:"POST",update:"POST"},reader:{idProperty:"COAL_SALES_DISTRIBUTION_ID",type:"json",root:"data.items",totalProperty:"data.totalCount"},writer:{type:"json",root:"data",writeAllFields:true}},sorter:{property:"COAL_SALES_DISTRIBUTION_ID",direction:"ASC"},autoSync:true});
 	storeCSD.load({params:{id:data.PEER_ID}})
+	var storeCSD2 = Ext.create("Ext.data.Store",{storeId:"CoalSalesDistributions",model:"CoalSalesDistribution",proxy:{type:"ajax",api:{read:"/coalsales/request/read3",create:"/coalsales/request/create",update:"/coalsales/request/update",destroy:"/coalsales/request/destroy"},actionMethods:{create:"POST",destroy:"POST",read:"POST",update:"POST"},reader:{idProperty:"COAL_SALES_DISTRIBUTION_ID",type:"json",root:"data.items",totalProperty:"data.totalCount"},writer:{type:"json",root:"data",writeAllFields:true}},sorter:{property:"COAL_SALES_DISTRIBUTION_ID",direction:"ASC"},autoSync:true});
+	storeCSD2.load({params:{id:data.PEER_ID}});
 	/* ================================ *
 	 * End of : Coal Sales Distribution *
 	 * ================================ */
@@ -565,7 +570,23 @@ function loadPeerDetail(data, detail) {
 				},{
 					title: 'Coal Sales Distribution by Country',
 					collapsible: true,
-					border: false
+					border: false,
+					items: [{
+						xtype: 'gridpanel',
+						border: false,
+						minHeight: 44,
+						store: storeCSD2,
+						columns: [{
+							text: 'Country',
+							flex: 3,
+							dataIndex: 'COUNTRY',
+						},{
+							text: 'Percentage',
+							flex: 1,
+							dataIndex: 'PERCENTAGE',
+							align: 'center'
+						}]
+					}]
 				}]
 			}]
 		});
