@@ -170,14 +170,14 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
         $lastId = $this->_model->getLastId();
         /* start sum amount */
-        $data = $modelSA->getTotal();
-        $jml = 0;
+//         $data = $modelSA->getTotal();
+//         $jml = 0;
         
-        foreach ($data as $k => $v) {
-        	foreach ($v as $key => $value) {
-        		$jml += $value;
-        	}
-        }
+//         foreach ($data as $k => $v) {
+//         	foreach ($v as $key => $value) {
+//         		$jml += $value;
+//         	}
+//         }
         /* end sum amount */
 		foreach($list as $k=>$d) {
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
@@ -201,8 +201,8 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				
 		$c = count($list);
 		$list[$c]['SHAREHOLDING_ID'] = $lastId+1;
-		$list[$c]['INVESTOR_NAME'] = 'TOTAL';
-		$list[$c]['AMOUNT'] = $jml;
+		$list[$c]['ACCOUNT_HOLDER'] = 'TOTAL';
+		$list[$c]['AMOUNT'] = $sum;
 		$list[$c]['PERCENTAGE'] = 100;
 		$max_id++; 
 		//$sum += $d['AMOUNT'];
@@ -464,10 +464,12 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  				$ID = $this->_model->getPkByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME']);
  				
  		         $list = $modelSearch->select()
+ 		         ->setIntegrityCheck(false)
  		         ->from('SHAREHOLDING_AMOUNTS', array('*'))		         
- 		         ->where('SHAREHOLDING_ID = ?', $ID)
+ 		         ->where('SHAREHOLDINGS.SHAREHOLDING_ID = ?', $ID)
  		         ->where('DATE >= ?',  $start_date[0])
- 		         ->where('DATE <= ?',  $end_date[0]);
+ 		         ->where('DATE <= ?',  $end_date[0])
+ 		         ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
  		         
  			} else {
  				$list = $modelSearch->select()
