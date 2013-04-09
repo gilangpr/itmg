@@ -58,6 +58,7 @@ class Coalsales_RequestController extends Zend_Controller_Action
 			'data' => array()
 		);
 		$modelCoalsales = new Application_Model_Coalsales();
+		$modelCoalSalesTitle = new Application_Model_CoalSalesTitle();
 		try {
 			$peer_id = $this->_getParam('id',0);
 			if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
@@ -69,6 +70,12 @@ class Coalsales_RequestController extends Zend_Controller_Action
 					'VOLUME' => $this->_post['VOLUME'],
 					'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
+				if(!$modelCoalSalesTitle->isExistByKey('TITLE', $this->_posts['TITLE'])) {
+					$modelCoalSalesTitle->insert(array(
+							'TITLE' => $this->_posts['TITLE'],
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+							));
+				}
 			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'PEER_ID NOT FOUND';
@@ -86,59 +93,60 @@ class Coalsales_RequestController extends Zend_Controller_Action
 	{
 		
 		$modelCoalsales = new Application_Model_Coalsales();
+		$modelCoalSalesTitle = new Application_Model_CoalSalesTitle();
 		$peer_id = (isset($this->_post['id'])) ? $this->_post['id'] : 0;
 		if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
-			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
-			$list = $list->query()->fetchAll();
+			$q = $this->_model->select()
+			->setIntegrityCheck(false)
+			->from('COAL_SALES_DISTRIBUTION', array('*'))
+			->where('PEER_ID = ?', $peer_id)
+			->join('COAL_SALES_DISTRIBUTION_TITLE','COAL_SALES_DISTRIBUTION.TITLE = COAL_SALES_DISTRIBUTION_TITLE.TITLE', array('*'))
+			->order('COAL_SALES_DISTRIBUTION_TITLE.CREATED_DATE DESC');
 			
-// 			/* Add total */
-// 			$sum2 = array(
-// 					'VOLUME'=> 0,
-// 					'PERCENTAGE' => 0
-// 			);
-// 			foreach($list as $k=>$d) {
-// 				$sum2['VOLUME'] += $d['VOLUME'];
-// 				$sum2['PERCENTAGE'] += $d['PERCENTAGE'];
-// 			}
+			if($q->query()->rowCount() > 0) {
+				$list = $q->query()->fetchAll();
+				$lastTitle = $list[0]['TITLE'];
 				
-// 			$c = count($list);
-// 			$list[$c]['TYPE'] = 'TOTAL';
-// 			$list[$c]['VOLUME'] = $sum2['VOLUME'];
-// 			$list[$c]['PERCENTAGE'] = $sum2['PERCENTAGE'];
-// 			/* End of : Add Total */
-			
-			$data = array(
-				'data' => array(
-					'items' => $list,
-					'totalCount' => $this->_model->count()
-					)
-				);
-
-			$domestic = 0;
-			$export = 0;
-			foreach($list as $k=>$d) {
-				if(strtolower($d['TYPE']) == 'domestic') {
-					$domestic += $d['VOLUME'];
-				} else {
-					$export += $d['VOLUME'];
+				$list = $this->_model->select()
+				->where('PEER_ID = ?', $peer_id)
+				->where('TITLE = ?', $lastTitle);
+				
+				$list = $list->query()->fetchAll();
+				
+				$data = array(
+					'data' => array(
+						'items' => $list,
+						'totalCount' => $this->_model->count()
+						)
+					);
+	
+				$domestic = 0;
+				$export = 0;
+				foreach($list as $k=>$d) {
+					if(strtolower($d['TYPE']) == 'domestic') {
+						$domestic += $d['VOLUME'];
+					} else {
+						$export += $d['VOLUME'];
+					}
 				}
-			}
-			$sum = $domestic + $export;
-			$data = array(
+				$sum = $domestic + $export;
+				$data = array(
 					'data' => array(
 					'items' => array(
-							array(
-									'NAME' => 'Domestic',
-									'VOLUME' => $domestic,
-									'PERCENTAGE' => number_format(($domestic / $sum) * 100, 2) . '%'
-									),
-							array(
-									'NAME' => 'Export',
-									'VOLUME' => $export,
-									'PERCENTAGE' => number_format(($export / $sum) * 100, 2) . '%'
-									)
+						array(
+							'NAME' => 'Domestic',
+							'VOLUME' => $domestic,
+							'PERCENTAGE' => number_format(($domestic / $sum) * 100, 2) . '%'
+							),
+						array(
+							'NAME' => 'Export',
+							'VOLUME' => $export,
+							'PERCENTAGE' => number_format(($export / $sum) * 100, 2) . '%'
 							)
-					));
+						)
+				));
+			
+			}
 
 		}
 
@@ -178,6 +186,62 @@ class Coalsales_RequestController extends Zend_Controller_Action
 // 					)	
 // 				);
 		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
+	public function read3Action()
+	{
+		$modelCS = new Application_Model_Coalsales();
+		$modelCST = new Application_Model_CoalSalesTitle();
+		$data = array(
+				'data' => array(
+						'items' => array(),
+						'totalCount' => 0
+						)
+				);
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			if(isset($this->_post['id'])) {
+				if($modelCS->isExistByKey('PEER_ID', $this->_post['id'])) {
+					
+					$peer_id = $this->_post['id'];
+					$q = $this->_model->select()
+					->setIntegrityCheck(false)
+					->from('COAL_SALES_DISTRIBUTION', array('*'))
+					->where('PEER_ID = ?', $peer_id)
+					->join('COAL_SALES_DISTRIBUTION_TITLE','COAL_SALES_DISTRIBUTION.TITLE = COAL_SALES_DISTRIBUTION_TITLE.TITLE', array('*'))
+					->order('COAL_SALES_DISTRIBUTION_TITLE.CREATED_DATE DESC');
+					
+					if($q->query()->rowCount() > 0) {
+						$list = $q->query()->fetch();
+						$lastTitle = $list['TITLE'];
+						
+						$list = $modelCS->select()
+						//->from('COAL_SALES_DISTRIBUTION', array('COUNTRY','VOLUME','sum(VOLUME) as TOTAL'))
+						->where('PEER_ID = ?', $peer_id)
+						->where('TITLE = ?', $lastTitle);
+						//->group(array('COUNTRY'));
+						
+						$list = $list->query()->fetchAll();
+						$total = 0;
+						foreach($list as $k=>$d) {
+							$total += $d['VOLUME'];
+						}
+						foreach($list as $k=>$d) {
+							$list[$k]['PERCENTAGE'] = number_format(($d['VOLUME'] / $total) * 100,2) . '%';
+						}
+						
+						$data = array(
+								'data' => array(
+										'items' => $list,
+										'totalCount' => count($list)
+								)
+						);
+					}
+					
+				}
+			}
+		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	

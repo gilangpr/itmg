@@ -1961,7 +1961,7 @@ if(selected.length > 0) {
                     	}
                     }]
                 },{
-                    title: 'Coal Sales Distribution 9M11',
+                    title: 'Coal Sales Distribution',
                     collapsible: true,
                     border: false,
                     xtype: 'gridpanel',

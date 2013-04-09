@@ -137,7 +137,7 @@ function loadContent(param1, editor) {
 														},
 														success: function(data) {
 															var json = Ext.decode(data.responseText);
-															eval(json.data.items);
+															eval(Base64.decode(json.data.items));
 															closeLoadingWindow();
 														},
 														failure: function(a,b,c) {

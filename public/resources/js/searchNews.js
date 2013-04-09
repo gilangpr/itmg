@@ -127,11 +127,12 @@ function showNewsSearch() {
 												text: 'Category',
 												width: 200,
 												align: 'center',
-												dataIndex: 'NEWS_REPORT_CATEGORY'
+												dataIndex: 'NEWS_CATEGORY'
 											},{
 												text: 'File Size (Byte)',
 												width: 150,
 												dataIndex: 'FILE_SIZE',
+												align: 'center',
 												renderer: Ext.util.Format.numberRenderer('0.,/i')
 											},{
 												text: 'Downloaded',

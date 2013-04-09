@@ -69,6 +69,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$i = 0;
 		$temp = '';
 		$temp2 = '';
+		
 		foreach($list as $k=>$d) {
 			if($temp == '') {
 				$temp = $d['DATE'];
@@ -82,10 +83,15 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				$t[$i]['DATE'] = $d['DATE'];
 			}
 			$nameSp = $this->_model->getName($d['DATE']);
-			foreach ($nameSp as $_k=>$_d)
-			{
-				$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
-			}
+// 			foreach ($nameSp as $_k=>$_d)
+// 			{
+// 				$number = $_d['VALUE'];
+// 				setlocale(LC_MONETARY, 'en_US');
+// 				$var = money_format('%i', $number);
+// 				$num = explode('USD ', $var);
+// 				$t[$i][$_d['SHAREPRICES_NAME']] = $num[1];
+// 				//$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+// 			}
 		}
 		foreach($t as $k=>$d) {
 			foreach($spRes as $_k=>$_d) {
@@ -328,6 +334,46 @@ class Shareprices_RequestController extends Zend_Controller_Action
  									if ($count['count'] == 0) {
 
  										$snId = new Application_Model_SharepricesName();
+ 										if($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
+ 											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
+ 										} else {
+ 											$getSNid = $snId->insert(array(
+ 													'SHAREPRICES_NAME' => $valNames,
+ 													'CREATED_DATE' => date('Y-m-d H:i:s')
+ 													));
+ 										}
+ 										$this->_model2 = new MyIndo_Ext_ContentColumns();
+ 										$this->_model3 = new MyIndo_Ext_ModelFields();
+ 										
+ 										if ($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
+ 											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
+ 										} else {
+ 											$this->_model3->insert(array(
+ 													'MODEL_ID' => 6,
+ 													'NAME' => $valNames,
+ 													'TYPE' => 'float',
+ 													'CREATED_DATE' => date('Y-m-d H:i:s')
+ 											));
+ 											$id = $this->_model3->getPkByKey('NAME', $valNames);
+ 											$sName = $snId->insert(array(
+ 												'SHAREPRICES_NAME_ID'=> $id,
+ 												'SHAREPRICES_NAME'=> $valNames,
+												'CREATED_DATE' => date('Y-m-d H:i:s')
+ 											));
+ 											$this->_model2->insert(array(
+ 													'CONTENT_ID' => 6,
+ 													'TEXT' => $valNames,
+ 													'DATAINDEX' => $valNames,
+ 													'DATATYPE' => 'float',
+ 													'ALIGN' => 'center',
+ 													'WIDTH' => '100',
+ 													'EDITABLE' => 1,
+ 													'FLEX' => 1,
+ 													'INDEX' => 0,
+ 													'CREATED_DATE' => date('Y-m-d H:i:s')
+ 											));
+ 											
+ 										}
  										$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
  										
  										// insert shareprices

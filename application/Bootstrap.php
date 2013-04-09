@@ -13,6 +13,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
     	$al = Zend_Loader_Autoloader::getInstance();
     	$al->registerNamespace('MyIndo_');
+    	$al->registerNamespace('JShrink');
     }
     
 	protected function _initRequest ()

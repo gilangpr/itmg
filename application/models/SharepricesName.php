@@ -8,19 +8,10 @@ class Application_Model_SharepricesName extends MyIndo_Ext_Abstract
 		
 	public function getAll($limit, $offset)
 	{		
-		// $select = $this->select();
-		// $select->setIntegrityCheck(false);
-		// $select->from('SHAREPRICES_NAME', array('*'));
-		// $select->join('CONTENT_COLUMNS', 'CONTENT_COLUMNS.DATAINDEX = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'));
-		// $select->join('MODEL_FIELDS', 'MODEL_FIELDS.NAME = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'));
-		// $select->limit($limit, $offset);
-		// return $select->query()->fetch();
-
 		$q = $this->select()
-		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
-		->join('CONTENT_COLUMNS', 'CONTENT_COLUMNS.DATAINDEX = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'))
-		->join('MODEL_FIELDS', 'MODEL_FIELDS.NAME = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'))
+		//->join('CONTENT_COLUMNS', 'CONTENT_COLUMNS.DATAINDEX = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'))
+		//->join('MODEL_FIELDS', 'MODEL_FIELDS.NAME = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'))
 		->limit($limit, $offset);
 		
 		return $q->query()->fetchAll();
