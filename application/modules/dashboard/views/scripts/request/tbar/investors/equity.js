@@ -1,177 +1,188 @@
-var _storeInvestors = Ext.create("Ext.data.Store", {
-	model: "Investor",
-	storeId: "Investors_combobox",
-	proxy:{"type":"ajax","api":{"read":"\/investors\/request\/read","create":"\/investors\/request\/create","update":"\/investors\/request\/update","destroy":"\/investors\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"INVESTOR_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
-	sorter: {"property":"INVESTOR_ID","direction":"ASC"}});
 
-Ext.create('Ext.Window', {
-	title: 'Search Investor',
-	xtype: 'panel',
-	layout: 'border',
-	id: 'search-investor-main',
-	modal: true,
-	closable: true,
-	width: 600,
-	height: 154,
-	resizable: false,
-	draggable: false,
-	buttons: [{
-		text: 'Search',
-		listeners: {
-			click: function() {
-				var form1 = Ext.getCmp('search-investor-form-left').getForm();
-				var form2 = Ext.getCmp('search-investor-form-right').getForm();
-				
-				if(form1.isValid() && form2.isValid()) {
-					var obj3 = {};
-					var val1 = form1.getValues();
-					var val2 = form2.getValues();
-					var COMPANY_NAME = '';
-					var CONTACT_PERSON = '';
-					var EQUITY_ASSETS = '';
-					var INVESTOR_TYPE = '';
-					var LOCATION = '';
-					var FORMAT = '';
-					/* Form 1 */
-					
-					if(typeof(val1.COMPANY_NAME) !== 'undefined') {
-						COMPANY_NAME = val1.COMPANY_NAME;
-					}
-					if(typeof(val1.CONTACT_PERSON) !== 'undefined') {
-						CONTACT_PERSON = val1.CONTACT_PERSON;
-					}
-					EQUITY_ASSETS = val1.EQUITY_ASSETS;
-					
-					/* End of : Form 1*/
-					
-					/* Form 2 */
-					
-					if(typeof(val2.INVESTOR_TYPE) !== 'undefined') {
-						INVESTOR_TYPE = val2.INVESTOR_TYPE;
-					}
-					
-					if(typeof(val2.LOCATION) !== 'undefined') {
-						LOCATION = val2.LOCATION;
-					}
-					
-					FORMAT = val2.FORMAT;
-					
-					/* End of : Form 2 */
-					
-					var _store = Ext.data.StoreManager.lookup('Investors');
-					
-					_store.load({
-						params: {
-							TYPE: 'SEARCH',
-							COMPANY_NAME: COMPANY_NAME,
-							EQUITY_ASSETS: EQUITY_ASSETS,
-							INVESTOR_TYPE: INVESTOR_TYPE,
-							LOCATION: LOCATION,
-							CONTACT_PERSON: val1.CONTACT_PERSON
-						},
-						callback: function() {
-							if(_store.data.items.length > 0) {
-								if(FORMAT == 'Detail') {
-									<?php echo $this->render('/request/tbar/investors/search-detailed.js') ?>
+var storeEQ = Ext.create("Ext.data.Store", {
+	model: "Equityasset",
+	storeId: "Equityassets",
+	proxy:{"type":"ajax","api":{"read":"\/equityasset\/request\/read","create":"\/equityasset\/request\/create","update":"\/equityasset\/request\/update","destroy":"\/equityasset\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"EQUITY_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+	sorter: {"property":"EQUITY_ID","direction":"ASC"}});
+storeEQ.autoSync = true;
+storeEQ.load();
+
+ //var storeEQ = loadStore('Equityassets');
+ var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+			clicksToMoveEditor: 1,
+	        autoCancel: false
+	    });
+	Ext.create('Ext.Window', {
+					title: 'Equity Asset',
+					resizabe: false,
+					modal: true,
+					draggable: false,
+					resizable: false,
+					items: [{
+						xtype: 'gridpanel',
+						minWidth: 500,
+						minHeight: 200,
+						border: false,
+						store:storeEQ,
+						plugins: [cellEditing],
+						id: 'investors-equity-asset-data-grid',
+						tbar: [{
+							xtype: 'button',
+							text: 'Add New Equity Type',
+							iconCls: 'icon-go',
+							listeners: {
+								click: function() {
+									Ext.create('Ext.Window', {
+										title: 'Add New Equity Type',
+										modal: true,
+										draggable: true,
+										resizable: false,
+										items: [{
+											xtype: 'form',
+											id: 'investors-equity-asset-add-new-form',
+											minWidth: 300,
+											border: false,
+											bodyPadding: '5 5 5 5',
+											items: [{
+												xtype: 'textfield',
+												fieldLabel: 'Equity Type',
+												name: 'EQUITY_TYPE',
+												allowBlank: false
+											},{
+												xtype: 'numberfield',
+												fieldLabel: 'Min.Value',
+												name: 'MIN_VALUE',
+												allowBlank: false,
+												value: 0,
+												minValue: 0
+											},{
+												xtype: 'numberfield',
+												fieldLabel: 'Max.Value',
+												name: 'MAX_VALUE',
+												allowBlank: false,
+												value: 0,
+												minValue: 0
+											}]
+										}],
+										buttons: [{
+											text: 'Save',
+											listeners: {
+												click: function() {
+													var form = Ext.getCmp('investors-equity-asset-add-new-form');
+													if(form.getForm().isValid()) {
+														form.getForm().submit({
+															url: sd.baseUrl + '/equityasset/request/create',
+															waitMsg: 'Saving data, please wait..',
+															success: function(d, e) {
+																var json = Ext.decode(e.response.responseText);
+																Ext.Msg.alert('Message', 'Saving data success.');
+																storeEQ.load();
+																form.getForm().reset();
+															},
+															failure: function(d, e) {
+																var json = Ext.decode(e.response.responseText);
+																Ext.Msg.alert('Error', json.error_message);
+															}
+														})
+													}
+												}
+											}
+										},{
+											text: 'Cancel',
+											listeners: {
+												click: function() {
+													this.up().up().close();
+												}
+											}
+										}]
+									}).show();
 								}
-							} else {
-								Ext.Msg.alert('Message', 'Sorry, No data found.');
 							}
-						}
-					});
-					// Close search window
-					Ext.getCmp('search-investor-main').close();
-				}
-			}
-		}
-	},{
-		text: 'Cancel',
-		listeners: {
-			click: function() {
-				Ext.getCmp('search-investor-main').close();
-			}
-		}
-	}],
-	items: [{
-		region: 'west',
-		border: false,
-		width: '50%',
-		items: [{
-			xtype: 'form',
-			layout: 'form',
-			border: false,
-			id: 'search-investor-form-left',
-			bodyPadding: '5 5 5 5',
-			defaultType: 'combobox',
-			items: [{
-				fieldLabel: 'Company Name',
-				emptyText: 'All',
-				store: _storeInvestors,
-                displayField: 'COMPANY_NAME',
-                typeAhead: true,
-				name: 'COMPANY_NAME',
-				allowBlank: true
-			},{
-				fieldLabel: 'Contact Person',
-				emptyText: 'All',
-				store: Ext.data.StoreManager.lookup('Contacts'),
-                displayField: 'NAME',
-                typeAhead: true,
-				name: 'CONTACT_PERSON',
-				allowBlank: true
-			},{
-				fieldLabel: 'Equity Assets',
-				emptyText: 'All',
-				store: new Ext.data.ArrayStore({fields:['EA'],data:[['All'],['Small'],['Medium'],['Large']]}),
-                displayField: 'EA',
-                value: 'All',
-                typeAhead: true,
-                editable: false,
-				name: 'EQUITY_ASSETS',
-				allowBlank: false
-			}]
-		}]
-	},{
-		region: 'east',
-		border: false,
-		width: '50%',
-		items: [{
-			xtype: 'form',
-			layout: 'form',
-			border: false,
-			id: 'search-investor-form-right',
-			bodyPadding: '5 5 5 5',
-			defaultType: 'combobox',
-			items: [{
-				fieldLabel: 'Investor Type',
-				emptyText: 'All',
-				store: Ext.data.StoreManager.lookup('InvestorTypes'),
-                displayField: 'INVESTOR_TYPE',
-                valueField:'INVESTOR_TYPE',
-                typeAhead: true,
-				name: 'INVESTOR_TYPE',
-				allowBlank: true,
-				editable: false
-			},{
-				fieldLabel: 'Location',
-				emptyText: 'All',
-				store: Ext.data.StoreManager.lookup('Locations'),
-                displayField: 'LOCATION',
-                valueField:'LOCATION',
-                typeAhead: true,
-				name: 'LOCATION',
-				allowBlank: true,
-				editable: false
-			},{
-				fieldLabel: 'Format',
-				emptyText: 'List',
-				name: 'FORMAT',
-				store: new Ext.data.ArrayStore({fields:['FR'],data:[['List'],['Detail']]}),
-				allowBlank: false,
-				value: 'List',
-				displayField: 'FR',
-				editable: false
-			}]
-		}]
-	}]
-}).show();
+						},{
+							xtype: 'button',
+							text: 'Delete',
+							iconCls: 'icon-stop',
+							listeners: {
+								click: function() {
+									var __c = Ext.getCmp('investors-equity-asset-data-grid');
+									var __selected = __c.getSelectionModel().getSelection();
+									if(__selected.length > 0) {
+										var __data = __selected[0].data;
+										Ext.create('Ext.Window', {
+											html: 'Are you sure want do delete selected item(s) ?',
+											bodyPadding: '20 5 5 17',
+											title: 'Confirmation',
+											resizable: false,
+											modal: true,
+											closable: false,
+											draggable: false,
+											width: 300,
+											height: 120,
+											buttons: [{
+												text: 'Yes',
+												listeners: {
+													click: function() {
+														showLoadingWindow();
+														this.up().up().close();
+														Ext.Ajax.request({
+															url: sd.baseUrl + '/equityasset/request/destroy',
+															params: {
+																EQUITY_ID: __data.EQUITY_ID
+															},
+															success: function(d) {
+																var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+																closeLoadingWindow();
+																storeEQ.load();
+															},
+															failure: function(d) {
+																var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+																closeLoadingWindow();
+																Ext.Msg.alert('Error', json.error_message);
+															}
+														});
+													}
+												}
+											},{
+												text: 'No',
+												listeners: {
+													click: function() {
+														this.up().up().close();
+													}
+												}
+											}]
+										}).show();
+									} else {
+										Ext.Msg.alert('Message', 'You did not select any data.');
+									}
+								}
+							}
+						}],
+						columns: [{
+							text: 'Equity Type',
+							flex: 1,
+							dataIndex: 'EQUITY_TYPE'
+						},{
+							text: 'Min.Value',
+							width: 120,
+							flex:1,
+							align: 'center',
+							dataIndex: 'MIN_VALUE',
+							editor:{
+								name:'MIN_VALUE',
+								xtype:'numberfield',
+								allowBlank:false,
+								minValue:0
+							}
+						},{
+							text:'Max.Value',
+							flex:1,
+							dataIndex:'MAX_VALUE',
+							editor:{
+								name:'MAX_VALUE',
+								xtype:'numberfield',
+								allowBlank:false,
+								minValue:0
+							}
+						}]
+					}]
+				}).show();
