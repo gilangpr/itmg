@@ -77,7 +77,7 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		die;
+
 	}
 	
 	public function getNamaById($sid) 
@@ -87,9 +87,25 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		return $select->query()->fetch();
 	}
 	
+	public function getTotal()
+	{
+
+		$select = $this->select();
+		//$select->distinct('SHAREHOLDING_ID');
+		//$select->from('SHAREHOLDING_AMOUNTS',array('AMOUNT' => new Zend_Db_Expr('SUM(AMOUNT)')));//declare $_name => nama tabel
+		$select->from('SHAREHOLDING_AMOUNTS',array());//declare $_name => nama tabel
+		$select->columns('AMOUNT');	
+		$select->where('SHAREHOLDING_ID');	
+		//$select->group('SHAREHOLDING_ID');
+		$select->order('DATE DESC');
+		//die($select);
+		return $select->query()->fetchAll();
+	}
+	
 	public function getSum()
 	{
 		try {
+
 			$q = $this->select()
 			->from($this->_name, array('sum(AMOUNT) as TOTAL'));
 			$x = $q->query()->fetch();

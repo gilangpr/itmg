@@ -222,7 +222,7 @@ if(selected.length > 0) {
 							   
 							}
 						}
-					}],
+			}],
 			items: [{
 				region: 'north',
 				maxWidth: Ext.getBody().getViewSize().width - maxWidth,
@@ -234,7 +234,6 @@ if(selected.length > 0) {
 						float: 'left',
 						width: '50%'
 					},
-					
 					items: [{
 						xtype: 'form',
 						layout: 'form',

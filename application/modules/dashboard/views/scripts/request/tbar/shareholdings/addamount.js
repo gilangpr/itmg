@@ -1,7 +1,12 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
+var selected = c.getSelectionModel().getSelection();
 var id = 'shareholdings-add-amount-shareholding-form';//?
+if(selected.length > 0) {
+	var id = 'shareholdings-add-amount-shareholding-form' + selected[0].id;
+/* get investor name by id */
 if(!c.up().items.get(id)) {
-	
+	var data = selected[0].data;
+};
 	Ext.define('Shareholding', {
 		extend: 'Ext.data.Model',
 		fields: [{
@@ -9,11 +14,18 @@ if(!c.up().items.get(id)) {
 			type: 'string'
 		}]
 	});
-Ext.create('Ext.Window', {
-	title: 'Add Amount',
+	store.load({
+		params: {
+			id: data.SHAREHOLDING_ID /* single param */
+		}
+	});
+	store.autoSync = true;
+    Ext.create('Ext.Window', {
+	title:'ADD AMOUNT : ' + data.INVESTOR_NAME,
+	id: id,
 	layout: 'anchor',
 	width: 400,
-	height: 165,
+	height: 130,
 	closable: true,
 	resizable: false,
 	draggable: false,
@@ -26,6 +38,7 @@ Ext.create('Ext.Window', {
 				if(form.isValid()) {
 					form.submit({
 						url: sd.baseUrl + '/shareholdings/request/amount',
+						params: selected[0].data,
 						success: function(data) {
 							var json = Ext.decode(data.respnoseText);
 							form.reset();
@@ -45,7 +58,7 @@ Ext.create('Ext.Window', {
 		text: 'Cancel',
 		listeners: {
 			click: function() {
-				if(confirm('Are you sure want to cancel ?')) {
+				{
 					this.up().up().close();
 				}
 			}
@@ -58,17 +71,18 @@ Ext.create('Ext.Window', {
 		id: 'shareholdings-add-new-form',
 		defaultType: 'textfield',
 		bodyPadding: '5 5 5 5',
-		items: [{
-			xtype: 'combobox',
-			fieldLabel: 'Investor Name',
-			pageSize: 10,
-			anchor: '100%',
-			name: 'INVESTOR_NAME',
-			store: Ext.data.StoreManager.lookup('Shareholdings'),
-			displayField: 'INVESTOR_NAME',
-			typeAhead: true,
-			allowBlank: false
-		},{
+		items:[{
+//		items: [{
+//			xtype: 'combobox',
+//			fieldLabel: 'Investor Status',
+//			pageSize: 10,
+//			anchor: '100%',
+//			name: 'INVESTOR_STATUS',
+//			store: Ext.data.StoreManager.lookup('Shareholdings'),
+//			displayField: 'INVESTOR_STATUS',
+//			typeAhead: true,
+//			allowBlank: false
+//		},{
 			fieldLabel: 'Amount',
 			xtype: 'numberfield',
 			name: 'AMOUNT',
@@ -85,4 +99,6 @@ Ext.create('Ext.Window', {
 	    }]
 	}]
 }).show();
+} else {
+	Ext.Msg.alert('Message', 'You did not select any Investor');
 }

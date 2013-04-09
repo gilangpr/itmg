@@ -1,5 +1,6 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var selected = c.getSelectionModel().getSelection();
+Ext.require(['Ext.form.field.Number']);
 if(selected.length > 0) {
 	var id = 'shareholdings-detail-' + selected[0].id;
 	if(!c.up().items.get(id)) {
@@ -21,6 +22,26 @@ if(selected.length > 0) {
 		});
 		store.autoSync = true;
 		// Bottom toolbar
+//		Ext.override(Ext.form.NumberField, {
+//		    forcePrecision : false,
+//
+//		    valueToRaw: function(value) {
+//		        var me = this,
+//		            decimalSeparator = me.decimalSeparator;
+//		        value = me.parseValue(value);
+//		        value = me.fixPrecision(value);
+//		        value = Ext.isNumber(value) ? value : parseFloat(String(value).replace(decimalSeparator, ','));
+//		        if (isNaN(value))
+//		        {
+//		          value = '';
+//		        } else {
+//		          value = me.forcePrecision ? value.toFixed(me.decimalPrecision) : parseFloat(value);
+//		          value = String(value).replace(".", decimalSeparator);
+//		        }
+//		        return value;
+//		    }
+//		});
+		 
 		var comboBbar2 = new Ext.form.ComboBox({
 		  name : 'perpageglistamount',
 		  width: 50,
@@ -71,6 +92,7 @@ if(selected.length > 0) {
 				columns: [{
 					text: 'Amount',
 					dataIndex: 'AMOUNT',
+					renderer: Ext.util.Format.numberRenderer('0.,/i'),
 					flex: 1,
 					editor: {
 						xtype: 'numberfield',
@@ -114,6 +136,8 @@ if(selected.length > 0) {
 											id: data.SHAREHOLDING_ID /* single param */
 										}
 									});
+									var store = Ext.StoreManager.lookup('Shareholdings');
+									store.load(1);
 								},
 								failure: function(data) {
 									var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
@@ -130,8 +154,3 @@ if(selected.length > 0) {
 } else {
 	Ext.Msg.alert('Message', 'You did not select any Investor');
 }
-//y
-var tip = Ext.create('Ext.tip.ToolTip', {
-    target: 'id',
-    html: 'I am a tooltip on myPanel'
-});

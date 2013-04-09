@@ -59,8 +59,16 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		else 
 		{
 			try {
+				$this->_model3->insert(array(
+						'MODEL_ID' => 6,
+						'NAME' => $this->_posts['SHAREPRICES_NAME'],
+						'TYPE' => 'float',
+						'CREATED_DATE' => date('Y-m-d H:i:s')
+				));
+				$id = $this->_model3->getPkByKey('NAME', $this->_posts['SHAREPRICES_NAME']);
 				// Insert Data :
 				$this->_model->insert(array(
+						'SHAREPRICES_NAME_ID'=> $id,
 						'SHAREPRICES_NAME'=> $this->_posts['SHAREPRICES_NAME'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
@@ -76,12 +84,7 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 						'INDEX' => 0,
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
-				$this->_model3->insert(array(
-						'MODEL_ID' => 6,
-						'NAME' => $this->_posts['SHAREPRICES_NAME'],
-						'TYPE' => 'float',
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
+				
 			}catch(Exception $e) {
 				$this->_error_code = $e->getCode();
 				$this->_error_message = $e->getMessage();
@@ -96,6 +99,8 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	{
 		$this->_model2 = new MyIndo_Ext_ContentColumns();
 		$this->_model3 = new MyIndo_Ext_ModelFields();
+		$this->_model4 = new Application_Model_Shareprices();
+		$this->_model5 = new Application_Model_SharepricesLog();
 		$data = array(
 				'data' => array()
 		);
@@ -121,6 +126,15 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			),
 					$this->_model3->getAdapter()->quoteInto('MODEL_FIELD_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 			
+			$this->_model4->update(array(
+					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+			),
+					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+			
+			$this->_model4->update(array(
+					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+			),
+					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 			
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
