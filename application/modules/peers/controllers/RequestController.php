@@ -55,12 +55,18 @@ class Peers_RequestController extends Zend_Controller_Action
 		);
 			
 		try {
-			$this->_model->insert(array(
+			$ID = $this->_model->insert(array(
 					'PEER_NAME' => $this->_posts['COMPANY_NAME'],
 					'BRIEF_HISTORY' => $this->_posts['BRIEF_HISTORY'],
 					'BUSINESS_ACTIVITY' => $this->_posts['BUSINESS_ACTIVITY'],
 					'CREATED_DATE' => date('Y-m-d H:i:s')	
 			));
+			
+			$data = array(
+					'data' => array(
+							'ID' => $ID
+					)
+			);
 			
 		}catch (Exception $e){
 			$this->_error_code = $e->getCode();

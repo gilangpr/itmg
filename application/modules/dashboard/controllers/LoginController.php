@@ -3,11 +3,14 @@
 class Dashboard_LoginController extends Zend_Controller_Action
 {
 	protected $_isLdap;
+	protected $_model;
+	
 	public function init()
 	{
 		$layout = $this->_helper->layout();
 		$layout->setLayout('login');
 		$this->_isLdap = false;
+		$this->_model = new Application_Model_LoginLog();
 	}
 	
 	protected function _getAuthAdapter() {
@@ -22,7 +25,7 @@ class Dashboard_LoginController extends Zend_Controller_Action
 	}
 	
 	protected function _loginProcess($data)
-	{
+	{	
 		try {
 			if(!$this->_isLdap) {
 				$adapter = $this->_getAuthAdapter();
@@ -35,13 +38,31 @@ class Dashboard_LoginController extends Zend_Controller_Action
 				$auth = Zend_Auth::getInstance();
 				
 				$result = $auth->authenticate($adapter);
-				 
+				
+				
 				if($result->isValid()) {
+					
+					$this->_model->insert(array(
+							'USERNAME' => $data['USERNAME'],
+							'IP_ADDRESS' => $this->getRequest()->getServer('REMOTE_ADDR'),
+							'MESSAGE' => 'Login Success',
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+
+					
 					return array(
 							'message' => 'Welcome back, ' . $data['USERNAME'] . '.',
 							'status' => true
 					);
 				} else {
+					
+					$this->_model->insert(array(
+							'USERNAME' => $data['USERNAME'],
+							'IP_ADDRESS' => $this->getRequest()->getServer('REMOTE_ADDR'),
+							'MESSAGE' => 'Invalid Username or Password',
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+					
 					return array(
 							'message' => 'Invalid Username or Password',
 							'status' => false
@@ -49,12 +70,23 @@ class Dashboard_LoginController extends Zend_Controller_Action
 				}
 			} else {
 				if(MyIndo_Tools_Ldap::ldapConnect($data['USERNAME'], $data['PASSWORD'])) {
-					
+					$this->_model->insert(array(
+							'USERNAME' => $data['USERNAME'],
+							'IP_ADDRESS' => $this->getRequest()->getServer('REMOTE_ADDR'),
+							'MESSAGE' => 'Login Success',
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
 					return array(
 							'message' => 'Welcome back, ' . $data['USERNAME'] . '.',
 							'status' => true
 					);
 				} else {
+					$this->_model->insert(array(
+							'USERNAME' => $data['USERNAME'],
+							'IP_ADDRESS' => $this->getRequest()->getServer('REMOTE_ADDR'),
+							'MESSAGE' => 'Invalid Username or Password',
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
 					return array(
 							'message' => 'Invalid Username or Password',
 							'status' => false
@@ -112,6 +144,12 @@ class Dashboard_LoginController extends Zend_Controller_Action
 		if ($objAuth->hasIdentity()) {
 			$objAuth->clearIdentity();
 		}
+		$this->_model->insert(array(
+				'USERNAME' => $this->view->active_user,
+				'IP_ADDRESS' => $this->getRequest()->getServer('REMOTE_ADDR'),
+				'MESSAGE' => 'User Logout',
+				'CREATED_DATE' => date('Y-m-d H:i:s')
+		));
 		$this->_redirect('/dashboard/login');
 	}
 }
