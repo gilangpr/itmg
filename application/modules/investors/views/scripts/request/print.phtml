@@ -18,7 +18,7 @@
 			<div id="detail">
 				<div id="dkiri">
 					<div id="head">
-					<h3>Detail</h3>
+					<h4>Detail</h4>
 					</div>
 					<div id="alignki">
 						<div id="title1"> Equity Asset(MM): </div> 
@@ -33,7 +33,7 @@
 				</div>
 				<div id="dkanan">
 					<div id="head">
-					<h3>Company Address</h3>
+					<h4>Company Address</h4>
 					</div>
 					
 					<div id="alignka">
@@ -51,25 +51,59 @@
 			</div>
 			<div id="detail2">
 				<div id="head2">
-					<h3>Company Overview</h3>
+					<center><h4>Company Overview</h4></center>
 				</div>
 				<?php echo $this->details['COMPANY_OVERVIEW'];?>
 			</div>
 			<div id="detail2">
 				<div id="head2">
-					<h3>Invesment Strategy</h3>
+					<center><h4>Invesment Strategy</h4></center>
 				</div>
 				<?php echo $this->details['INVESTMENT_STRATEGY'];?>
 			</div>
-			
-				<div id="detail3">
+			<div id="bawah">
+				<div id="head2">
+					<center><h4>Key Person</h4></center>
+				</div>
+				<?php foreach ($this->con as $data) {
+					 echo "<b>".$data['NAME']."</b> ".$data['POSITION']." (".$data['PHONE_1'].") <br>";
+				}?>
+				
+
+			</div>	
+			<div id="bawah">
+				<div id="head2">
+					<center><h4>Meeting Activities</h4></center>
+				</div>
+				<?php
+					
+					foreach ($this->ma as $meeting) {
+						//$in=count($meeting['INITIAL_PART']);
+						//if($in>1){
+						echo "   ".$meeting['MEETING_DATE']."&nbsp &nbsp &nbsp <b>".$meeting['MEETING_EVENT']."</b> &nbsp &nbsp &nbsp".
+						$meeting['NAME']."&nbsp &nbsp &nbsp".$meeting['POSITION'].
+						"&nbsp &nbsp &nbsp";
+							foreach ($this->ma as $meet) {
+								if ($meet['MEETING_EVENT']==$meeting['MEETING_EVENT']) {
+								echo $meet['INITIAL_PART']." . ";	
+								}
+								
+							}
+							echo "<br>";
+						//}
+					}
+					
+				?>
+			</div>
+			<div id="detail3">
 					<div id="headSec">
-						<h3>Sector Holdings</h3>
+						<h4>Sector Holdings</h4>
 					</div>
 					<div id="headPor">
-						<h3>Portfolio Distribution</h3>
+						<h4>Portfolio Distribution</h4>
 					</div>
-				</div>	
+			</div>
+
 					<script type="text/javascript">
 					 	/*
 						 * Sector Holdings
@@ -121,8 +155,8 @@
 					
     					var panel1 = Ext.create('widget.panel',{					   
 					    renderTo: Ext.getBody(),
-					    width: 420,
-						height: 250,
+					    width: 350,
+						height: 170,
 						style: {
 							float: 'left',
 							width: '50%'
@@ -203,12 +237,12 @@
 					
 					var panel2 = Ext.create('widget.panel',{					   
 					    renderTo: Ext.getBody(),
-					    width: 420,
+					    width: 350,
 					    style: {
 							float: 'right',
 							width: '50%'
 						},
-						height: 250,
+						height: 170,
 					    layout: 'fit',
 					    items: [{
 							xtype: 'chart',
@@ -256,5 +290,6 @@
 					   });
 					</script>
 		</div>
+
 	</body>
 </html>

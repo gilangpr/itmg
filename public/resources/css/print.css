@@ -29,6 +29,26 @@
 		border: 1px solid gray;
 		
 	}
+	#bawah{
+		width: 880px;
+		position: relative;
+		margin: 5px;
+		padding: 5px;
+		min-height: 70px;
+		border: 1px solid gray;
+		background:#e6ecef;
+		
+	}
+	#dalam{
+		width: 880px;
+		position: relative;
+		min-height: 50px;
+	}
+	#mdata{
+		width: 50px;
+		position: relative;
+
+	}
 	#header{
 		width: 890px;
 		min-height: 30px;
@@ -50,7 +70,7 @@
 	}
 	#head{
 		width:425px;
-		min-height: 20px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		padding-left: 5px;
@@ -70,7 +90,7 @@
 	}
 	#headSec{
 		width:430px;
-		min-height: 40px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		padding-left: 5px;
@@ -91,7 +111,7 @@
 	}
 	#headPor{
 		width:430px;
-		min-height: 40px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		float: right;
@@ -112,7 +132,7 @@
 	}
 	#head2{
 		width:875px;
-		min-height: 20px;
+		height: 40px;
 		margin: 0px;
 		color:black;
 		padding-left: 5px;
