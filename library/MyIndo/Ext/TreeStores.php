@@ -32,7 +32,7 @@ class MyIndo_Ext_TreeStores extends MyIndo_Ext_Abstract
 				->where('TYPE = ?', 'submenus');
 				$x = $q->query()->fetchAll();
 				foreach($x as $__k=>$__d) {
-					$name = $subMenuModel->getValueByKey('SUB_MENU_ID', $__d['ID'], 'NAME');
+					$name = $subMenuModel->getValueByKey($subMenuModel->getPK(), $__d['ID'], 'NAME');
 					if(!in_array($name, $menus)) {
 						$menus[] = $name;
 					}
