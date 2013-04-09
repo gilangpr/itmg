@@ -26,7 +26,7 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 	public function joinHolding($limit, $offset, $order = null)
 	{
 		try {
-			//$_name = 'SHAREHOLDINGS';
+
 			$q = $this->select();
 			$q->setIntegrityCheck(false);
 			$q->from($this->_name, array('*'));
@@ -53,30 +53,19 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 			$select = $this->select();
 			$select->from('SHAREHOLDINGS',('count(SHAREHOLDING_ID) as count'));
 			$select->where('INVESTOR_NAME = ? ',$name);
-			return $select->query()->fetch();
-            /*$search = $this->_name->quoteIndentifier('$name');
-            $where = $this->_name->quoteInto("$search LIKE ?", '$name%');
-            $this->select->where($where);*/
             return $select->query()->fetchAll();
-		    /*$table = new Application_Model_Shareholdings();
-            $select = $table->select();
-            $select->where('INVESTOR_NAME LIKE ?', $name.'%');
-            $rows = $table->fetchAll($select);*/
-				
-			 //echo $select->__toString();
 	}
-	public function getId()
+	
+	public function getListInvestorsLimit($limit, $offset)
 	{
-// 		$uid = mysql_query("SELECT MAX(SHAREHOLDING_ID) FROM 'SHAREHOLDINGS'");
-// 		echo uid;
-// 		$select = $this->select();
-// 		$select->from('SHAREHOLDINGS',('max(SHAREHOLDING_ID)'));
-//         return $select->query()->fetch();
-//         $sql = 'SELECT max(SHAREHOLDING_ID) FROM user';
-//         $query = $this->getAdapter()->query($sql);
-//         $result = $query->fetchAll();
-//         return $result[0]['max(id)'];
-
+		
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->join('INVESTOR_STATUS', 'INVESTOR_STATUS.INVESTOR_STATUS_ID = SHAREHOLDINGS.INVESTOR_STATUS_ID', array('*'))
+		->limit($limit, $offset);
+		
+		return $q->query()->fetchAll();
 	}
 	
 	
@@ -84,10 +73,7 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 		
 		try {
 		$table = new Application_Model_Shareholdings();
-		$wherenya = $table->getAdapter()->quoteInto('INVESTOR_NAME = ? ',$where['INVESTOR_NAME']);
-		//$x = $data['AMOUNT'];
-		//$y = $data['AMOUNT'];
-		//$data['AMOUNT'] = $x + $y; 
+		$wherenya = $table->getAdapter()->quoteInto('INVESTOR_NAME = ? ',$where['INVESTOR_NAME']); 
 		$table->update($data,$wherenya);
 		exit();
 		} catch (Exception $e) {
@@ -111,6 +97,7 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 		die;
 	
 	}
+	
 	public function getName() {
 		
 		$select = $this->select();
@@ -120,5 +107,15 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 		
 	}
 	
+	public function getAllLike($query, $limit, $offset)
+	{
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->where('INVESTOR_NAME LIKE ?', $query. '%')
+		->limit($limit, $offset);
+	
+		return $q->query()->fetchAll();
+	}
 	
 }

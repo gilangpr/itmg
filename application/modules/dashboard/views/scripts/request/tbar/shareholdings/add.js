@@ -1,3 +1,40 @@
+//	Ext.define('Shareholding', {
+//		extend: 'Ext.data.Model',
+//		fields: [{
+//			name: 'SHAREHOLDING_ID',
+//			type: 'string'
+//		}]
+//	});
+var storeSR = Ext.create('Ext.data.Store',{
+    storeId: 'InvestorStatus',
+    model: 'InvestorStatus',
+    proxy: {
+        type: 'ajax',
+        api: {
+            read: '/investorstatus/request/autocom'
+        },
+        actionMethods: {
+            create: 'POST'
+        },
+        reader: {
+            idProperty: 'INVESTOR_STATUS',
+            type: 'json',
+            root: 'data.items',
+            totalProperty: 'data.totalCount'
+        },
+        writer: {
+            type: 'json',
+            root: 'data',
+            writeAllFields: true
+        }
+    },
+    sorter: {
+        property: 'INVESTOR_STATUS_ID',
+        direction: 'ASC'
+    },
+    autoSync: true
+});
+
 Ext.create('Ext.Window', {
 	title: 'Add New Shareholder',
 	width: 400,
@@ -51,8 +88,16 @@ Ext.create('Ext.Window', {
 			name: 'INVESTOR_NAME',
 			allowBlank: false
 		},{
+			xtype: 'combobox',
 			fieldLabel: 'Investor Status',
+			//store: Ext.data.StoreManager.lookup('InvestorStatus'),
+			id: 'investor-status',
 			name: 'INVESTOR_STATUS',
+			displayField: 'INVESTOR_STATUS',
+			store: storeSR,
+			minChars: 3,
+			pageSize: 10,
+			typeAhead: true,
 			allowBlank: false
 		},{
 			fieldLabel: 'Account Holder',
