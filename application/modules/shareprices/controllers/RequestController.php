@@ -340,14 +340,14 @@ class Shareprices_RequestController extends Zend_Controller_Action
  									if ($count['count'] == 0) {
 
  										$snId = new Application_Model_SharepricesName();
- 										if($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
- 											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
- 										} else {
- 											$getSNid = $snId->insert(array(
- 													'SHAREPRICES_NAME' => $valNames,
- 													'CREATED_DATE' => date('Y-m-d H:i:s')
- 													));
- 										}
+//  										if($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
+//  											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
+//  										} else {
+//  											$getSNid = $snId->insert(array(
+//  													'SHAREPRICES_NAME' => $valNames,
+//  													'CREATED_DATE' => date('Y-m-d H:i:s')
+//  													));
+//  										}
  										$this->_model2 = new MyIndo_Ext_ContentColumns();
  										$this->_model3 = new MyIndo_Ext_ModelFields();
  										
