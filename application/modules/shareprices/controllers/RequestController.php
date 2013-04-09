@@ -85,12 +85,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			$nameSp = $this->_model->getName($d['DATE']);
 			foreach ($nameSp as $_k=>$_d)
 			{
-				$number = $_d['VALUE'];
-				setlocale(LC_MONETARY, 'en_US');
-				$var = money_format('%i', $number);
-				$num = explode('USD ', $var);
-				$t[$i][$_d['SHAREPRICES_NAME']] = $num[1];
-				//$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+				$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
 			}
 		}
 		foreach($t as $k=>$d) {
@@ -386,6 +381,13 @@ class Shareprices_RequestController extends Zend_Controller_Action
  												'CREATED_DATE' => date('Y-m-d H:i:s'),
 												'SHAREPRICES_NAME_ID' => $getSNid
  										));
+ 										if(file_exists($upload->getDestination() . '/' . $new_name)) {
+ 											unlink($upload->getDestination() . '/' . $new_name);
+ 										}
+ 										
+ 										$this->_model->delete(array('DATE = ?' => '1999-12-30'));
+ 										$this->_modelLog->delete(array('DATE = ?' => '1999-12-30'));
+ 										
  									} else {
  										// get value before log
  										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
@@ -408,6 +410,10 @@ class Shareprices_RequestController extends Zend_Controller_Action
  										$this->_model->update(array(
  												'VALUE' => $valValue,
  										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
+ 										
+ 										if(file_exists($upload->getDestination() . '/' . $new_name)) {
+ 											unlink($upload->getDestination() . '/' . $new_name);
+ 										}
  									}
 								}			
 							}													
@@ -433,11 +439,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
-		if(file_exists($upload->getDestination() . '/' . $new_name)) {
-			unlink($upload->getDestination() . '/' . $new_name);
-		}
-		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	

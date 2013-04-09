@@ -33,11 +33,12 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		$data = array(
-				'data' => array(
-						'items' => $this->_model->getAll($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
-				)
+					'data' => array(
+							'items' => $this->_model->getAll($this->_limit, $this->_start),
+							'totalCount' => $this->_model->count()
+					)
 		);
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -172,6 +173,27 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
+	public function readautoAction()
+	{
+		if ($this->_posts['query'] == '') {
+			$data = array(
+					'data' => array(
+							'items' => $this->_model->getAll($this->_limit, $this->_start),
+							'totalCount' => $this->_model->count()
+					)
+			);
+		} else {
+			$data = array(
+					'data' => array(
+							'items' => $this->_model->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
+							'totalCount' => $this->_model->count()
+					)
+			);
+		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }
