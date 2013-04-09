@@ -136,6 +136,8 @@ if(selected.length > 0) {
 											id: data.SHAREHOLDING_ID /* single param */
 										}
 									});
+									var store = Ext.StoreManager.lookup('Shareholdings');
+									store.load(1);
 								},
 								failure: function(data) {
 									var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object

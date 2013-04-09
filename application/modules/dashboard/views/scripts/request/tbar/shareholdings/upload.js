@@ -29,6 +29,8 @@ Ext.create('Ext.Window', {
 							console.log(json);
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
+							var store = Ext.StoreManager.lookup('InvestorStatus');
+							store.load(1);
 						},
 						failure: function(data,e) {
 							var json = Ext.decode(e.response.responseText);
