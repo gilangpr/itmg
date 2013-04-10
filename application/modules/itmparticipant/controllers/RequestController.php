@@ -51,7 +51,6 @@ class Itmparticipant_RequestController extends Zend_Controller_Action
 			// Insert Data :
 			$this->_model->insert(array(
 					'NAME_PART'=>$this->_posts['NAME_PART'],
-					'INITIAL_PART' => $this->_posts['INITIAL_PART'],
 					'PHONE_PART1'=>$this->_posts['PHONE_PART1'],
 					'PHONE_PART2'=>$this->_posts['PHONE_PART2'],
 					'EMAIL_PART'=>$this->_posts['EMAIL_PART'],

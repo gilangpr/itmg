@@ -37,9 +37,11 @@ function showPeerSearch() {
 					text: 'Search',
 					listeners: {
 						click: function() {
+							showLoadingWindow();
 							var f = Ext.getCmp('peers-search-form').getForm();
 							peerStore.proxy.extraParams.COMPANY_NAME = f._fields.items[0].value;
 							peerStore.proxy.extraParams.TYPE = 'SEARCH';
+							this.up().up().close();
 							peerStore.load({
 								params: {
 									COMPANY_NAME: f._fields.items[0].value,
@@ -132,7 +134,7 @@ function showPeerSearch() {
 										});
 									}
 									c.setActiveTab('peers-search-result-' + xyz);
-									Ext.getCmp('peers-search-main').close();
+									closeLoadingWindow();
 								}
 							});
 						}

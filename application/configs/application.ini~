@@ -23,6 +23,9 @@ resources.db.adapter = "PDO_MYSQL"
 resources.db.params.host = "localhost"
 resources.db.params.username = "root"
 resources.db.params.password = "myindo"
+<<<<<<< HEAD
+resources.db.params.dbname = "itmg2"
+=======
 resources.db.params.dbname = "itmg"
 >>>>>>> 729e846499a0a63dc0cf1a39398f9005dfb72fd4
 resources.db.isDefaultTableAdapter = true
