@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<?php echo $this->headTitle() . "\n"?>
+		<title>ITMG | Executive</title>
 		
 		<!-- Start : CSS -->
 		<link rel="stylesheet" href="<?php echo $this->baseUrl('resources/css/ext-all.css')?>" type="text/css" />
@@ -16,6 +16,14 @@
 		
 		<script type="text/javascript" src="<?php echo $this->baseUrl('apps/js/models')?>"></script>
 		<script type="text/javascript" src="<?php echo $this->baseUrl('apps/js/stores')?>"></script>
+		
+		
+		<script type="text/javascript" src="<?php echo $this->baseUrl('resources/js/searchInvestors.js')?>"></script>
+		<script type="text/javascript" src="<?php echo $this->baseUrl('resources/js/searchPeers.js')?>"></script>
+		<script type="text/javascript" src="<?php echo $this->baseUrl('resources/js/searchShareholdings.js')?>"></script>
+		<script type="text/javascript" src="<?php echo $this->baseUrl('resources/js/searchResearchReports.js')?>"></script>
+		<script type="text/javascript" src="<?php echo $this->baseUrl('resources/js/searchNews.js')?>"></script>
+		<script type="text/javascript" src="<?php echo $this->baseUrl('resources/js/searchShareprices.js')?>"></script>
 		
 		<script type="text/javascript" src="<?php echo $this->baseUrl('app.js')?>"></script>
 		<script type="text/javascript">
@@ -104,6 +112,9 @@
 		<!-- End of : JS -->
 	</head>
 	<body>
+		<div class="logout-box">
+			<p>Welcome, Administrator | <a href="<?php echo $this->url(array('module'=>'dashboard','controller'=>'login','action'=>'logout'),null,true)?>"><img src="<?php echo $this->baseUrl('images/logout.png')?>"/> Logout</a></p>
+		</div>
 		<div class="head">
 			<img class="logo" src="<?php echo $this->baseUrl('images/logo.png')?>" />
 		</div>

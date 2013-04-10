@@ -29,6 +29,26 @@
 		border: 1px solid gray;
 		
 	}
+	#bawah{
+		width: 880px;
+		position: relative;
+		margin: 5px;
+		padding: 5px;
+		min-height: 70px;
+		border: 1px solid gray;
+		background:#e6ecef;
+		
+	}
+	#dalam{
+		width: 880px;
+		position: relative;
+		min-height: 50px;
+	}
+	#mdata{
+		width: 50px;
+		position: relative;
+
+	}
 	#header{
 		width: 890px;
 		min-height: 30px;
@@ -38,7 +58,7 @@
 		text-shadow: 0.1em 0.1em 0.05em white;
 		background-color: #2eac2b;
 		/* Mozzila 3.6+ */
-		background: -moz-linear-gradient(top, #2eac2b ,#76e74b );
+		background: -moz-linear-gradient(top,#2eac2b , #76e74b );
 		 /* Safari 4-5, Chrome 1-9 */ 
 		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
 		/* Safari 5.1, Chrome 10+ */ 
@@ -50,7 +70,7 @@
 	}
 	#head{
 		width:425px;
-		min-height: 20px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		padding-left: 5px;
@@ -60,17 +80,17 @@
 		/*Mozzila*/
 		background: -moz-linear-gradient(top, #2eac2b, #99FF33);
 		 /* Safari 4-5, Chrome 1-9 */ 
-		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#99FF33), to(#2eac2b));
 		/* Safari 5.1, Chrome 10+ */ 
-		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		background: -webkit-linear-gradient(top, #2eac2b, #99FF33);
 		/* IE 10 */ 
-		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		background: -ms-linear-gradient(top, #2eac2b, #99FF33);
 		/* Opera 11.10+ */ 
-		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+		background: -o-linear-gradient(top, #2eac2b, #99FF33);
 	}
 	#headSec{
 		width:430px;
-		min-height: 40px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		padding-left: 5px;
@@ -78,20 +98,20 @@
 		float: left;
 		text-shadow: 0.1em 0.1em 0.05em white;
 		position: relative;
-		/*Mozzila*/
+		/*Mozzila #76e74b*/
 		background: -moz-linear-gradient(top, #2eac2b, #99FF33);
 		 /* Safari 4-5, Chrome 1-9 */ 
-		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#99FF33), to(#2eac2b));
 		/* Safari 5.1, Chrome 10+ */ 
-		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		background: -webkit-linear-gradient(top, #2eac2b, #99FF33);
 		/* IE 10 */ 
-		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		background: -ms-linear-gradient(top, #2eac2b, #99FF33);
 		/* Opera 11.10+ */ 
-		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+		background: -o-linear-gradient(top, #2eac2b, #99FF33);
 	}
 	#headPor{
 		width:430px;
-		min-height: 40px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		float: right;
@@ -102,17 +122,17 @@
 		/*Mozzila*/
 		background: -moz-linear-gradient(top, #2eac2b, #99FF33);
 		 /* Safari 4-5, Chrome 1-9 */ 
-		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#99FF33), to(#2eac2b));
 		/* Safari 5.1, Chrome 10+ */ 
-		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		background: -webkit-linear-gradient(top, #2eac2b, #99FF33);
 		/* IE 10 */ 
-		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		background: -ms-linear-gradient(top, #2eac2b, #99FF33);
 		/* Opera 11.10+ */ 
-		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+		background: -o-linear-gradient(top, #2eac2b, #99FF33);
 	}
 	#head2{
 		width:875px;
-		min-height: 20px;
+		height: 40px;
 		margin: 0px;
 		color:black;
 		padding-left: 5px;
@@ -122,13 +142,13 @@
 		/*Mozzila*/
 		background: -moz-linear-gradient(top, #2eac2b, #99FF33);
 		 /* Safari 4-5, Chrome 1-9 */ 
-		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#76e74b), to(#2eac2b));
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#99FF33), to(#2eac2b));
 		/* Safari 5.1, Chrome 10+ */ 
-		background: -webkit-linear-gradient(top, #2eac2b, #76e74b);
+		background: -webkit-linear-gradient(top, #2eac2b, #99FF33);
 		/* IE 10 */ 
-		background: -ms-linear-gradient(top, #2eac2b, #76e74b);
+		background: -ms-linear-gradient(top, #2eac2b, #99FF33);
 		/* Opera 11.10+ */ 
-		background: -o-linear-gradient(top, #2eac2b, #76e74b);
+		background: -o-linear-gradient(top, #2eac2b, #99FF33);
 	}
 	#detail{
 		width: 889px;
@@ -136,7 +156,7 @@
 		margin: 5px;
 		min-height: 140px;
 		border: 1px solid gray;
-		background: #e6ecef;
+		background:#e6ecef;
 	}
 	#detail2{
 		width: 880px;

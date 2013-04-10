@@ -37,6 +37,15 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				)
 		);
 	}
+	protected function isPost()
+	{
+		return $this->getRequest()->isPost();
+	}
+	
+	protected function isAjax()
+	{
+		return $this->getRequest()->isXmlHttpRequest();
+	}
 	
 	public function readAction()
 	{
@@ -60,6 +69,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$i = 0;
 		$temp = '';
 		$temp2 = '';
+		
 		foreach($list as $k=>$d) {
 			if($temp == '') {
 				$temp = $d['DATE'];
@@ -73,9 +83,20 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				$t[$i]['DATE'] = $d['DATE'];
 			}
 			$nameSp = $this->_model->getName($d['DATE']);
+
+// 			foreach ($nameSp as $_k=>$_d)
+// 			{
+// 				$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+// 			}
+
 			foreach ($nameSp as $_k=>$_d)
 			{
-				$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+				$number = $_d['VALUE'];
+				setlocale(LC_MONETARY, 'en_US');
+				$var = money_format('%i', $number);
+				$num = explode('USD ', $var);
+				$t[$i][$_d['SHAREPRICES_NAME']] = $num[1];
+				//$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
 			}
 		}
 		foreach($t as $k=>$d) {
@@ -198,7 +219,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				} else {
 
 					$snId = new Application_Model_SharepricesName();
-					$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $name);
+					$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $temp[0]);
 					
 					//insert shareprices
 					$this->_model->insert(array(
@@ -319,6 +340,46 @@ class Shareprices_RequestController extends Zend_Controller_Action
  									if ($count['count'] == 0) {
 
  										$snId = new Application_Model_SharepricesName();
+//  										if($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
+//  											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
+//  										} else {
+//  											$getSNid = $snId->insert(array(
+//  													'SHAREPRICES_NAME' => $valNames,
+//  													'CREATED_DATE' => date('Y-m-d H:i:s')
+//  													));
+//  										}
+ 										$this->_model2 = new MyIndo_Ext_ContentColumns();
+ 										$this->_model3 = new MyIndo_Ext_ModelFields();
+ 										
+ 										if ($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
+ 											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
+ 										} else {
+ 											$this->_model3->insert(array(
+ 													'MODEL_ID' => 6,
+ 													'NAME' => $valNames,
+ 													'TYPE' => 'float',
+ 													'CREATED_DATE' => date('Y-m-d H:i:s')
+ 											));
+ 											$id = $this->_model3->getPkByKey('NAME', $valNames);
+ 											$sName = $snId->insert(array(
+ 												'SHAREPRICES_NAME_ID'=> $id,
+ 												'SHAREPRICES_NAME'=> $valNames,
+												'CREATED_DATE' => date('Y-m-d H:i:s')
+ 											));
+ 											$this->_model2->insert(array(
+ 													'CONTENT_ID' => 6,
+ 													'TEXT' => $valNames,
+ 													'DATAINDEX' => $valNames,
+ 													'DATATYPE' => 'float',
+ 													'ALIGN' => 'center',
+ 													'WIDTH' => '100',
+ 													'EDITABLE' => 1,
+ 													'FLEX' => 1,
+ 													'INDEX' => 0,
+ 													'CREATED_DATE' => date('Y-m-d H:i:s')
+ 											));
+ 											
+ 										}
  										$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
  										
  										// insert shareprices
@@ -339,6 +400,13 @@ class Shareprices_RequestController extends Zend_Controller_Action
  												'CREATED_DATE' => date('Y-m-d H:i:s'),
 												'SHAREPRICES_NAME_ID' => $getSNid
  										));
+ 										if(file_exists($upload->getDestination() . '/' . $new_name)) {
+ 											unlink($upload->getDestination() . '/' . $new_name);
+ 										}
+ 										
+ 										$this->_model->delete(array('DATE = ?' => '1999-12-30'));
+ 										$this->_modelLog->delete(array('DATE = ?' => '1999-12-30'));
+ 										
  									} else {
  										// get value before log
  										$valbef = $this->_modelLog->getValueLog($dt, $valNames, 'VALUE_AFTER');
@@ -361,6 +429,10 @@ class Shareprices_RequestController extends Zend_Controller_Action
  										$this->_model->update(array(
  												'VALUE' => $valValue,
  										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
+ 										
+ 										if(file_exists($upload->getDestination() . '/' . $new_name)) {
+ 											unlink($upload->getDestination() . '/' . $new_name);
+ 										}
  									}
 								}			
 							}													
@@ -386,122 +458,48 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
-		if(file_exists($upload->getDestination() . '/' . $new_name)) {
-			unlink($upload->getDestination() . '/' . $new_name);
-		}
-		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
 	public function searchAction ()
 	{		
-		$searchModel = new Application_Model_Shareprices();
-		$getSdate = explode('T', $this->_posts['START_DATE']);
-		$getEdate = explode('T', $this->_posts['END_DATE']);		
-		$n = explode(', ', strtoupper($this->_posts['SHAREPRICES_NAME']));
-		$ShareName = strtoupper($this->_posts['SHAREPRICES_NAME']);		
-		
-		
-		//echo count($n);
-		$c = count($n)-1;
-		if ($c == 0) {
-			$spNameModel = new Application_Model_SharepricesName();
-			$spRes = $spNameModel->getList();
-			$spList = array();
-			$i = 0;
-			foreach($spRes as $k=>$d) {
-				if(!isset($spRes[$d['SHAREPRICES_NAME']])) {
-					$spRes[$i] = $d['SHAREPRICES_NAME'];
-					$i++;
-				}
-			}
-			$lastId = $this->_model->getLastId();
-			$listSearch = $searchModel->select()
-				->where('SHAREPRICES_NAME = ?' ,$ShareName)
-				->where('DATE >= ?' ,$getSdate[0])
-				->where('DATE <= ?' ,$getEdate[0]);
-			$list = $listSearch->query()->fetchall();
-			$startDate = $getSdate[0];
-			$endDate = $getEdate[0];
-			
-			$t = array();
-			$t2 = array();
-			$i = 0;
-			$temp = '';
-			$temp2 = '';
-			foreach($list as $k=>$d) {
-				if($temp == '') {
-					$temp = $d['DATE'];
-				}
-				if($temp != $d['DATE']) {
-					$i++;
-					$temp = $d['DATE'];
-					$t2 = array();
-				}
-				if(!isset($t[$i]['DATE'])) {
-					$t[$i]['DATE'] = $d['DATE'];
-				}
-				$nameSp = $this->_model->searchDate($d['DATE'], $ShareName);
-				foreach ($nameSp as $_k=>$_d)
-				{
-					$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
-				}
-			}
-			
-		} else {
-			$ncount = count($n)-1;
-			$spNameModel = new Application_Model_SharepricesName();
-			$spRes = $spNameModel->getList();
-			$spList = array();
-			$i = 0;
-			foreach($spRes as $k=>$d) {
-				if(!isset($spRes[$d['SHAREPRICES_NAME']])) {
-					$spRes[$i] = $d['SHAREPRICES_NAME'];
-					$i++;
-				}
-			}				
-			$where = array();
-			foreach($n as $k):
-			    $where[] = "SHAREPRICES_NAME LIKE '%" . $k . "%'";
-			endforeach;
-			$where = implode(' OR ', $where);
-			$listSearchS = $searchModel->select()
-				->where('DATE >= ?' ,$getSdate[0])
-				->where('DATE <= ?' ,$getEdate[0])
-				->where($where);
-			$list = $listSearchS->query()->fetchall();
-			$t = array();
-			$t2 = array();
-			$i = 0;
-			$temp = '';
-			$temp2 = '';
-			foreach($list as $k=>$d) {
-				if($temp == '') {
-					$temp = $d['DATE'];
-				}
-				if($temp != $d['DATE']) {
-					$i++;
-					$temp = $d['DATE'];
-					$t2 = array();
-				}
-				if(!isset($t[$i]['DATE'])) {
-					$t[$i]['DATE'] = $d['DATE'];
-				}
-				for ($countn = 0; $countn <= $ncount; $countn++)
-				{
-					$nameSp = $this->_model->searchDate($d['DATE'], $n[$countn]);
-					foreach ($nameSp as $_k=>$_d)
-					{
-						$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+		if($this->isAjax() && $this->isPost()) {
+			if(isset($this->_posts['SP_START_DATE']) && isset($this->_posts['SP_END_DATE']) && isset($this->_posts['SP_NAMES'])) {
+				$s_date = $this->_posts['SP_START_DATE'];
+				$e_date = $this->_posts['SP_END_DATE'];
+				$names = Zend_Json::decode($this->_posts['SP_NAMES']);
+				
+				$q = $this->_model->select()
+				->where('DATE >= ?', $s_date)
+				->where('DATE <= ?', $e_date);
+				
+				$data = $q->query()->fetchAll();
+				
+				$list = array();
+				$t = '';
+				$i = -1;
+				foreach($data as $k=>$d) {
+					if($t != $d['DATE']) {
+						$i++;
+						$t = $d['DATE'];
 					}
-				}			
-			}					
+					$list[$i]['DATE'] = $d['DATE'];
+					foreach($names as $_k=>$_d) {
+						if($d['SHAREPRICES_NAME'] == $_d) {
+							$list[$i][$d['SHAREPRICES_NAME']] = $d['VALUE'];
+						}
+					}
+					foreach($names as $_k=>$_d) {
+						if(!isset($list[$i][$_d])) {
+							$list[$i][$_d] = 0;
+						}
+					}
+				}
+				$this->_data['data']['items'] = $list;
+				$this->_data['data']['names'] = $names;
+				$this->_data['data']['totalCount'] = $i+1;
+			}
 		}
-		
-		$this->_data['data']['items'] = $t;
-		$this->_data['data']['totalCount'] = $i;
-		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

@@ -1,5 +1,7 @@
 <?php 
 
+use JShrink\Minifier;
+
 class Dashboard_RequestController extends Zend_Controller_Action
 {
 	protected $_p;
@@ -93,6 +95,8 @@ class Dashboard_RequestController extends Zend_Controller_Action
 				
 				$this->_data['data']['items'] = $this->view->render($ctl->getValueByKey('CONTENT_TBAR_ID', $ct->getPkByKey('ID', $id), 'PATH'));
 				$this->_data['data']['container'] = $this->_p['container'];
+				$this->_data['data']['items'] = base64_encode(JShrink\Minifier::minify($this->_data['data']['items']));
+				//include_once APPLICATION_PATH . '/../library/JShrink/Minifier.php';
 				
 			} catch( Exception $e ) {
 				$this->_error_code = $e->getCode();

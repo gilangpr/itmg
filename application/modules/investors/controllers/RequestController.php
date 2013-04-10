@@ -136,7 +136,6 @@ class Investors_RequestController extends Zend_Controller_Action
 			/* Model */
 			
 			/* End of : Models */
-			//die($q);
 			$x = $q->query()->fetchAll();
 			
 			$data['data']['items'] = $x;
@@ -221,7 +220,8 @@ class Investors_RequestController extends Zend_Controller_Action
 		if($this->_model->isExistByKey('INVESTOR_ID', $id)) {
 			$this->_helper->viewRenderer->setNoRender(false);
 			//$details = $this->_model->getDetailByKey('INVESTOR_ID', $id);
-			
+			$conModel = new Application_Model_Contacts();
+			$miModel = new Application_Model_Meetinginvestor();
 			$q = $this->_model->select()
 				->from('INVESTORS',array('*'))
 				->setIntegrityCheck(false)
@@ -230,7 +230,28 @@ class Investors_RequestController extends Zend_Controller_Action
 				->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('*'));
 				//->join('SECTOR_HOLDINGS','SECTOR_HOLDINGS.INVESTOR_ID = INVESTORS.INVESTOR_ID',array('*'));
 			$details = $q->query()->fetch();
-			
+			$d = $conModel->select()
+				->from('CONTACTS',array('*'))
+				->setIntegrityCheck(false)
+				->where('INVESTOR_ID = ?',$id);
+			$con = $d->query()->fetchAll();
+
+			$a = $miModel->select()
+				->from('MEETING_ACTIVITIE_INVESTOR',array('*'))
+				->setIntegrityCheck(false)
+				//->join('INVESTORS','MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID = INVESTORS.INVESTOR_ID',array('*'))
+				->join('MEETING_ACTIVITIE', 'MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID',array('*'))
+				->join('MEETING_ACTIVITIE_CONTACT','MEETING_ACTIVITIE_CONTACT.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID',array('*'))
+				->join('CONTACTS','MEETING_ACTIVITIE_CONTACT.CONTACT_ID = CONTACTS.CONTACT_ID',array('*'))
+				->join('MEETING_ACTIVITIE_ITM','MEETING_ACTIVITIE_ITM.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID',array('*'))
+				->join('ITM_PARTICIPANTS','MEETING_ACTIVITIE_ITM.PARTICIPANT_ID = ITM_PARTICIPANTS.PARTICIPANT_ID',array('*'))
+				->where('MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID= ?', $id)
+				->where('CONTACTS.INVESTOR_ID= ?',$id);
+			$ma = $a->query()->fetchAll();	
+
+
+			$this->view->ma = $ma;
+			$this->view->con = $con;
 			$this->view->details = $details;
 			
 		} else {
@@ -238,8 +259,158 @@ class Investors_RequestController extends Zend_Controller_Action
 			echo "no data found";
 		}
 		
-		
-		
-		
+	}
+	public function uploadAction (){
+			
+		//$data = array(
+		//		'data' => array()
+		//);
+		$ITmodel = new Application_Model_InvestorType();
+		$LOmodel = new Application_Model_Locations();
+		try{
+		// membaca file excel yang diupload
+		$upload = new Zend_File_Transfer_Adapter_Http();
+	
+		$upload->setDestination(APPLICATION_PATH ."/../public/upload/investors/");
+		//$upload->addValidator('Extension',false,'xls,xlsx');
+		$upload->addValidator('Extension',false, array('xls','xlsx','case'=>true));
+		if ($upload->isValid()) {
+	
+			$upload->receive();
+			$fileInfo = $upload->getFileInfo();
+			$filExt = explode('.', $fileInfo['FILE']['name']);
+			$filExt = explode('_', $fileInfo['FILE']['name']);
+			$date = explode('.', $filExt[2]);
+
+			/* Get file extension */
+			$filExt = explode('.',$fileInfo['FILE']['name']);
+			$filExt = '.' . strtolower($filExt[count($filExt)-1]);
+			/* End of : Get file extension */
+	
+			/* Rename file */
+			$new_name = microtime() . $filExt ;
+			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
+			/* End of : Rename file */
+		} 
+		try{
+	
+			$inputFileName = $upload->getDestination() . '/' . $new_name;
+			$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+			$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+			$objReader->setReadDataOnly(true);
+			$objPHPExcel = $objReader->load($inputFileName);
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
+		    $objWriter->setPreCalculateFormulas(false);
+		    //$objPHPExcel->setActiveSheetIndex(0);
+		    //$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+		    
+		    // get number of last Row
+
+		    $total = 0;
+			foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+				$worksheetTitle     =  $worksheet->getTitle();
+				$highestRow         =  $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();  
+				$highestColumn      =  $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+				//$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+				$nrColumns = ord($highestColumn) - 64;
+				
+                $highestColumn++;
+				for ($row = 2; $row < $highestRow + 1; $row++) {
+					
+					$val=array();
+					for ($col = 'A'; $col < $highestColumn; $col++) {
+
+						$val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
+					};
+					
+					if(!is_null($val[0])){
+						if(!$this->_model->isExistByKey('COMPANY_NAME',$val[0])){
+							if (!$ITmodel->isExistByKey('INVESTOR_TYPE',$val[1])) {
+								$id_it = $ITmodel->insert(array(
+									'INVESTOR_TYPE' => $val[1],
+									'CREATED_DATE' => date('Y-m-d H:i:s')
+									));
+								$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+							}
+							else{
+								$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+							}
+							if (!$LOmodel->isExistByKey('LOCATION',$val[11])) {
+								$id_lo = $LOmodel->insert(array(
+									'LOCATION' => $val[11],
+									'CREATED_DATE' => date('Y-m-d H:i:s')
+									));
+								$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
+							}
+							else{
+								$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
+							}
+							//$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+							//$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
+							$jum = $this->_model->insert(array(									
+									'INVESTOR_TYPE_ID' => $IT_id,
+									'LOCATION_ID' => $LO_id,
+									'COMPANY_NAME' => $val[0],
+									'STYLE'=> $val[2],
+									'EQUITY_ASSETS'=>$val[3] ,
+									'PHONE_1'=>$val[4],
+									'PHONE_2'=>$val[5],
+									'FAX'=>$val[6],
+									'EMAIL_1'=>$val[7],
+									'EMAIL_2'=>$val[8],
+									'WEBSITE'=>$val[9],
+									'ADDRESS'=>$val[10],
+									'COMPANY_OVERVIEW'=>$val[12],
+									'INVESTMENT_STRATEGY'=>$val[13],
+				 					'CREATED_DATE' => date('Y-m-d H:i:s')
+								));
+							$total = $total + count($jum);
+							$data = array(
+								'data' => array(
+									'items' => $total,
+									'totalCount' => $total
+									)
+								);
+						}
+						
+						else{
+							/*
+							if($total == 0){
+								//$total=1;
+								$this->_success = false;
+								$this->_error_message = '0 Data Insert';	
+							}
+							else{
+								$jumlah=$total+1;
+								$this->_success = false;
+								$this->_error_message = $jumlah.' Data Insert';	
+							}
+							*/
+						}
+						//$jumlah = $total+1;
+					}
+					
+				}
+ 			}
+		}
+		catch (Exception $e) {
+			 
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
+		} 
+		catch(Zend_File_Transfer_Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+		} 
+	    /*
+		if(file_exists($upload->getDestination() . '/' . $new_name)) {
+			unlink($upload->getDestination() . '/' . $new_name);
+		}
+		*/
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	
 	}
 }

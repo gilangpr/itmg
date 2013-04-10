@@ -33,11 +33,12 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		$data = array(
-				'data' => array(
-						'items' => $this->_model->getAll($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
-				)
+					'data' => array(
+							'items' => $this->_model->getAll($this->_limit, $this->_start),
+							'totalCount' => $this->_model->count()
+					)
 		);
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -59,8 +60,16 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		else 
 		{
 			try {
+				$this->_model3->insert(array(
+						'MODEL_ID' => 6,
+						'NAME' => $this->_posts['SHAREPRICES_NAME'],
+						'TYPE' => 'float',
+						'CREATED_DATE' => date('Y-m-d H:i:s')
+				));
+				$id = $this->_model3->getPkByKey('NAME', $this->_posts['SHAREPRICES_NAME']);
 				// Insert Data :
 				$this->_model->insert(array(
+						'SHAREPRICES_NAME_ID'=> $id,
 						'SHAREPRICES_NAME'=> $this->_posts['SHAREPRICES_NAME'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
@@ -76,12 +85,7 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 						'INDEX' => 0,
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
-				$this->_model3->insert(array(
-						'MODEL_ID' => 6,
-						'NAME' => $this->_posts['SHAREPRICES_NAME'],
-						'TYPE' => 'float',
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
+				
 			}catch(Exception $e) {
 				$this->_error_code = $e->getCode();
 				$this->_error_message = $e->getMessage();
@@ -169,6 +173,27 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
+	public function readautoAction()
+	{
+		if ($this->_posts['query'] == '') {
+			$data = array(
+					'data' => array(
+							'items' => $this->_model->getAll($this->_limit, $this->_start),
+							'totalCount' => $this->_model->count()
+					)
+			);
+		} else {
+			$data = array(
+					'data' => array(
+							'items' => $this->_model->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
+							'totalCount' => $this->_model->count()
+					)
+			);
+		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

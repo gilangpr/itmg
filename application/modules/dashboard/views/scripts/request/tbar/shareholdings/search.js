@@ -1,11 +1,34 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
-var storeSH = loadStore('Shareholdings');
-//var storeRR_curpage = storeSH.currentPage;
-//storeSH.load({
-//	params: {
-//		all: 1
-//	}
-//});
+var storeSR = Ext.create('Ext.data.Store',{
+    storeId: 'Shareholdings',
+    model: 'Shareholding',
+    proxy: {
+        type: 'ajax',
+        api: {
+            read: '/shareholdings/request/autocom'
+        },
+        actionMethods: {
+            create: 'POST'
+        },
+        reader: {
+            idProperty: 'INVESTOR_NAME',
+            type: 'json',
+            root: 'data.items',
+            totalProperty: 'data.totalCount'
+        },
+        writer: {
+            type: 'json',
+            root: 'data',
+            writeAllFields: true
+        }
+    },
+    sorter: {
+        property: 'SHAREHOLDING_ID',
+        direction: 'ASC'
+    },
+    autoSync: true
+});
+
     // Add the additional 'advanced' VTypes
     Ext.apply(Ext.form.field.VTypes, {
         daterange: function(val, field) {
@@ -41,13 +64,12 @@ Ext.create('Ext.Window', {
 	modal: true,
 	closable: true,
 	width: 400,
-	height: 163,
-	bodyPadding: 10,
+	height: 153,
 	resizable: false,
 	draggable: false,
 	items: [{
 		xtype: 'form',
-		layout: 'anchor',
+		layout: 'form',
 		border: false,
 		id: 'search-shareholdings-form',
 		bodyPadding: '5 5 5 5',
@@ -61,7 +83,8 @@ Ext.create('Ext.Window', {
 			emptyText: 'All',
 			id: 'investor-name',
 			name: 'INVESTOR_NAME',
-			store: storeSH,
+			store: storeSR,
+			minChars: 3,
 			displayField: 'INVESTOR_NAME',
 			allowBlank: true
 		},{
@@ -161,18 +184,6 @@ Ext.create('Ext.Window', {
 					});
 					c.up().setActiveTab(_id);
 					form.up().close();
-//					form.getForm().submit({
-//						url: sd.baseUrl + '/shareholdings/request/search',
-//						success: function(d, e) {
-//							var _id = 'shareholdings-search-result' + Math.random();
-//							var json = Ext.decode(data.responseText);
-//							
-//						},
-//						failure: function(d, e) {
-//							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
-//							closeLoadingWindow();
-//						}
-//					});
 				}
 			}
 		}
