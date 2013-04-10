@@ -19,6 +19,10 @@ Ext.create('Ext.Window', {
 		   		fieldLabel: 'Name',
 		  		allowBlank: false,
 		     	name: 'NAME_PART'
+            },            {
+		   		fieldLabel: 'Name',
+		  		allowBlank: false,
+		     	name: 'INITIAL_PART'
             },{
 		        fieldLabel: 'Phone 1',
 		        allowBlank: false,

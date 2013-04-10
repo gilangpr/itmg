@@ -53,6 +53,42 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+	public function crAction(){
+		$data = array(
+			'data' => array()
+		);
+		try{
+			//$inModel = new Application_Model_Investors();
+			$miModel = new Application_Model_Meetinginvestor();
+			$in_id = $this->_getParam('id',0);
+			$this->_model->insert(array(
+				'MEETING_EVENT' => $this->_posts['MEETING_EVENT'],
+				'MEETING_DATE' => $this->_posts['MEETING_DATE'],
+				'START_TIME' => $this->_posts['START_TIME'],
+				'END_TIME' => $this->_posts['END_TIME'],
+				'NOTES' => '',
+ 				'CREATED_DATE' => date('Y-m-d H:i:s')
+			));
+			if($this->_model->isExistByKey('MEETING_EVENT',$this->_posts['MEETING_EVENT'])){
+				$ma_id = $this->_model->getPkByKey('MEETING_EVENT',$this->_posts['MEETING_EVENT']);
+				$miModel->insert(array(
+						'MEETING_ACTIVITIE_ID' => $ma_id,
+						'INVESTOR_ID' => $in_id,
+					));
+			}
+			else{
+				$this->_success = false;
+				$this->_error_message = "MEETING EVENT Not Found";
+			}
+
+
+		}catch(Exception $e){
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
 	
 	public function readAction()
 	{
