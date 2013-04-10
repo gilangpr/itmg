@@ -13,7 +13,8 @@ function loadMenus() {
 				json.data.items.data[_i].width = sd.nav.width;
 				json.data.items.data[_i].listeners =  {
 					click: function() {
-						loadContent(this, json.data.items.data[_i].editor);
+						//loadContent(this, json.data.items.data[_i].editor);
+						loadContent(this, true);
 					}
 				};
 			});

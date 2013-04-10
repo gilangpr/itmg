@@ -70,7 +70,7 @@ Ext.create('Ext.Window', {
 		text: 'Cancel',
 		listeners: {
 			click: function() {
-				if(confirm('Are you sure want to cancel ?')) {
+				{
 					this.up().up().close();
 				}
 			}
