@@ -87,18 +87,26 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		return $select->query()->fetch();
 	}
 	
-	public function getTotal()
+ public function getTotal()
 	{
 
 		$select = $this->select();
 		//$select->distinct('SHAREHOLDING_ID');
 		//$select->from('SHAREHOLDING_AMOUNTS',array('AMOUNT' => new Zend_Db_Expr('SUM(AMOUNT)')));//declare $_name => nama tabel
 		$select->from('SHAREHOLDING_AMOUNTS',array());//declare $_name => nama tabel
-		$select->columns('AMOUNT');	
+		$select->columns('SHAREHOLDING_ID');	
 		$select->where('SHAREHOLDING_ID');	
-		//$select->group('SHAREHOLDING_ID');
-		$select->order('DATE DESC');
+		$select->group('SHAREHOLDING_ID');
+		//$select->order('DATE DESC');
 		//die($select);
+		return $select->query()->fetchAll();
+	}
+	
+    public function getIdamount($idd)
+	{
+		$select = $this->select();
+		$select->from('SHAREHOLDING_AMOUNTS', array(new Zend_Db_Expr("MAX(SHAREHOLDING_AMOUNT_ID) AS maxID")));
+		$select->where('SHAREHOLDING_ID = ?', $idd);
 		return $select->query()->fetchAll();
 	}
 	
@@ -107,7 +115,9 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		try {
 
 			$q = $this->select()
-			->from($this->_name, array('sum(AMOUNT) as TOTAL'));
+			->from($this->_name, array('sum(AMOUNT) as TOTAL'))
+			->distinct('SHAREHOLDING_ID')
+			->limit(1,0);
 			$x = $q->query()->fetch();
 			return $x['TOTAL'];
 		} catch(Exception $e) {
