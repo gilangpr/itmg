@@ -27,6 +27,7 @@ function showInvestorSearch2() {
 			text: 'Search',
 			listeners: {
 				click: function() {
+					showLoadingWindow();
 					var form1 = Ext.getCmp('search-investor-form-left').getForm();
 					var form2 = Ext.getCmp('search-investor-form-right').getForm();
 					
@@ -80,7 +81,7 @@ function showInvestorSearch2() {
 									CONTACT_PERSON: CONTACT_PERSON
 								}},
 							sorter: {"property":"INVESTOR_ID","direction":"ASC"}});
-						
+						this.up().up().close();
 						_storeSearchInvestors.load({
 							params: {
 								TYPE: 'SEARCH',
@@ -1666,7 +1667,7 @@ function showInvestorSearch2() {
 									}
 									c.setActiveTab('investors-search-result-' + xyz);
 								}
-								Ext.getCmp('search-investor-main').close();
+								closeLoadingWindow();
 							}
 						});
 					}

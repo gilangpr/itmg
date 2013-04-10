@@ -18,8 +18,8 @@ Ext.create('Ext.Window', {
 							var json = Ext.decode(data.respnoseText);
 							form.reset();
 							Ext.Msg.alert('Message','Success adding new Shareprices');
-							var store = loadStore('Shareprices');
-							store.loadPage(1);
+							form.reset();
+							store.loadPage(store.currentPage);
 						},
 						failure: function(data,res) {
 							var json = Ext.decode(res.response.responseText);

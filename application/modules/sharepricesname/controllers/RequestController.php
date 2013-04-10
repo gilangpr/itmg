@@ -149,11 +149,13 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		$this->_model = new MyIndo_Ext_ContentColumns();
 		$this->_model2 = new MyIndo_Ext_ModelFields();
 		$this->_model3 = new Application_Model_SharepricesName();
+		$this->_model4 = new Application_Model_Shareprices();
 		
 		$data = array(
 				'data' => array()
 		);
-		try {
+		$name = $this->_model4->isExistByKey('SHAREPRICES_NAME', $this->_posts['SHAREPRICES_NAME']);
+		if ($name == 0) {
 			// Delete
 			$this->_model3->delete(
 					$this->_model3->getAdapter()->quoteInto(
@@ -166,12 +168,33 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			$this->_model->delete(
 					$this->_model->getAdapter()->quoteInto(
 							'DATAINDEX = ?',$this->_posts['SHAREPRICES_NAME']
-					));
-		}catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
+			));
+			
+			$this->_error_message = 'Data has been deleted';
+			$this->_success = false;
+		} else {
+			$this->_error_message = 'Data is being used';
 			$this->_success = false;
 		}
+// 		try {
+// 			// Delete
+// 			$this->_model3->delete(
+// 					$this->_model3->getAdapter()->quoteInto(
+// 							'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']
+// 					));
+// 			$this->_model2->delete(
+// 					$this->_model2->getAdapter()->quoteInto(
+// 							'NAME = ?',$this->_posts['SHAREPRICES_NAME']
+// 					));
+// 			$this->_model->delete(
+// 					$this->_model->getAdapter()->quoteInto(
+// 							'DATAINDEX = ?',$this->_posts['SHAREPRICES_NAME']
+// 					));
+// 		}catch(Exception $e) {
+// 			$this->_error_code = $e->getCode();
+// 			$this->_error_message = $e->getMessage();
+// 			$this->_success = false;
+// 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

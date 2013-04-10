@@ -54,6 +54,7 @@ function showNewsSearch() {
 			text: 'Search',
 			listeners: {
 				click: function() {
+					showLoadingWindow();
 					var rTitle = Ext.getCmp('news-title').getValue();
 					var rCategory = Ext.getCmp('news-category').getValue();
 					if(typeof(rTitle) === 'undefined') {
@@ -62,6 +63,7 @@ function showNewsSearch() {
 					if(typeof(rCategory) === 'undefined') {
 						rCategory = '';
 					}
+					this.up().up().close();
 					storeRR.load({
 						params: {
 							search: 1,
@@ -69,7 +71,7 @@ function showNewsSearch() {
 							category: rCategory
 						},
 						callback: function(d, i, e) {
-							Ext.getCmp('news-search-window').close();
+							closeLoadingWindow();
 							if(d.length == 0) {
 								Ext.Msg.alert('Message', 'No data found.');
 							} else {

@@ -100,6 +100,19 @@ class Investors_RequestController extends Zend_Controller_Action
 			
 			if(isset($this->_posts['EQUITY_ASSETS'])) {
 				$EQUITY_ASSETS = $this->_posts['EQUITY_ASSETS'];
+				$EQmodel = new Application_Model_Equityasset();
+				$min = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MIN_VALUE');
+				$max = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MAX_VALUE');
+				if(strtolower($EQUITY_ASSETS) == 'small') {
+					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
+				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
+					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
+				} else if(strtolower($EQUITY_ASSETS) == 'large'){
+					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
+				} else {
+					$q->where('EQUITY_ASSETS >= 0');
+				}
+				/*
 				if(strtolower($EQUITY_ASSETS) == 'small') {
 					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
 				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
@@ -109,6 +122,7 @@ class Investors_RequestController extends Zend_Controller_Action
 				} else {
 					$q->where('EQUITY_ASSETS >= 0');
 				}
+				*/
 			}
 			
 			if(isset($this->_posts['INVESTOR_TYPE'])) {

@@ -1152,7 +1152,7 @@ Ext.create('Ext.Window', {
                 typeAhead: true,
 				name: 'CONTACT_PERSON',
 				allowBlank: true
-			},{
+			}/*,{
 				fieldLabel: 'Equity Assets',
 				emptyText: 'All',
 				store: new Ext.data.ArrayStore({fields:['EA'],data:[['All'],['Small'],['Medium'],['Large']]}),
@@ -1162,6 +1162,18 @@ Ext.create('Ext.Window', {
                 editable: false,
 				name: 'EQUITY_ASSETS',
 				allowBlank: false
+			}*/,{
+				xtype: 'combobox',
+                fieldLabel: 'Equity Assets',
+                name: 'EQUITY_ASSETS',
+                labelWidth: 130,
+                store: Ext.data.StoreManager.lookup('Equityassets'),
+                displayField: 'EQUITY_TYPE',
+                valueField:'EQUITY_TYPE',
+                typeAhead: true,
+                allowBlank: false,
+                minChars: 1,
+                emptyText: 'All'
 			}]
 		}]
 	},{

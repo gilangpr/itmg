@@ -248,6 +248,10 @@ if(__selected.length > 0) {
                     text:'Email',
                     dataIndex:'EMAIL_PART',
                     width:200
+                },{
+                    text:'Initials',
+                    dataIndex:'INITIAL_PART',
+                    width:200
                 }],
             	tbar:[{
             		xtype:'button',

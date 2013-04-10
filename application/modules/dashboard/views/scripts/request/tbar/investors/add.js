@@ -1,5 +1,42 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var id = 'investors-add-investor-form';
+<<<<<<< HEAD
+=======
+/*
+*Star
+*/
+if (Ext.ux.form == undefined) {
+    Ext.ns('Ext.ux.form');
+}
+
+Ext.ux.form.HtmlEditorCounterPlugin = function (config) {
+    Ext.apply(this, config);
+};
+
+Ext.extend (Ext.ux.form.HtmlEditorCounterPlugin, Ext.util.Observable, {
+    prefix: '',
+    itemTypeSingular: ' character',
+    itemTypePlural: ' characters',
+    itemTypeNone: ' characters',
+    onRender: function (o) {
+        this.counter = document.createElement("DIV");
+        this.editor.getToolbar ().add (this.counter);
+        this.set_counter ((this.editor.initialConfig.value || '').length);
+    },
+    init:   function (editor) {
+        this.editor = editor;
+        this.editor.on ('render', this.onRender, this);
+        this.editor.on ('sync', function (ct, html) { this.set_counter (html.length); }, this);
+    },
+    set_counter: function (s) {
+        this.counter.innerHTML = this.prefix + s + ((s) ? ((s > 1) ? this.itemTypePlural: this.itemTypeSingular) : this.itemTypeNone);
+    }
+});
+/*
+*End
+*/
+var myplugin = new Ext.ux.form.HtmlEditorCounterPlugin ({prefix: 'Current size is '});
+>>>>>>> 729e846499a0a63dc0cf1a39398f9005dfb72fd4
 if(!c.up().items.get(id)) {
 	
 	Ext.define('InvestorType', {//model
@@ -128,7 +165,12 @@ if(!c.up().items.get(id)) {
 					fieldLabel: 'Company Overview',
 					name: 'COMPANY_OVERVIEW',
 					xtype: 'htmleditor',
+<<<<<<< HEAD
 					height: 150
+=======
+					height: 150,
+					plugins:[myplugin]
+>>>>>>> 729e846499a0a63dc0cf1a39398f9005dfb72fd4
 				},{
 					fieldLabel: 'Investment Strategy',
 					name: 'INVESTMENT_STRATEGY',

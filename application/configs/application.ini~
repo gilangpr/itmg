@@ -24,15 +24,12 @@ resources.db.params.host = "localhost"
 resources.db.params.username = "root"
 resources.db.params.password = "myindo"
 <<<<<<< HEAD
-resources.db.params.dbname = "itmg"
-=======
-<<<<<<< HEAD
-resources.db.params.dbname = "itmg"
-=======
 resources.db.params.dbname = "itmg2"
->>>>>>> 71f0d8b7df6cf984fbe57adb64f3be684638eb46
->>>>>>> 99e32b3046d7c416115aa23afb5bc210e8a1e619
+=======
+resources.db.params.dbname = "itmg"
+>>>>>>> 729e846499a0a63dc0cf1a39398f9005dfb72fd4
 resources.db.isDefaultTableAdapter = true
+
 autoloaderNamespaces[] = "PHPExcel_" 
 autoloaderNamespaces[] = "PHPExcel" 
 [staging : production]
