@@ -41,4 +41,13 @@ class Application_Model_InvestorStatus extends MyIndo_Ext_Abstract
 		return $select->query()->fetchAll();
 	
 	}
+	
+	public function getStatus() {
+	
+		$select = $this->select();
+		$select->from(array($this->_name),array());//declare $_name => nama tabel
+		$select->columns('INVESTOR_STATUS');
+		return $select->query()->fetchAll();
+	
+	}
 }
