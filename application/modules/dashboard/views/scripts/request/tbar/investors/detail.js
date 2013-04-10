@@ -212,16 +212,16 @@ if(selected.length > 0) {
 			autoScroll: true,
 			waitMsgTarget: true,
 			tbar:[{
-						xtype: 'button',
-						text: 'Print Page',
-						iconCls: 'icon-print',
-						listeners: {
-							click: function() {
-								//var myWindow = window.open('', '', 'width=900,height=900');
-								window.open(sd.baseUrl + '/investors/request/print/id/' + data.INVESTOR_ID, '_blank');
-							   
-							}
-						}
+				xtype: 'button',
+				text: 'Print Page',
+				iconCls: 'icon-print',
+				listeners: {
+					click: function() {
+						//var myWindow = window.open('', '', 'width=900,height=900');
+						window.open(sd.baseUrl + '/investors/request/print/id/' + data.INVESTOR_ID, '_blank');
+					   
+					}
+				}
 			}],
 			items: [{
 				region: 'north',
@@ -440,12 +440,7 @@ if(selected.length > 0) {
 						name: 'COMPANY_OVERVIEW',
 						value: data.COMPANY_OVERVIEW,
 						minHeight: 160,
-						allowBlank: false,
-						id:'COMPANY_OVERVIEW',
-						msgTarget:'under',
-						maxLength:'100',
-						anchor:'-5 -53',
-						enableKeyEvents:true
+						allowBlank: false
 					}],
 					buttons: [{
 						text: 'Update',
@@ -941,105 +936,13 @@ if(selected.length > 0) {
 							}
 						}
 					}
-				},{
-					xtype:'button',
-					iconCls:'icon-go',
-					text:'Create Meeting',
-					listeners:{
-						click:function(){
-							Ext.create('Ext.Window', {
-								title: 'Add New Meeting Activities',
-                                draggable: false,
-			    				id: 'MA',
-                                modal: true,
-                                width: 400,
-                                align: 'center',
-                                resizable: false,
-                                items: [{
-                                	xtype: 'panel',
-                                	border: false,
-                                	items: [{
-                                		xtype: 'form',
-                                		layout: 'form',
-                                		id: 'add-meetingactivities-form',
-                                		border: false,
-                                		bodyPadding: '5 5 5 5',
-                                		defaultType: 'textfield',
-                                		waitMsgTarget: true,
-                                		items: [{
-							            	fieldLabel: 'Meeting Event',
-							            	allowBlank: false,
-							                name: 'MEETING_EVENT'
-							            },{
-							             	xtype:'datefield',
-							                fieldLabel: 'Meeting Date',
-							                allowBlank: false,
-							                name: 'MEETING_DATE',
-							                format:'Y-m-d'
-							            },{
-							             	xtype:'timefield',
-							                fieldLabel: 'Start Time',
-							                allowBlank: false,
-							                name: 'START_TIME'
-							            },{
-							                xtype:'timefield',
-							                fieldLabel: 'End Time',
-							                allowBlank: false,
-							                name: 'END_TIME'
-							            }]
-                                	}],
-                                	buttons: [{
-                                		text: 'Save',
-                                		listeners: {
-                                			click: function() {
-                                				var form = Ext.getCmp('add-meetingactivities-form').getForm();
-                                				if (form.isValid()) {
-                                					form.submit({
-                                						url: sd.baseUrl + '/meetingactivitie/request/cr',
-                                						waitMsg: 'Saving data, please wait..',
-                                						params: {
-                                							id: data.INVESTOR_ID
-                                						},
-                                						success: function(d, e) {
-                                							var json = Ext.decode(e.response.responseText);
-                                							form.reset();
-                                							var store = loadStore('Meetinginvestors');
-                                							store.load({
-                                								params: {
-                                									id: data.INVESTOR_ID
-                                								}
-                                							});
-                                							Ext.Msg.alert('Success', 'Data has been saved');
-                                							Ext.getCmp('MA').close();
-                                						},
-                                						failure: function(d, e) {
-                                							var json = Ext.decode(e.response.responseText);
-                                							Ext.Msg.alert('Error','Sorry, data already exist');
-                                						}
-                                					});
-                                				}
-                                			}
-                                		}
-                                	},{
-                                		text: 'Cancel',
-                                		listeners: {
-                                			click: function() {
-                                				this.up().up().up().close();
-                                			}
-                                		}
-                                	}]
-                                }]
-                            }).show();
-						}
-					}
-
 				}]
 			}]
 		}));
 	}
 	c.up().setActiveTab(id);
 	$('body').css('overflow','hidden');
-			
+	
 	
 	/* Investment Strategy */
 	

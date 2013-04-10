@@ -1,34 +1,5 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
-//Store Shareprices Name
-var storeSR = Ext.create('Ext.data.Store',{
-    storeId: 'Shareprices',
-    model: 'SharepricesName',
-    proxy: {
-        type: 'ajax',
-        api: {
-            read: '/sharepricesname/request/readauto'
-        },
-        actionMethods: {
-            create: 'POST'
-        },
-        reader: {
-            idProperty: 'SHAREPRICES_NAME',
-            type: 'json',
-            root: 'data.items',
-            totalProperty: 'data.totalCount'
-        },
-        writer: {
-            type: 'json',
-            root: 'data',
-            writeAllFields: true
-        }
-    },
-    sorter: {
-        property: 'SHAREPRICES_NAME_ID',
-        direction: 'ASC'
-    },
-    autoSync: true
-});
+
 Ext.require('Ext.chart.*');
 Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox']);
 Ext.onReady(function() {
@@ -108,22 +79,16 @@ Ext.onReady(function() {
 				allowBlank: false
 			},{
 				xtype: 'combobox',
-				store: storeSR,
 				fieldLabel: 'Shareprices Name',
-		        displayField:'SHAREPRICES_NAME',
 				name: 'SHAREPRICES_NAME',
-		        typeAhead: false,
-		        loadingText: 'Searching...',
 				labelWidth: 120,
 				width: 320,
-				minChars: 3,
-		        hideTrigger:false,
-		        applyTo: 'search',
-				emptyText: 'Select shareprices name',
-		        itemSelector: 'div.search-item',
-		        onSelect: function(record){ // override default onSelect to do redirect
-		            alert("do something here");
-		        }
+				store: Ext.data.StoreManager.lookup('SharepricesNames'),
+				displayField: 'SHAREPRICES_NAME',
+				typeAhead: true,
+				allowBlank: false,
+				minChars: 2,
+				emptyText: 'Select shareprices name'
 			}]
 		}],
 		buttons: [{

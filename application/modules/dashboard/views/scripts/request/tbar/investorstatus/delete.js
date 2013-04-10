@@ -25,10 +25,20 @@ if(selected.length > 0) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
 							var store = loadStore('InvestorStatus');
-							store.loadPage(1);						},
+							store.loadPage(1);						
+							},
 						failure: function(data) {
-							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
+							var json = Ext.decode(response.responseText);
 							closeLoadingWindow();
+							var store = Ext.StoreManager.lookup('InvestorStatus');
+							store.load(1);					
+							Ext.Msg.show({
+								   title:'Alert!',
+								   msg: json.error_message,
+								   modal: true,
+								   buttons: Ext.Msg.OK
+								});
+							  return true;
 						}
 					});
 				}

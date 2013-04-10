@@ -1,6 +1,5 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var id = 'investors-add-investor-form';
-//var myplugin = new Ext.ux.form.HtmlEditorCounterPlugin ({prefix: 'Current size is '});
 if(!c.up().items.get(id)) {
 	
 	Ext.define('InvestorType', {//model
@@ -129,11 +128,7 @@ if(!c.up().items.get(id)) {
 					fieldLabel: 'Company Overview',
 					name: 'COMPANY_OVERVIEW',
 					xtype: 'htmleditor',
-					height: 150,
-					/*editor: new Ext.form.TextField({
-							maxLength: 20,
-							plugins: new Ext.ux.plugins.Counter()
-					})*/
+					height: 150
 				},{
 					fieldLabel: 'Investment Strategy',
 					name: 'INVESTMENT_STRATEGY',

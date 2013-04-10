@@ -16,18 +16,7 @@ class Application_Model_SharepricesName extends MyIndo_Ext_Abstract
 		
 		return $q->query()->fetchAll();
 	}
-	public function getAllLike($query, $limit, $offset)
-	{
-		$q = $this->select()
-		->setIntegrityCheck(false)
-		->from($this->_name, array('*'))
-		->join('CONTENT_COLUMNS', 'CONTENT_COLUMNS.DATAINDEX = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'))
-		->join('MODEL_FIELDS', 'MODEL_FIELDS.NAME = SHAREPRICES_NAME.SHAREPRICES_NAME', array('*'))
-		->where('SHAREPRICES_NAME LIKE ?', $query. '%')
-		->limit($limit, $offset);
 	
-		return $q->query()->fetchAll();
-	}
 	public function getShare()
 	{
 		$q = $this->select()

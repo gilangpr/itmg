@@ -91,10 +91,9 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 
                 	if ($query->query()->rowCount() > 0) {
                 		
-                		
+                		$this->_error_message = 'Data Used';
 			            $this->_success = false;
                 		
-
                 } else {
                 	
                 	$this->_model->delete(

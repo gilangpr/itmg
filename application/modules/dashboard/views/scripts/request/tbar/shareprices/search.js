@@ -18,36 +18,7 @@ Date.prototype.customFormat = function(formatString){
     ss=(s=dateObject.getSeconds())<10?('0'+s):s;
     return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 }
-//Store Shareprices Name
-var storeSR = Ext.create('Ext.data.Store',{
-    storeId: 'Shareprices',
-    model: 'SharepricesName',
-    proxy: {
-        type: 'ajax',
-        api: {
-            read: '/sharepricesname/request/readauto'
-        },
-        actionMethods: {
-            create: 'POST'
-        },
-        reader: {
-            idProperty: 'SHAREPRICES_NAME',
-            type: 'json',
-            root: 'data.items',
-            totalProperty: 'data.totalCount'
-        },
-        writer: {
-            type: 'json',
-            root: 'data',
-            writeAllFields: true
-        }
-    },
-    sorter: {
-        property: 'SHAREPRICES_NAME_ID',
-        direction: 'ASC'
-    },
-    autoSync: true
-});
+
 var SP_START_DATE = '1900-01-01';
 var SP_END_DATE = '2013-12-12';
 var SP_NAMES = new Array();
