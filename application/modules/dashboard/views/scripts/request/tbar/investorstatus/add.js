@@ -27,7 +27,7 @@ Ext.create('Ext.Window', {
 		listeners: {
 			click: function() {
 				var form = this.up().up().items.items[0].items.items[0].getForm();
-				var store = loadStore('InvestorStatus');
+				var store = loadStore('InvestorStatuss');
 				if(form.isValid()) {
 					form.submit({
 						url: sd.baseUrl + '/investorstatus/request/create',
