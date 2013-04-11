@@ -1,3 +1,4 @@
+
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSR = Ext.create('Ext.data.Store',{
     storeId: 'SharepricesNames',

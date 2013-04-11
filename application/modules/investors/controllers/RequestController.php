@@ -277,9 +277,9 @@ class Investors_RequestController extends Zend_Controller_Action
 
 	public function uploadAction (){
 			
-		//$data = array(
-		//		'data' => array()
-		//);
+		$data = array(
+				'data' => array()
+		);
 		$ITmodel = new Application_Model_InvestorType();
 		$LOmodel = new Application_Model_Locations();
 		try{
