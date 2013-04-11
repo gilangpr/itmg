@@ -143,7 +143,9 @@ Ext.onReady(function() {
 				store: storeSR,
 				minChars: 3,
 				emptyText: 'Select shareprices name',
-				typeAhead: true,
+				multiSelect: true,
+				typeAhead: false,
+				editable: false,
 				allowBlank: false
 			}]
 		}],

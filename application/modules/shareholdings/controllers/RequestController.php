@@ -288,7 +288,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		);
 		
 		$upload = new Zend_File_Transfer_Adapter_Http();	
-		$upload->setDestination(APPLICATION_PATH . '/../public/uploads');
+		$upload->setDestination(APPLICATION_PATH . '/../public/upload');
 		$upload->addValidator('Extension',false,'xls,xlsx');
         
 		if ($upload->isValid()) {	
