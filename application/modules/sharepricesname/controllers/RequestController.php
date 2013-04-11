@@ -88,8 +88,11 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 				));
 
 				/* Set Value */
-				$listSp = $this->_modelSp->getList();
-				foreach($listSp as $k=>$d) {
+				$_qSp = $this->_modelSp->select()
+				->from('SHAREPRICES', array('DATE'))
+				->distinct(true);
+				$_result = $_qSp->query()->fetchAll();
+				foreach($_result as $k=>$d) {
 					$this->_modelSp->insert(array(
 						'DATE'=> $d['DATE'],
 						'SHAREPRICES_NAME' => $this->_posts['SHAREPRICES_NAME'],
