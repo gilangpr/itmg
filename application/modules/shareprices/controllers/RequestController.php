@@ -13,6 +13,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 	
 	public function init()
 	{
+		set_time_limit(1800);
 		$this->_helper->layout()->disableLayout();
 		$this->_helper->viewRenderer->setNoRender(true);
 		$this->_model = new Application_Model_Shareprices();
@@ -334,14 +335,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
  									if ($count['count'] == 0) {
 
  										$snId = new Application_Model_SharepricesName();
- 										if($snId->isExistByKey('SHAREPRICES_NAME', $valNames)) {
- 											$getSNid = $snId->getPkByKey('SHAREPRICES_NAME', $valNames);
- 										} else {
- 											$getSNid = $snId->insert(array(
- 													'SHAREPRICES_NAME' => $valNames,
- 													'CREATED_DATE' => date('Y-m-d H:i:s')
- 													));
- 										}
  										$this->_model2 = new MyIndo_Ext_ContentColumns();
  										$this->_model3 = new MyIndo_Ext_ModelFields();
  										
@@ -417,6 +410,9 @@ class Shareprices_RequestController extends Zend_Controller_Action
  												'VALUE' => $valValue,
  										),$this->_model->getAdapter()->quoteInto('SHAREPRICES_ID = ?', $spid));
  									}
+ 									if(file_exists($upload->getDestination() . '/' . $new_name)) {
+ 										unlink($upload->getDestination() . '/' . $new_name);
+ 									}
 								}			
 							}													
 						}
@@ -441,11 +437,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
-		if(file_exists($upload->getDestination() . '/' . $new_name)) {
-			unlink($upload->getDestination() . '/' . $new_name);
-		}
-		
+				
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
