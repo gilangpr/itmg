@@ -1171,7 +1171,7 @@ Ext.create('Ext.Window', {
                 displayField: 'EQUITY_TYPE',
                 valueField:'EQUITY_TYPE',
                 typeAhead: true,
-                allowBlank: false,
+                allowBlank: true,
                 minChars: 1,
                 emptyText: 'All'
 			}]

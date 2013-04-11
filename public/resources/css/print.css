@@ -50,7 +50,7 @@
 	}
 	#head{
 		width:425px;
-		min-height: 20px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		padding-left: 5px;
@@ -70,7 +70,7 @@
 	}
 	#headSec{
 		width:430px;
-		min-height: 40px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		padding-left: 5px;
@@ -91,7 +91,7 @@
 	}
 	#headPor{
 		width:430px;
-		min-height: 40px;
+		height: 40px;
 		margin: 5px;
 		color:black;
 		float: right;
@@ -112,7 +112,7 @@
 	}
 	#head2{
 		width:875px;
-		min-height: 20px;
+		height: 40px;
 		margin: 0px;
 		color:black;
 		padding-left: 5px;
@@ -135,6 +135,15 @@
 		position: relative;
 		margin: 5px;
 		min-height: 140px;
+		border: 1px solid gray;
+		background: #e6ecef;
+	}
+	#bawah{
+		width: 880px;
+		position: relative;
+		margin: 5px;
+		padding: 5px;
+		min-height: 70px;
 		border: 1px solid gray;
 		background: #e6ecef;
 	}
