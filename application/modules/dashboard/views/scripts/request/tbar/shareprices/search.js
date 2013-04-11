@@ -164,17 +164,89 @@ Ext.onReady(function() {
 											text: json.data.names[i],
 											renderer: Ext.util.Format.numberRenderer('0.,00/i')
 									};
+									series[i] = {
+										type: 'line',
+										highlight: {
+											size: 7,
+											radius: 7
+										},
+										axis: 'left',
+										xField: 'DATE',
+										yField: json.data.names[i],
+						                markerConfig: {
+						                    type: 'circle',
+						                    size: 4,
+						                    radius: 4,
+						                    'stroke-width': 0
+						                }
+									};
 								}
 								c.up().add({
 									title: 'Shareprices Search Result',
 									closable: true,
-			                        id: _id,
-			                        autoScroll: true,
-									xtype: 'gridpanel',
-									border: false,
-									store: _storeShareprices,
-									columns: cols
+									id: _id,
+									autoScroll: true,
+									xtype: 'panel',
+									layout: 'border',
+									items: [{
+										region: 'north',
+										minHeight: 154,
+										maxHeight: 154,
+										autoScroll: true,
+										xtype: 'gridpanel',
+										border: false,
+										store: _storeShareprices,
+										columns: cols
+									},{
+										region: 'north',
+										title: 'Chart',
+										minHeight: 260,
+										maxHeight: 260,
+										width: 500,
+										border: false,
+										xtype: 'chart',
+										style: 'background: #fff',
+										animate: true,
+										store: _storeShareprices,
+										shadow: true,
+										theme: 'Category1',
+										legend: {
+											position: 'right'
+										},
+										axes: [{
+											type: 'Numeric',
+											minimum: 0,
+											position: 'left',
+											fields: json.data.names,
+											title: 'Shareprices',
+											minorTickSteps: 1,
+											grid: {
+												odd: {
+													opacity: 1,
+													fill: '#ddd',
+													stroke: '#bbb',
+													'stroke-width': 0.5
+												}
+											}
+										},{
+											type: 'Category',
+											position: 'bottom',
+											fields: ['DATE'],
+											title: 'Date'
+										}],
+										series: series
+									}]
 								});
+								// c.up().add({
+								// 	title: 'Shareprices Search Result',
+								// 	closable: true,
+			     //                    id: _id,
+			     //                    autoScroll: true,
+								// 	xtype: 'gridpanel',
+								// 	border: false,
+								// 	store: _storeShareprices,
+								// 	columns: cols
+								// });
 								c.up().setActiveTab(_id);
 								closeLoadingWindow();
 							}
