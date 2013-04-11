@@ -24,30 +24,17 @@ if(selected.length > 0) {
 						success: function(data) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
-							var store = loadStore('SharepricesNames');
-							store.loadPage(1);						
-							Ext.Msg.show({
-								title: 'Error',
-								msg: json.error_message,
-								minWidth: 300,
-								modal: true,
-								icon: Ext.Msg.INFO,
-								buttons: Ext.Msg.OK
-							});
+							
+							if(!json.success) {
+								Ext.Msg.alert('Error', json.error_message);
+							} else {
+								var store = loadStore('SharepricesNames');
+								store.loadPage(1);
+							}
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
-							var store = loadStore('SharepricesNames');
-							store.loadPage(1);						
-							Ext.Msg.show({
-								title: 'Complete',
-								msg: json.error_message,
-								minWidth: 300,
-								modal: true,
-								icon: Ext.Msg.INFO,
-								buttons: Ext.Msg.OK
-							});
 						}
 					});
 				}
