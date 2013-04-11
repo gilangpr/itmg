@@ -175,24 +175,33 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		$this->_model = new MyIndo_Ext_ContentColumns();
 		$this->_model2 = new MyIndo_Ext_ModelFields();
 		$this->_model3 = new Application_Model_SharepricesName();
-		
+		$this->_modelSp = new Application_Model_Shareprices();
+
 		$data = array(
 				'data' => array()
 		);
 		try {
-			// Delete
-			$this->_model3->delete(
-					$this->_model3->getAdapter()->quoteInto(
-							'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']
-					));
-			$this->_model2->delete(
-					$this->_model2->getAdapter()->quoteInto(
-							'NAME = ?',$this->_posts['SHAREPRICES_NAME']
-					));
-			$this->_model->delete(
-					$this->_model->getAdapter()->quoteInto(
-							'DATAINDEX = ?',$this->_posts['SHAREPRICES_NAME']
-					));
+			$_q = $this->_modelSp->select()
+				->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+				if($_q->query()->rowCount() == 0) {
+				// Delete
+				$this->_model3->delete(
+						$this->_model3->getAdapter()->quoteInto(
+								'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']
+						));
+				$this->_model2->delete(
+						$this->_model2->getAdapter()->quoteInto(
+								'NAME = ?',$this->_posts['SHAREPRICES_NAME']
+						));
+				$this->_model->delete(
+						$this->_model->getAdapter()->quoteInto(
+								'DATAINDEX = ?',$this->_posts['SHAREPRICES_NAME']
+						));
+			}else {
+				$this->_error_code = 102;
+				$this->_error_message = 'Delete failed, data is being used.';
+				$this->_success = false;
+			}
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

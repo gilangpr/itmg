@@ -12,20 +12,23 @@ Ext.create('Ext.Window', {
 			click: function() {
 				var form  = Ext.getCmp('shareprices-add-new-form').getForm();
 				if(form.isValid()) {
+					showLoadingWindow();
 					form.submit({
 						url: sd.baseUrl + '/shareprices/request/create',
 						success: function(data) {
 							var json = Ext.decode(data.respnoseText);
 							form.reset();
 							Ext.Msg.alert('Message','Success adding new Shareprices');
-							form.reset();
-							store.loadPage(store.currentPage);
+							var store = loadStore('Shareprices');
+							store.loadPage(1);
+							closeLoadingWindow();
 						},
 						failure: function(data,res) {
 							var json = Ext.decode(res.response.responseText);
 							Ext.Msg.alert('Error',json.error_message);
 							form.reset();
 							store.loadPage(1);
+							closeLoadingWindow();
 						}
 					});
 				}
