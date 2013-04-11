@@ -19,8 +19,11 @@ Ext.extend (Ext.ux.form.HtmlEditorCounterPlugin, Ext.util.Observable, {
     itemTypePlural: ' characters',
     itemTypeNone: ' characters',
     onRender: function (o) {
-        this.counter = document.createElement("DIV");
-        this.editor.getToolbar ().add (this.counter);
+        this.counter = Ext.DomHelper.append(document.body,{
+          tag : 'div',
+          style: 'padding-top:2px'
+        })
+        this.editor.wrap.up('div.x-form-element').appendChild(this.counter);
         this.set_counter ((this.editor.initialConfig.value || '').length);
     },
     init:   function (editor) {
