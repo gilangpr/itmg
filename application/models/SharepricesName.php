@@ -33,4 +33,15 @@ class Application_Model_SharepricesName extends MyIndo_Ext_Abstract
 		->where('SHAREPRICES_NAME_ID = ?' ,$nameId);
 		return $q->query()->fetch();
 	}
+	
+	public function getAllLike($query, $limit, $offset)
+	{
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->where('SHAREPRICES_NAME LIKE ?', $query. '%')
+		->limit($limit, $offset);
+	
+		return $q->query()->fetchAll();
+	}
 }

@@ -408,6 +408,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 									'CREATED_DATE' => $this->_date
 									));
 								$this->_model2->insert(array(
+									'CONTENT_COLUMN_ID' => $id,
 									'CONTENT_ID' => 6,
 									'TEXT' => $d,
 									'DATAINDEX' => $d,
@@ -606,4 +607,6 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		}
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+	
+	
 }
