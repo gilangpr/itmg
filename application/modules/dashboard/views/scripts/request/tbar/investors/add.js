@@ -1,10 +1,8 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var id = 'investors-add-investor-form';
-<<<<<<< HEAD
-=======
 /*
 *Star
-*/
+*
 if (Ext.ux.form == undefined) {
     Ext.ns('Ext.ux.form');
 }
@@ -38,8 +36,7 @@ Ext.extend (Ext.ux.form.HtmlEditorCounterPlugin, Ext.util.Observable, {
 /*
 *End
 */
-var myplugin = new Ext.ux.form.HtmlEditorCounterPlugin ({prefix: 'Current size is '});
->>>>>>> 729e846499a0a63dc0cf1a39398f9005dfb72fd4
+//var myplugin = new Ext.ux.form.HtmlEditorCounterPlugin ({prefix: 'Current size is '});
 if(!c.up().items.get(id)) {
 	
 	Ext.define('InvestorType', {//model
@@ -168,12 +165,8 @@ if(!c.up().items.get(id)) {
 					fieldLabel: 'Company Overview',
 					name: 'COMPANY_OVERVIEW',
 					xtype: 'htmleditor',
-<<<<<<< HEAD
-					height: 150
-=======
 					height: 150,
-					plugins:[myplugin]
->>>>>>> 729e846499a0a63dc0cf1a39398f9005dfb72fd4
+					//plugins:[myplugin]
 				},{
 					fieldLabel: 'Investment Strategy',
 					name: 'INVESTMENT_STRATEGY',
