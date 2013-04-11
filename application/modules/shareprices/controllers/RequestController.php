@@ -83,15 +83,15 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				$t[$i]['DATE'] = $d['DATE'];
 			}
 			$nameSp = $this->_model->getName($d['DATE']);
-// 			foreach ($nameSp as $_k=>$_d)
-// 			{
+			foreach ($nameSp as $_k=>$_d)
+			{
 // 				$number = $_d['VALUE'];
 // 				setlocale(LC_MONETARY, 'en_US');
 // 				$var = money_format('%i', $number);
 // 				$num = explode('USD ', $var);
 // 				$t[$i][$_d['SHAREPRICES_NAME']] = $num[1];
-// 				//$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
-// 			}
+				$t[$i][$_d['SHAREPRICES_NAME']] = $_d['VALUE'];
+			}
 		}
 		foreach($t as $k=>$d) {
 			foreach($spRes as $_k=>$_d) {
