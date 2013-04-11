@@ -26,16 +26,14 @@ Ext.create('Ext.Window', {
 							var json = Ext.decode(e.response.responseText);
 							form.reset();
 							Ext.Msg.alert('Message','Sukses');
-							console.log(json);
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
-							var store = Ext.StoreManager.lookup('InvestorStatus');
+							var store = Ext.StoreManager.lookup('InvestorStatuss');
 							store.load(1);
 						},
 						failure: function(data,e) {
 							var json = Ext.decode(e.response.responseText);
 							Ext.Msg.alert('Message',json.error_message);
-							console.log(json);
 						}
 					});
 				}
