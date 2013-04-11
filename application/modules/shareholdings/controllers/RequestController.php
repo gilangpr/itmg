@@ -286,14 +286,12 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-
-		// membaca file excel yang diupload
+		
 		$upload = new Zend_File_Transfer_Adapter_Http();	
 		$upload->setDestination(APPLICATION_PATH . '/../public/uploads');
 		$upload->addValidator('Extension',false,'xls,xlsx');
         
-		if ($upload->isValid()) {
-	
+		if ($upload->isValid()) {	
 			$upload->receive();
 			$fileInfo = $upload->getFileInfo();
 			$filExt = explode('.', $fileInfo['FILE']['name']);

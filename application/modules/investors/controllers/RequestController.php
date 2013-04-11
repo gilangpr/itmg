@@ -100,6 +100,19 @@ class Investors_RequestController extends Zend_Controller_Action
 			
 			if(isset($this->_posts['EQUITY_ASSETS'])) {
 				$EQUITY_ASSETS = $this->_posts['EQUITY_ASSETS'];
+				$EQmodel = new Application_Model_Equityasset();
+				$min = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MIN_VALUE');
+				$max = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MAX_VALUE');
+				if(strtolower($EQUITY_ASSETS) == 'small') {
+					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
+				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
+					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
+				} else if(strtolower($EQUITY_ASSETS) == 'large'){
+					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
+				} else {
+					$q->where('EQUITY_ASSETS >= 0');
+				}
+				/*
 				if(strtolower($EQUITY_ASSETS) == 'small') {
 					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
 				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
@@ -109,6 +122,7 @@ class Investors_RequestController extends Zend_Controller_Action
 				} else {
 					$q->where('EQUITY_ASSETS >= 0');
 				}
+				*/
 			}
 			
 			if(isset($this->_posts['INVESTOR_TYPE'])) {
@@ -214,8 +228,7 @@ class Investors_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	public function printAction()
-	{
-		
+	{	
 		$id = $this->_getParam('id',0);
 		if($this->_model->isExistByKey('INVESTOR_ID', $id)) {
 			$this->_helper->viewRenderer->setNoRender(false);
@@ -258,8 +271,10 @@ class Investors_RequestController extends Zend_Controller_Action
 			$this->_helper->viewRenderer->setNoRender(true);
 			echo "no data found";
 		}
+	
 		
 	}
+
 	public function uploadAction (){
 			
 		//$data = array(
@@ -274,131 +289,134 @@ class Investors_RequestController extends Zend_Controller_Action
 		$upload->setDestination(APPLICATION_PATH ."/../public/upload/investors/");
 		//$upload->addValidator('Extension',false,'xls,xlsx');
 		$upload->addValidator('Extension',false, array('xls','xlsx','case'=>true));
-		if ($upload->isValid()) {
-	
-			$upload->receive();
-			$fileInfo = $upload->getFileInfo();
-			$filExt = explode('.', $fileInfo['FILE']['name']);
-			$filExt = explode('_', $fileInfo['FILE']['name']);
-			$date = explode('.', $filExt[2]);
+			if ($upload->isValid()) {
+		
+				$upload->receive();
+				$fileInfo = $upload->getFileInfo();
+				$filExt = explode('.', $fileInfo['FILE']['name']);
+				$filExt = explode('_', $fileInfo['FILE']['name']);
+				$date = explode('.', $filExt[2]);
 
-			/* Get file extension */
-			$filExt = explode('.',$fileInfo['FILE']['name']);
-			$filExt = '.' . strtolower($filExt[count($filExt)-1]);
-			/* End of : Get file extension */
-	
-			/* Rename file */
-			$new_name = microtime() . $filExt ;
-			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
-			/* End of : Rename file */
-		} 
-		try{
-	
-			$inputFileName = $upload->getDestination() . '/' . $new_name;
-			$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
-			$objReader = PHPExcel_IOFactory::createReader($inputFileType);
-			$objReader->setReadDataOnly(true);
-			$objPHPExcel = $objReader->load($inputFileName);
-			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
-		    $objWriter->setPreCalculateFormulas(false);
-		    //$objPHPExcel->setActiveSheetIndex(0);
-		    //$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-		    
-		    // get number of last Row
+				/* Get file extension */
+				$filExt = explode('.',$fileInfo['FILE']['name']);
+				$filExt = '.' . strtolower($filExt[count($filExt)-1]);
+				/* End of : Get file extension */
+		
+				/* Rename file */
+				$new_name = microtime() . $filExt ;
+				rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
+				/* End of : Rename file */
+			} 
+			try{
+		
+				$inputFileName = $upload->getDestination() . '/' . $new_name;
+				$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+				$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+				$objReader->setReadDataOnly(true);
+				$objPHPExcel = $objReader->load($inputFileName);
+				$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
+			    $objWriter->setPreCalculateFormulas(false);
+			    //$objPHPExcel->setActiveSheetIndex(0);
+			    //$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+			    
+			    // get number of last Row
 
-		    $total = 0;
-			foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-				$worksheetTitle     =  $worksheet->getTitle();
-				$highestRow         =  $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();  
-				$highestColumn      =  $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
-				//$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-				$nrColumns = ord($highestColumn) - 64;
-				
-                $highestColumn++;
-				for ($row = 2; $row < $highestRow + 1; $row++) {
+			    $total = 0;
+				foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+					$worksheetTitle     =  $worksheet->getTitle();
+					$highestRow         =  $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();  
+					$highestColumn      =  $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+					//$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+					$nrColumns = ord($highestColumn) - 64;
 					
-					$val=array();
-					for ($col = 'A'; $col < $highestColumn; $col++) {
+	                $highestColumn++;
+					for ($row = 2; $row < $highestRow + 1; $row++) {
+						
+						$val=array();
+						for ($col = 'A'; $col < $highestColumn; $col++) {
 
-						$val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
-					};
-					
-					if(!is_null($val[0])){
-						if(!$this->_model->isExistByKey('COMPANY_NAME',$val[0])){
-							if (!$ITmodel->isExistByKey('INVESTOR_TYPE',$val[1])) {
-								$id_it = $ITmodel->insert(array(
-									'INVESTOR_TYPE' => $val[1],
-									'CREATED_DATE' => date('Y-m-d H:i:s')
+							$val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
+						};
+						
+						if(!is_null($val[0])){
+							if(!$this->_model->isExistByKey('COMPANY_NAME',$val[0])){
+								if (!$ITmodel->isExistByKey('INVESTOR_TYPE',$val[1])) {
+									$id_it = $ITmodel->insert(array(
+										'INVESTOR_TYPE' => $val[1],
+										'CREATED_DATE' => date('Y-m-d H:i:s')
+										));
+									$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+								}
+								else{
+									$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+								}
+								if (!$LOmodel->isExistByKey('LOCATION',$val[11])) {
+									$id_lo = $LOmodel->insert(array(
+										'LOCATION' => $val[11],
+										'CREATED_DATE' => date('Y-m-d H:i:s')
+										));
+									$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
+								}
+								else{
+									$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
+								}
+								//$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+								//$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
+								$jum = $this->_model->insert(array(									
+										'INVESTOR_TYPE_ID' => $IT_id,
+										'LOCATION_ID' => $LO_id,
+										'COMPANY_NAME' => $val[0],
+										'STYLE'=> $val[2],
+										'EQUITY_ASSETS'=>$val[3] ,
+										'PHONE_1'=>$val[4],
+										'PHONE_2'=>$val[5],
+										'FAX'=>$val[6],
+										'EMAIL_1'=>$val[7],
+										'EMAIL_2'=>$val[8],
+										'WEBSITE'=>$val[9],
+										'ADDRESS'=>$val[10],
+										'COMPANY_OVERVIEW'=>$val[12],
+										'INVESTMENT_STRATEGY'=>$val[13],
+					 					'CREATED_DATE' => date('Y-m-d H:i:s')
 									));
-								$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+								$total = $total + count($jum);
+								/*
+								$data = array(
+									'data' => array(
+										'items' => $total,
+										'totalCount' => $total
+										)
+									);
+								*/
 							}
+							
 							else{
-								$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
+								/*
+								if($total == 0){
+									//$total=1;
+									$this->_success = false;
+									$this->_error_message = '0 Data Insert';	
+								}
+								else{
+									$jumlah=$total+1;
+									$this->_success = false;
+									$this->_error_message = $jumlah.' Data Insert';	
+								}
+								*/
+								$this->_success = false;
+								$this->_error_message = 'Any data Already Exist';	
 							}
-							if (!$LOmodel->isExistByKey('LOCATION',$val[11])) {
-								$id_lo = $LOmodel->insert(array(
-									'LOCATION' => $val[11],
-									'CREATED_DATE' => date('Y-m-d H:i:s')
-									));
-								$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
-							}
-							else{
-								$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
-							}
-							//$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE',$val[1]);
-							//$LO_id = $LOmodel->getPkByKey('LOCATION',$val[11]);
-							$jum = $this->_model->insert(array(									
-									'INVESTOR_TYPE_ID' => $IT_id,
-									'LOCATION_ID' => $LO_id,
-									'COMPANY_NAME' => $val[0],
-									'STYLE'=> $val[2],
-									'EQUITY_ASSETS'=>$val[3] ,
-									'PHONE_1'=>$val[4],
-									'PHONE_2'=>$val[5],
-									'FAX'=>$val[6],
-									'EMAIL_1'=>$val[7],
-									'EMAIL_2'=>$val[8],
-									'WEBSITE'=>$val[9],
-									'ADDRESS'=>$val[10],
-									'COMPANY_OVERVIEW'=>$val[12],
-									'INVESTMENT_STRATEGY'=>$val[13],
-				 					'CREATED_DATE' => date('Y-m-d H:i:s')
-								));
-							$total = $total + count($jum);
-							$data = array(
-								'data' => array(
-									'items' => $total,
-									'totalCount' => $total
-									)
-								);
+							//$jumlah = $total+1;
 						}
 						
-						else{
-							/*
-							if($total == 0){
-								//$total=1;
-								$this->_success = false;
-								$this->_error_message = '0 Data Insert';	
-							}
-							else{
-								$jumlah=$total+1;
-								$this->_success = false;
-								$this->_error_message = $jumlah.' Data Insert';	
-							}
-							*/
-						}
-						//$jumlah = $total+1;
 					}
-					
-				}
- 			}
-		}
-		catch (Exception $e) {
+	 			}
+			}catch (Exception $e) {
 			 
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
-		}
+			}
 		} 
 		catch(Zend_File_Transfer_Exception $e) {
 					$this->_error_code = $e->getCode();
@@ -413,4 +431,5 @@ class Investors_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	
 	}
+
 }

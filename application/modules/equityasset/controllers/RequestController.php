@@ -98,7 +98,6 @@ class Equityasset_RequestController extends Zend_Controller_Action
 				'data' => array()
 				);
 		try {
-			//Delete
 			
 			$this->_model->delete(
  					$this->_model->getAdapter()->quoteInto(

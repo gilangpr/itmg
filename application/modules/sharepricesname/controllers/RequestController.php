@@ -33,12 +33,11 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		$data = array(
-					'data' => array(
-							'items' => $this->_model->getAll($this->_limit, $this->_start),
-							'totalCount' => $this->_model->count()
-					)
+				'data' => array(
+						'items' => $this->_model->getAll($this->_limit, $this->_start),
+						'totalCount' => $this->_model->count()
+				)
 		);
-		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -46,6 +45,8 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	{
 		$this->_model2 = new MyIndo_Ext_ContentColumns();
 		$this->_model3 = new MyIndo_Ext_ModelFields();
+		$this->_modelSp = new Application_Model_Shareprices();
+		$this->_modelLog = new Application_Model_SharepricesLog();
 		
 		$data = array(
 				'data' => array()
@@ -68,7 +69,7 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 				));
 				$id = $this->_model3->getPkByKey('NAME', $this->_posts['SHAREPRICES_NAME']);
 				// Insert Data :
-				$this->_model->insert(array(
+				$getSNid = $this->_model->insert(array(
 						'SHAREPRICES_NAME_ID'=> $id,
 						'SHAREPRICES_NAME'=> $this->_posts['SHAREPRICES_NAME'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
@@ -85,6 +86,30 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 						'INDEX' => 0,
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
+
+				/* Set Value */
+				$_qSp = $this->_modelSp->select()
+				->from('SHAREPRICES', array('DATE'))
+				->distinct(true);
+				$_result = $_qSp->query()->fetchAll();
+				foreach($_result as $k=>$d) {
+					$this->_modelSp->insert(array(
+						'DATE'=> $d['DATE'],
+						'SHAREPRICES_NAME' => $this->_posts['SHAREPRICES_NAME'],
+						'VALUE' => 0,
+						'CREATED_DATE' => date('Y-m-d H:i:s'),
+						'SHAREPRICES_NAME_ID' => $getSNid
+						));
+					//insert shareprices log
+					$this->_modelLog->insert(array(
+							'DATE'=> $d['DATE'],
+							'SHAREPRICES_NAME' => $this->_posts['SHAREPRICES_NAME'],
+							'VALUE_BEFORE' => 0,
+							'VALUE_AFTER' => 0,
+							'CREATED_DATE' => date('Y-m-d H:i:s'),
+							'SHAREPRICES_NAME_ID' => $getSNid
+					));
+				}
 				
 			}catch(Exception $e) {
 				$this->_error_code = $e->getCode();
@@ -173,27 +198,6 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	public function readautoAction()
-	{
-		if ($this->_posts['query'] == '') {
-			$data = array(
-					'data' => array(
-							'items' => $this->_model->getAll($this->_limit, $this->_start),
-							'totalCount' => $this->_model->count()
-					)
-			);
-		} else {
-			$data = array(
-					'data' => array(
-							'items' => $this->_model->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
-							'totalCount' => $this->_model->count()
-					)
-			);
-		}
-		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

@@ -20,12 +20,13 @@ storeEQ.load();
 					resizable: false,
 					items: [{
 						xtype: 'gridpanel',
-						minWidth: 500,
-						minHeight: 200,
+						minWidth: 300,
+						minHeight: 100,
 						border: false,
 						store:storeEQ,
 						plugins: [cellEditing],
 						id: 'investors-equity-asset-data-grid',
+						/*
 						tbar: [{
 							xtype: 'button',
 							text: 'Add New Equity Type',
@@ -157,6 +158,7 @@ storeEQ.load();
 								}
 							}
 						}],
+						*/
 						columns: [{
 							text: 'Equity Type',
 							flex: 1,

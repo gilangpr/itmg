@@ -77,6 +77,33 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 			MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		}
 		
+		public function updateAction()
+		{
+		
+			$data = array(
+					'data' => array()
+			);
+		
+			$data = $this->getRequest()->getRawBody();//mengambil data json
+			$data = Zend_Json::decode($data);//merubah data json menjadi array
+			$id = $data['data']['INVESTOR_STATUS_ID'];
+		
+			try {
+				
+				
+				$this->_model->update(array(
+						'INVESTOR_STATUS' => $data['data']['INVESTOR_STATUS'],
+				),$this->_model->getAdapter()->quoteInto('INVESTOR_STATUS_ID = ?', $id));
+					
+			}catch(Exception $e) {
+				$this->_error_code = $e->getCode();
+				$this->_error_message = $e->getMessage();
+				$this->_success = false;
+			}
+		
+			MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		}
+		
 		public function destroyAction()
 		{
 			$data = array(
@@ -91,16 +118,18 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 
                 	if ($query->query()->rowCount() > 0) {
                 		
-                		
+                		$this->_error_message = 'Data Being Used';
 			            $this->_success = false;
                 		
-
                 } else {
                 	
                 	$this->_model->delete(
                 			$this->_model->getAdapter()->quoteInto(
                 					'INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']
                 			));
+                	
+                	$this->_error_message = 'Data Succes Deleted';
+                	$this->_success = false;
                
 				
 			}
