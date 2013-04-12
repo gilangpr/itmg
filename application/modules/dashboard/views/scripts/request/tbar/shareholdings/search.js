@@ -80,6 +80,7 @@ Ext.create('Ext.Window', {
 			pageSize: 10,
 			anchor: '100%',
 			width: 300,
+			flex: 1,
 			emptyText: 'All',
 			id: 'investor-name',
 			name: 'INVESTOR_NAME',

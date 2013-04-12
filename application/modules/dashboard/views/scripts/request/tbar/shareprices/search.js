@@ -144,7 +144,9 @@ Ext.onReady(function() {
 				multiSelect: true,
 				minChars: 3,
 				emptyText: 'Select shareprices name',
-				typeAhead: true,
+				multiSelect: true,
+				typeAhead: false,
+				editable: false,
 				allowBlank: false
 			}]
 		}],
