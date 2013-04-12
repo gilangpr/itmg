@@ -112,9 +112,9 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 		$q = $this->select()
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
-		->where('INVESTOR_NAME LIKE ?', $query. '%')
+		->where('INVESTOR_NAME LIKE ?','%' .$query. '%')
 		->limit($limit, $offset);
-	
+		
 		return $q->query()->fetchAll();
 	}
 	
