@@ -1,6 +1,6 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var selected = c.getSelectionModel().getSelection();
-	
+
 if(selected.length > 0) {
 	Ext.create('Ext.Window', {
 		html: 'Are you sure want do delete selected item(s) ?',
@@ -25,7 +25,9 @@ if(selected.length > 0) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
 							var store = loadStore('Shareholdings');
-							store.loadPage(1);						
+							store.loadPage(1);
+							var store = Ext.StoreManager.lookup('Shareholdings');
+							store.load(1);
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object

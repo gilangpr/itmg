@@ -27,7 +27,7 @@ class Application_Model_InvestorStatus extends MyIndo_Ext_Abstract
 		$q = $this->select()
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
-		->where('INVESTOR_STATUS LIKE ?', $query. '%')
+		->where('INVESTOR_STATUS LIKE ?','%' .$query. '%')
 		->limit($limit, $offset);
 	
 		return $q->query()->fetchAll();
