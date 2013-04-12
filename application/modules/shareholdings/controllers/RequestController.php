@@ -120,7 +120,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	{
 			
 		$modelSA = new Application_Model_ShareholdingAmounts();
-		//$list = $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
 	    $list = $this->_model->getListInvestorsLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
         $lastId = $this->_model->getLastId();
 	    /* start sum amount */
@@ -135,24 +134,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
         	}
         	$jml += $amountid;
         }
-//        print_r($jml);die;
-//         $data = $modelSA->getTotal();
-//         foreach ($data as $k => $v) {
-//         	if($k['SHAREHOLDING_ID'] ){
-//         	print_r($v['AMOUNT']);
-//         	}
-//         }
-
-        /* start sum amount */
-//         $data = $modelSA->getTotal();
-//         $jml = 0;
-//         foreach ($data as $k => $v) {      
-//         	foreach ($v as $key => $value) {
-//         		$jml = $value;
-//         	}
-//         }
-        /* end sum amount */
-
+        
 		foreach($list as $k=>$d) {
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 
@@ -215,7 +197,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 	public function getListAmountAction()
 	{
-		//read amount from shareholding amounts table
+
 		$modelSA = new Application_Model_ShareholdingAmounts();
 		$list = $modelSA->getListByKey('SHAREHOLDING_ID', $this->_posts['id']);
 		
@@ -286,7 +268,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		
+	try{
 		$upload = new Zend_File_Transfer_Adapter_Http();	
 		$upload->setDestination(APPLICATION_PATH . '/../public/upload');
 		$upload->addValidator('Extension',false,'xls,xlsx');
@@ -307,7 +289,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$new_name = microtime() . $filExt ;
 			rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 			/* End of : Rename file */
-		}
+		//}
 		
 		try
 		{
@@ -403,16 +385,23 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				}
 				}
  			}
-		}
-		catch (Exception $e) {
+ 			/* End of : Insert data from excel to database */
+ 			unlink($inputFileName);
+		} catch (Exception $e) {
 			 
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
-		if(file_exists($upload->getDestination() . '/' . $new_name)) {
-			unlink($upload->getDestination() . '/' . $new_name);
+		} else {
+			$this->_error_code = 902;
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		}catch(Exception $e) {
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
 		}
 	
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
@@ -420,9 +409,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 	
  	public function searchAction()
- 	{
- 		
- 		
+ 	{		
  		$modelSearch = new Application_Model_ShareholdingAmounts();
  		$start_date = explode('T',$this->_posts['START_DATE']);
  		$end_date = explode('T',$this->_posts['END_DATE']);
