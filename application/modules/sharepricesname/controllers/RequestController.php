@@ -75,6 +75,7 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
 				$this->_model2->insert(array(
+						'CONTENT_COLUMN_ID' => $id,
 						'CONTENT_ID' => 6,
 						'TEXT' => $this->_posts['SHAREPRICES_NAME'],
 						'DATAINDEX' => $this->_posts['SHAREPRICES_NAME'],
@@ -140,7 +141,7 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 					'DATAINDEX' => $posts['data']['SHAREPRICES_NAME']
 			),
 					$this->_model2
-					->getAdapter()->quoteInto('CREATED_DATE = ?', $posts['data']['CREATED_DATE']));
+					->getAdapter()->quoteInto('CONTENT_COLUMN_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 
 			$this->_model->update(array(
 					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
@@ -175,29 +176,61 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		$this->_model = new MyIndo_Ext_ContentColumns();
 		$this->_model2 = new MyIndo_Ext_ModelFields();
 		$this->_model3 = new Application_Model_SharepricesName();
-		
+		$this->_modelSp = new Application_Model_Shareprices();
+
 		$data = array(
 				'data' => array()
 		);
 		try {
-			// Delete
-			$this->_model3->delete(
-					$this->_model3->getAdapter()->quoteInto(
-							'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']
-					));
-			$this->_model2->delete(
-					$this->_model2->getAdapter()->quoteInto(
-							'NAME = ?',$this->_posts['SHAREPRICES_NAME']
-					));
-			$this->_model->delete(
-					$this->_model->getAdapter()->quoteInto(
-							'DATAINDEX = ?',$this->_posts['SHAREPRICES_NAME']
-					));
+			$_q = $this->_modelSp->select()
+				->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+				if($_q->query()->rowCount() == 0) {
+				// Delete
+				$this->_model3->delete(
+						$this->_model3->getAdapter()->quoteInto(
+								'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']
+						));
+				$this->_model2->delete(
+						$this->_model2->getAdapter()->quoteInto(
+								'NAME = ?',$this->_posts['SHAREPRICES_NAME']
+						));
+				$this->_model->delete(
+						$this->_model->getAdapter()->quoteInto(
+								'DATAINDEX = ?',$this->_posts['SHAREPRICES_NAME']
+						));
+			}else {
+				$this->_error_code = 102;
+				$this->_error_message = 'Delete failed, data is being used.';
+				$this->_success = false;
+			}
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
+	public function readautoAction()
+	{
+		$modSN = new Application_Model_SharepricesName();
+		if ($this->_posts['query'] == '') {
+	
+			$data = array(
+					'data' => array(
+							'items' => $modSN->getAll($this->_limit, $this->_start, 'SHAREPRICES_NAME ASC'),
+							'totalCount' => $modSN->count()
+					)
+			);
+		} else {
+			$data = array(
+					'data' => array(
+							'items' => $modSN->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
+							'totalCount' => $modSN->count()
+					)
+			);
+		}
+			
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

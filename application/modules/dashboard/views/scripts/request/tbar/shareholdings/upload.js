@@ -25,7 +25,7 @@ Ext.create('Ext.Window', {
 						success: function(data,e) {
 							var json = Ext.decode(e.response.responseText);
 							form.reset();
-							Ext.Msg.alert('Message','Sukses');
+							Ext.Msg.alert('Message','Success');
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
 							var store = Ext.StoreManager.lookup('InvestorStatuss');

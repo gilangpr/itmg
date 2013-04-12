@@ -89,4 +89,15 @@ class Application_Model_Shareprices extends MyIndo_Ext_Abstract
 		->where('DATE = <=', $daten);
 		return $q->query()->fetchAll();
 	}
+	
+	public function getAllLike($query, $limit, $offset)
+	{
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->where('SHAREPRICES_NAME LIKE ?', $query. '%')
+		->limit($limit, $offset);
+	
+		return $q->query()->fetchAll();
+	}
 }

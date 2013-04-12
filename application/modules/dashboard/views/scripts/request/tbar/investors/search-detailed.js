@@ -1024,6 +1024,100 @@ c.up().add({
 						}
 					}
 				}
+			},{
+				//create meeting
+					xtype:'button',
+					iconCls:'icon-go',
+					text:'Create Meeting',
+					listeners:{
+						click:function(){
+							Ext.create('Ext.Window', {
+								title: 'Add New Meeting Activities',
+								draggable: false,
+								id: 'MA',
+		                        modal: true,
+		                        width: 400,
+		                        align: 'center',
+		                        resizable: false,
+		                        items: [{
+		                            xtype: 'panel',
+		                            border: false,
+		                            items: [{
+		                                xtype: 'form',
+		                                layout: 'form',
+		                                id: _id + '-add-meetingactivities-form',
+		                                border: false,
+		                                bodyPadding: '5 5 5 5',
+		                                defaultType: 'textfield',
+		                                waitMsgTarget: true,
+		                                items: [{
+											fieldLabel: 'Meeting Event',
+											allowBlank: false,
+											name: 'MEETING_EVENT'
+										},{
+											xtype:'datefield',
+											fieldLabel: 'Meeting Date',
+											allowBlank: false,
+											name: 'MEETING_DATE',
+											format:'Y-m-d'
+										},{
+											xtype:'timefield',
+											fieldLabel: 'Start Time',
+											allowBlank: false,
+											name: 'START_TIME'
+										},{
+											xtype:'timefield',
+											fieldLabel: 'End Time',
+											allowBlank: false,
+											name: 'END_TIME'
+										}]
+		                            }],
+		                            buttons: [{
+		                                text: 'Save',
+		                                listeners: {
+		                                	click: function() {
+			                                 	var form = Ext.getCmp(_id + '-add-meetingactivities-form').getForm();
+				                                if (form.isValid()) {
+				                                 	form.submit({
+						                                 url: sd.baseUrl + '/meetingactivitie/request/cr',
+						                                 waitMsg: 'Saving data, please wait..',
+						                                 params: {
+						                                 	id: data.INVESTOR_ID
+				                                		 },
+					                                	success: function(d, e) {
+					                                 		var json = Ext.decode(e.response.responseText);
+						                                 	form.reset();
+						                                	var store = loadStore('Meetinginvestors');
+						                                 	store.load({
+							                                 	params: {
+							                                		 id: data.INVESTOR_ID
+							                                 	}
+						                                	 });
+						                                	Ext.Msg.alert('Success', 'Data has been saved');
+						                                 	Ext.getCmp('MA').close();
+					                                 	},
+					                                	failure: function(d, e) {
+					                                 	var json = Ext.decode(e.response.responseText);
+					                                	 Ext.Msg.alert('Error','Sorry, data already exist');
+					                                	}
+				                                	});
+				                                }
+			                                }
+			                            }
+			                        },{
+			                            text: 'Cancel',
+			                            listeners: {
+			                                click: function() {
+			                            	    this.up().up().up().close();
+			                                 }
+			                            }
+		                            }]
+		                        }]
+		                    }).show();
+						}
+					}
+
+					//end create
 			}]
 		}]
 	}]

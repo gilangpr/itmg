@@ -1,5 +1,34 @@
-var c = Ext.getCmp('<?php echo $this->container ?>');
 
+var c = Ext.getCmp('<?php echo $this->container ?>');
+var storeSR = Ext.create('Ext.data.Store',{
+    storeId: 'SharepricesNames',
+    model: 'SharepricesName',
+    proxy: {
+        type: 'ajax',
+        api: {
+            read: '/sharepricesname/request/readauto'
+        },
+        actionMethods: {
+            create: 'POST'
+        },
+        reader: {
+            idProperty: 'SHAREPRICES_NAME',
+            type: 'json',
+            root: 'data.items',
+            totalProperty: 'data.totalCount'
+        },
+        writer: {
+            type: 'json',
+            root: 'data',
+            writeAllFields: true
+        }
+    },
+    sorter: {
+        property: 'SHAREPRICES_NAME_ID',
+        direction: 'ASC'
+    },
+    autoSync: true
+});
 Ext.require('Ext.chart.*');
 Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox']);
 Ext.onReady(function() {
@@ -64,6 +93,7 @@ Ext.onReady(function() {
 		        endDateField: 'enddt',
 		        emptyText: 'End Date',
 				labelWidth: 120,
+				width: 300,
 				allowBlank: false
 			},{
 				fieldLabel:'End Date',
@@ -76,19 +106,21 @@ Ext.onReady(function() {
 	            startDateField: 'startdt',
 	            emptyText: 'Start Date',
 				labelWidth: 120,
+				width: 300,
 				allowBlank: false
 			},{
 				xtype: 'combobox',
 				fieldLabel: 'Shareprices Name',
+				id: 'shareprices-name',
 				name: 'SHAREPRICES_NAME',
-				labelWidth: 120,
-				width: 320,
-				store: Ext.data.StoreManager.lookup('SharepricesNames'),
 				displayField: 'SHAREPRICES_NAME',
+				labelWidth: 120,
+				width: 300,
+				store: storeSR,
+				minChars: 3,
+				emptyText: 'Select shareprices name',
 				typeAhead: true,
-				allowBlank: false,
-				minChars: 2,
-				emptyText: 'Select shareprices name'
+				allowBlank: false
 			}]
 		}],
 		buttons: [{

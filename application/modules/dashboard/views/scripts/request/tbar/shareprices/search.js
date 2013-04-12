@@ -25,6 +25,35 @@ var SP_NAMES = new Array();
 
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSP = loadStore('SharepricesNames');
+var storeSR = Ext.create('Ext.data.Store',{
+    storeId: 'SharepricesNames',
+    model: 'SharepricesName',
+    proxy: {
+        type: 'ajax',
+        api: {
+            read: '/sharepricesname/request/readauto'
+        },
+        actionMethods: {
+            create: 'POST'
+        },
+        reader: {
+            idProperty: 'SHAREPRICES_NAME',
+            type: 'json',
+            root: 'data.items',
+            totalProperty: 'data.totalCount'
+        },
+        writer: {
+            type: 'json',
+            root: 'data',
+            writeAllFields: true
+        }
+    },
+    sorter: {
+        property: 'SHAREPRICES_NAME_ID',
+        direction: 'ASC'
+    },
+    autoSync: true
+});
 Ext.require('Ext.chart.*');
 Ext.require(['Ext.Window', 'Ext.fx.target.Sprite', 'Ext.layout.container.Fit', 'Ext.window.MessageBox',  'Ext.form.field.Number']);
 Ext.onReady(function() {
@@ -105,18 +134,19 @@ Ext.onReady(function() {
 				allowBlank: false
 			},{
 				xtype: 'combobox',
-				id: 'combo',
 				fieldLabel: 'Shareprices Name',
+				id: 'shareprices-name',
 				name: 'SHAREPRICES_NAME',
-				labelWidth: 140,
-				width: 370,
-				store: storeSP,
 				displayField: 'SHAREPRICES_NAME',
-				typeAhead: true,
-				allowBlank: true,
-				minChars: 2,
+				labelWidth: 140,
+				width: 320,
+				store: storeSR,
+				minChars: 3,
+				emptyText: 'Select shareprices name',
 				multiSelect: true,
-				emptyText: 'Select shareprices name'
+				typeAhead: false,
+				editable: false,
+				allowBlank: false
 			}]
 		}],
 		buttons: [{
