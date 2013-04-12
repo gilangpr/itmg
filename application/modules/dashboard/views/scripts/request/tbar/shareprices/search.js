@@ -141,6 +141,7 @@ Ext.onReady(function() {
 				labelWidth: 140,
 				width: 320,
 				store: storeSR,
+				multiSelect: true,
 				minChars: 3,
 				emptyText: 'Select shareprices name',
 				typeAhead: true,
