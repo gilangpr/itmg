@@ -134,7 +134,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
         	}
         	$jml += $amountid;
         }
-        
 		foreach($list as $k=>$d) {
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 

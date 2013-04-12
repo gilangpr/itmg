@@ -14,6 +14,12 @@ if(!c.up().items.get(id)) {
 			type: 'string'
 		}]
 	});
+	var store = Ext.create("Ext.data.Store", {
+		model: "ShareholdingAmount",
+		storeId: "ShareholdingAmounts",
+		proxy:{"type":"ajax","api":{"read":"\/shareholdings\/request\/get-list-amount","create":"\/shareholdings\/request\/amount","update":"\/shareholdings\/request\/upamount","destroy":"\/shareholdings\/request\/des"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"SHAREHOLDING_AMOUNT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+		sorter: {"property":"SHAREHOLDING_AMOUNT_ID","direction":"ASC"}});
+	
 	store.load({
 		params: {
 			id: data.SHAREHOLDING_ID /* single param */
@@ -45,6 +51,8 @@ if(!c.up().items.get(id)) {
 							Ext.Msg.alert('Message','Success adding Amount');
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
+//							var store = Ext.StoreManager.lookup('Shareholdings');
+//							store.load(1);
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText);
@@ -72,17 +80,6 @@ if(!c.up().items.get(id)) {
 		defaultType: 'textfield',
 		bodyPadding: '5 5 5 5',
 		items:[{
-//		items: [{
-//			xtype: 'combobox',
-//			fieldLabel: 'Investor Status',
-//			pageSize: 10,
-//			anchor: '100%',
-//			name: 'INVESTOR_STATUS',
-//			store: Ext.data.StoreManager.lookup('Shareholdings'),
-//			displayField: 'INVESTOR_STATUS',
-//			typeAhead: true,
-//			allowBlank: false
-//		},{
 			fieldLabel: 'Amount',
 			xtype: 'numberfield',
 			name: 'AMOUNT',

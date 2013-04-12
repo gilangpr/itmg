@@ -22,27 +22,9 @@ if(selected.length > 0) {
 		});
 		store.autoSync = true;
 		// Bottom toolbar
-//		Ext.override(Ext.form.NumberField, {
-//		    forcePrecision : false,
-//
-//		    valueToRaw: function(value) {
-//		        var me = this,
-//		            decimalSeparator = me.decimalSeparator;
-//		        value = me.parseValue(value);
-//		        value = me.fixPrecision(value);
-//		        value = Ext.isNumber(value) ? value : parseFloat(String(value).replace(decimalSeparator, ','));
-//		        if (isNaN(value))
-//		        {
-//		          value = '';
-//		        } else {
-//		          value = me.forcePrecision ? value.toFixed(me.decimalPrecision) : parseFloat(value);
-//		          value = String(value).replace(".", decimalSeparator);
-//		        }
-//		        return value;
-//		    }
-//		});
+
 		 
-		var comboBbar2 = new Ext.form.ComboBox({
+		var comboBbar = new Ext.form.ComboBox({
 		  name : 'perpageglistamount',
 		  width: 50,
 		  store: new Ext.data.ArrayStore({fields:['id'],data:[['15'],['25'],['50']]}),
@@ -56,7 +38,7 @@ if(selected.length > 0) {
 		  forceSelection: true
 		});
 		
-		var bbar2 = new Ext.PagingToolbar({
+		var bbar = new Ext.PagingToolbar({
 			store: store,
 			displayInfo: true,
 			displayMsg: 'Displaying data {0} - {1} of {2}',
@@ -65,11 +47,11 @@ if(selected.length > 0) {
 			    '-',
 			    'Records per page',
 			    '-',
-			    comboBbar2
+			    comboBbar
 			]
 		});
 		
-		comboBbar2.on('select', function(combo, _records) {
+		comboBbar.on('select', function(combo, _records) {
 			store.pageSize = parseInt(_records[0].get('id'), 10);
 			store.loadPage(1);
 		}, this);
@@ -87,7 +69,7 @@ if(selected.length > 0) {
 				store: store,
 				plugins: [cellEditing],//memanggil plugin
 				id: 'shareholding-amount-list-' + id,
-				bbar: bbar2,
+				bbar: bbar,
 				height: c.up().getHeight() - 56,//letak pagingtoolbar
 				columns: [{
 					text: 'Amount',
