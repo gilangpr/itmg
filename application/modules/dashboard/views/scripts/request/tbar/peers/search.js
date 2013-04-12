@@ -1,12 +1,41 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
-var storeSP = loadStore('Peers');
-var storeRR_curpage = storeSP.currentPage;
-
-storeSP.load({
-	params: {
-		all: 1
-	}
+//var storeSP = loadStore('Peers');
+var storeSP = Ext.create('Ext.data.Store',{
+    storeId: 'Peers2',
+    model: 'Peer',
+    proxy: {
+        type: 'ajax',
+        api: {
+            read: '/peers/request/autocom'
+        },
+        actionMethods: {
+            create: 'POST'
+        },
+        reader: {
+            idProperty: 'PEER_NAME',
+            type: 'json',
+            root: 'data.items',
+            totalProperty: 'data.totalCount'
+        },
+        writer: {
+            type: 'json',
+            root: 'data',
+            writeAllFields: true
+        }
+    },
+    sorter: {
+        property: 'PEER_ID',
+        direction: 'ASC'
+    },
+    autoSync: true
 });
+//var storeRR_curpage = storeSP.currentPage;
+
+//storeSP.load({
+//	params: {
+//		all: 1
+//	}
+//});
 
 Ext.create('Ext.Window', {
 	title: 'Search Peers',
@@ -62,6 +91,7 @@ Ext.create('Ext.Window', {
 				allowBlank: false,
 				name: 'PEER_NAME',
 				store: storeSP,
+				minChars: 3,
 				id: 'peers-search-peer-name',
 				displayField: 'PEER_NAME'
 			}]

@@ -22,4 +22,33 @@ class Application_Model_Peers extends MyIndo_Ext_Abstract
 
 		return $q->query()->fetchAll();
 	}
+	
+	public function getListLimit($limit, $offset, $order = null)
+	{
+		try {
+			$q = $this->select()
+			->limit($limit, $offset);
+				
+			if($order != null) {
+				$q->order($order);
+			}
+				
+			return $q->query()->fetchAll();
+		} catch ( Exception $e ) {
+				
+			return array();
+				
+		}
+	}
+	
+	public function getAllLike($query, $limit, $offset)
+	{
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->where('PEER_NAME LIKE ?', '%' . $query. '%')
+		->limit($limit, $offset);
+	
+		return $q->query()->fetchAll();
+	}
 }
