@@ -409,7 +409,7 @@ var storeCSD_BC = Ext.create('Ext.data.Store',{
     proxy: {
         type: 'ajax',
         api: {
-            read	: '/coalsales/request/read2',
+            read	: '/coalsales/request/read3',
             create	: '/coalsales/request/create',
             update	: '/coalsales/request/update',
             destroy	: '/coalsales/request/destroy'
