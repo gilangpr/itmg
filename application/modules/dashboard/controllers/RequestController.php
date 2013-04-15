@@ -146,20 +146,37 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	{
 		$list = $model->select()->limit(1,0)->order('CREATED_DATE DESC');
 		$list = $list->query()->fetchAll();
-		$columns = array(array(
-			'flex' => 1,
-			'text' => $list[0]['TITLE'],
-			'align' => 'center',
-			'dataIndex' => 'NAME'
-		),array(
-			'text' => 'Volume',
-			'align' => 'center',
-			'dataIndex' => 'VOLUME'
-		),array(
-			'text' => 'Percentage',
-			'align' => 'center',
-			'dataIndex' => 'PERCENTAGE'
-		));
+		if(count($list) > 0) {
+			$columns = array(array(
+				'flex' => 1,
+				'text' => $list[0]['TITLE'],
+				'align' => 'center',
+				'dataIndex' => 'NAME'
+			),array(
+				'text' => 'Volume',
+				'align' => 'center',
+				'dataIndex' => 'VOLUME'
+			),array(
+				'text' => 'Percentage',
+				'align' => 'center',
+				'dataIndex' => 'PERCENTAGE'
+			));
+		} else {
+			$columns = array(array(
+				'flex' => 1,
+				'text' => '',
+				'align' => 'center',
+				'dataIndex' => 'NAME'
+			),array(
+				'text' => 'Volume',
+				'align' => 'center',
+				'dataIndex' => 'VOLUME'
+			),array(
+				'text' => 'Percentage',
+				'align' => 'center',
+				'dataIndex' => 'PERCENTAGE'
+			));
+		}
 // 		$columns = array(
 // 				'editor' => array(
 // 					'xtype'=> 'numberfield',
@@ -224,7 +241,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	protected function getSrColumns($model)
 	{
 		
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
@@ -241,7 +258,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getSrFields($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$fields = array(array(
 				'name' => 'NAME',
@@ -259,7 +276,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getSryColumns($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(5,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(5,0);
 		$list = $list->query()->fetchAll();
 		$columns = array();
 		foreach ($list as $k=>$d) {
@@ -278,7 +295,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getSryFields($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(5,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(5,0);
 		$list = $list->query()->fetchAll();
 		$fields = array(array(
 				'name' => 'NAME',
@@ -293,7 +310,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 
 	protected function getAspColumns($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
@@ -310,7 +327,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 
 	protected function getAspFields($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(5,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(5,0);
 		$list = $list->query()->fetchAll();
 		$fields = array(array(
 				'name' => 'NAME',
@@ -387,7 +404,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getFobColumns($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
@@ -409,7 +426,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getFobFields($model)
 	{
-		$list = $model->select()->order('CREATED_DATE ASC')->limit(5,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(5,0);
 		$list = $list->query()->fetchAll();
 		$fields = array(array(
 				'name' => 'NAME',
