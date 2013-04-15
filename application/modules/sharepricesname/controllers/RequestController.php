@@ -135,34 +135,43 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		try {
 			$posts = $this->getRequest()->getRawBody();
 			$posts = Zend_Json::decode($posts);
+			$sName = $posts['data']['SHAREPRICES_NAME'];
+			if (!($this->_model->isExistByKey('SHAREPRICES_NAME', $sName))) {
 				
-			$this->_model2->update(array(
-					'TEXT' => $posts['data']['SHAREPRICES_NAME'],
-					'DATAINDEX' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model2
-					->getAdapter()->quoteInto('CONTENT_COLUMN_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-
-			$this->_model->update(array(
-					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+// 				$this->_model2->update(array(
+// 						'TEXT' => $posts['data']['SHAREPRICES_NAME'],
+// 						'DATAINDEX' => $posts['data']['SHAREPRICES_NAME']
+// 				),
+// 						$this->_model2
+// 						->getAdapter()->quoteInto('CONTENT_COLUMN_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+	
+// 				$this->_model->update(array(
+// 						'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+// 				),
+// 						$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+				
+// 				$this->_model3->update(array(
+// 						'NAME' => $posts['data']['SHAREPRICES_NAME']
+// 				),
+// 						$this->_model3->getAdapter()->quoteInto('MODEL_FIELD_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+				
+// 				$this->_model4->update(array(
+// 						'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+// 				),
+// 						$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+				
+// 				$this->_model5->update(array(
+// 						'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+// 				),
+// 						$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 			
-			$this->_model3->update(array(
-					'NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model3->getAdapter()->quoteInto('MODEL_FIELD_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-			
-			$this->_model4->update(array(
-					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-			
-			$this->_model4->update(array(
-					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-			
+				$this->_error_message = 'Edit Success';
+				$this->_success = false;
+			} else {
+				$this->_error_message = 'Edit Failed';
+				$this->_success = false;
+			}
+// 			
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

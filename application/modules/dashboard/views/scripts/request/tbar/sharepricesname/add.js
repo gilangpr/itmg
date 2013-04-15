@@ -18,7 +18,8 @@ Ext.create('Ext.Window', {
 			items: [{
 				fieldLabel: 'Name',
 				allowBlank: false,
-				name: 'SHAREPRICES_NAME'
+				name: 'SHAREPRICES_NAME',
+				emptyText: 'Insert shareprices name',
 			}]
 		}]
 	}],
