@@ -61,6 +61,37 @@ class Investors_RequestController extends Zend_Controller_Action
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+	public function updateAction()
+	{
+		$data = array(
+				'data' => array()
+		);
+		
+		$data = $this->getRequest()->getRawBody();//mengambil data json
+		$data = Zend_Json::decode($data);//merubah data json menjadi array
+		$id = $data['data']['INVESTOR_ID'];
+		
+		try {
+			$ITmodel = new Application_Model_InvestorType();
+			$LOmodel = new Application_Model_Locations();
+			$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE', $data['data']['INVESTOR_TYPE']);
+			$LO_id = $LOmodel->getPkByKey('LOCATION', $data['data']['LOCATION']);
+			$this->_model->update(array(
+					'COMPANY_NAME' => $data['data']['COMPANY_NAME'],
+					'INVESTOR_TYPE_ID' => $IT_id,
+					'LOCATION_ID' => $LO_id,
+					'EQUITY_ASSETS' => $data['data']['EQUITY_ASSETS'],
+					'STYLE' => $data['data']['STYLE']
+					),$this->_model->getAdapter()->quoteInto('INVESTOR_ID = ?', $id));
+			
+		}catch(Exception $e) {
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
+		
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
 	public function readAction()
 	{
 		$data = array(
