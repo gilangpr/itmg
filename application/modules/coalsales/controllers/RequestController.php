@@ -61,6 +61,8 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		$modelCoalSalesTitle = new Application_Model_CoalSalesTitle();
 		try {
 			$peer_id = $this->_getParam('id',0);
+			$PID = $modelCoalsales->getValueByKey('TITLE', $this->_post['TITLE'], 'PEER_ID');
+			PRINT_R($PID);die;
 			if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
 				$this->_model->insert(array(
 					'PEER_ID' => $peer_id,

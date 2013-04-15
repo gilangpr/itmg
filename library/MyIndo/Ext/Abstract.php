@@ -101,6 +101,8 @@ class MyIndo_Ext_Abstract extends Zend_Db_Table_Abstract
 	
 	public function getValueByKey($name, $value, $what)
 	{
+		
+	
 		try {
 			$x = $this->getDetailByKey($name, $value);
 			return $x[$what];

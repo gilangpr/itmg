@@ -126,17 +126,16 @@ class Shareholdings_RequestController extends Zend_Controller_Action
         $data = $modelSA->getTotal();
         $jml = 0;
         foreach ($data as $k => $e) {
+        	
         	$shareholdingid = $data[$k]['SHAREHOLDING_ID'];
-        	$idmax = $modelSA->getIdamount($shareholdingid);
+        	$idmax = $modelSA->getIdamount( $e['SHAREHOLDING_ID']); // get max date terakhir
         	foreach ($idmax as $x => $l) {
-        		$shareholdingamountid = $idmax[$x]['maxID'];
-        		$amountid = $modelSA->getValueByKey('SHAREHOLDING_AMOUNT_ID', $shareholdingamountid, 'AMOUNT');
+        		$amountid = $modelSA->getMaxAmounth($l,$shareholdingid); // get value amounth
+        		$jml += $amountid['AMOUNT'];
         	}
-        	$jml += $amountid;
         }
-		foreach($list as $k=>$d) {
+		foreach($list as $k=>$d) {	
 			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
-
 		}
 
 		$sum = 0;
@@ -175,7 +174,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				'data' => array()
 		);
 		try {
-			// Delete
 			$delAmount = new Application_Model_ShareholdingAmounts();
 			
 			$id = $this->_posts['SHAREHOLDING_ID'];
@@ -216,7 +214,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		);
 		
 		try {				
-			//delete by shareholding amount id
 			$modelSA = new Application_Model_ShareholdingAmounts();
 		    $id = $this->_posts['id'];
 			$where = $modelSA->getAdapter()->quoteInto(
@@ -235,7 +232,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 	public function upamountAction()
 	{
-		//update shareholding amount table
 		$data = array(
 				'data' => array()
 		);
