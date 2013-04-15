@@ -236,7 +236,7 @@ if(selected.length > 0) {
                                                             success: function(d) {
                                                                 var json = Ext.decode(d.responseText);
                                                                 form.reset();
-                                                                store.load({
+                                                                storeSRY.load({
                                                                     params: {
                                                                         id: data.PEER_ID
                                                                     }

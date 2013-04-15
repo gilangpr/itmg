@@ -145,18 +145,34 @@ class Peerrs_RequestController extends Zend_Controller_Action
 	{
 		$data = array(
 				'data' => array()
-				);
+		);
 		try {
 			/* Delete */
- 			$this->_model->delete(
- 					$this->_model->getAdapter()->quoteInto(
- 							'RESERVES_RESOURCES_ID = ?', $this->_posts['RESERVES_RESOURCES_ID']
- 							));
-		}catch(Exception $e) {
+			$this->_model->delete(
+					$this->_model->getAdapter()->quoteInto(
+							'RESERVES_RESOURCES_ID = ?', $this->_posts['id']
+					));
+				
+		}catch (Exception $e){
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
+		
+// 		$data = array(
+// 				'data' => array()
+// 				);
+// 		try {
+// 			/* Delete */
+//  			$this->_model->delete(
+//  					$this->_model->getAdapter()->quoteInto(
+//  							'RESERVES_RESOURCES_ID = ?', $this->_posts['RESERVES_RESOURCES_ID']
+//  							));
+// 		}catch(Exception $e) {
+// 			$this->_error_code = $e->getCode();
+// 			$this->_error_message = $e->getMessage();
+// 			$this->_success = false;
+// 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }
