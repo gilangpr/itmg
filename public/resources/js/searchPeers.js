@@ -10,6 +10,36 @@ function showPeerSearch() {
 				proxy:{"type":"ajax","api":{"read":"\/peers\/executive\/get-list-peers","create":"\/peers\/request\/create","update":"\/peers\/request\/update","destroy":"\/peers\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"PEER_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
 				sorter: {"property":"PEER_ID","direction":"ASC"}});
 			
+			var storeSP = Ext.create('Ext.data.Store',{
+			    storeId: 'Peers2',
+			    model: 'Peer',
+			    proxy: {
+			        type: 'ajax',
+			        api: {
+			            read: '/peers/request/autocom'
+			        },
+			        actionMethods: {
+			            create: 'POST'
+			        },
+			        reader: {
+			            idProperty: 'PEER_NAME',
+			            type: 'json',
+			            root: 'data.items',
+			            totalProperty: 'data.totalCount'
+			        },
+			        writer: {
+			            type: 'json',
+			            root: 'data',
+			            writeAllFields: true
+			        }
+			    },
+			    sorter: {
+			        property: 'PEER_ID',
+			        direction: 'ASC'
+			    },
+			    autoSync: true
+			});
+			
 			/* --- */
 			Ext.create('Ext.Window', {
 				title: 'Search Peers',
@@ -27,7 +57,8 @@ function showPeerSearch() {
 					items: [{
 						xtype: 'combobox',
 						fieldLabel: 'Company',
-						store: peerStore,
+						store: storeSP,
+						minChars: 3,
 						name: 'COMPANY',
 						displayField: 'PEER_NAME',
 						emptyText: 'All'

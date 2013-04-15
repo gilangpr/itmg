@@ -5,6 +5,7 @@ if(selected.length > 0) {
 	var id = 'shareholdings-detail-' + selected[0].id;
 	if(!c.up().items.get(id)) {
 		var data = selected[0].data;
+	}; 
 		var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToMoveEditor: 1,
 	        autoCancel: false
@@ -20,11 +21,9 @@ if(selected.length > 0) {
 				id: data.SHAREHOLDING_ID /* single param */
 			}
 		});
+		//console.log(id);
 		store.autoSync = true;
-		// Bottom toolbar
-
-		 
-		var comboBbar = new Ext.form.ComboBox({
+		var comboBbar2 = new Ext.form.ComboBox({
 		  name : 'perpageglistamount',
 		  width: 50,
 		  store: new Ext.data.ArrayStore({fields:['id'],data:[['15'],['25'],['50']]}),
@@ -38,7 +37,7 @@ if(selected.length > 0) {
 		  forceSelection: true
 		});
 		
-		var bbar = new Ext.PagingToolbar({
+		var bbar2 = new Ext.PagingToolbar({
 			store: store,
 			displayInfo: true,
 			displayMsg: 'Displaying data {0} - {1} of {2}',
@@ -47,11 +46,11 @@ if(selected.length > 0) {
 			    '-',
 			    'Records per page',
 			    '-',
-			    comboBbar
+			    comboBbar2
 			]
 		});
 		
-		comboBbar.on('select', function(combo, _records) {
+		comboBbar2.on('select', function(combo, _records) {
 			store.pageSize = parseInt(_records[0].get('id'), 10);
 			store.loadPage(1);
 		}, this);
@@ -69,7 +68,7 @@ if(selected.length > 0) {
 				store: store,
 				plugins: [cellEditing],//memanggil plugin
 				id: 'shareholding-amount-list-' + id,
-				bbar: bbar,
+				bbar: bbar2,
 				height: c.up().getHeight() - 56,//letak pagingtoolbar
 				columns: [{
 					text: 'Amount',
@@ -110,16 +109,15 @@ if(selected.length > 0) {
 								params: {
 									id: data2.SHAREHOLDING_AMOUNT_ID
 								},
-								success: function(d) {
-									var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
+								success: function(data) {
+									var json = Ext.decode(data.respnoseText);
+									Ext.Msg.alert('Message','Success Delete');
 									closeLoadingWindow();
 									store.load({
 										params: {
 											id: data.SHAREHOLDING_ID /* single param */
 										}
 									});
-									var store = Ext.StoreManager.lookup('Shareholdings');
-									store.load(1);
 								},
 								failure: function(data) {
 									var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
@@ -131,7 +129,7 @@ if(selected.length > 0) {
 				}
 			}]
 		}));
-	}		
+	//}		
 	c.up().setActiveTab(id);
 } else {
 	Ext.Msg.alert('Message', 'You did not select any Investor');

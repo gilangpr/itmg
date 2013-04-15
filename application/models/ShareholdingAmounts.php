@@ -43,16 +43,20 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	public function getAmount($shareholding_id)
 	{
 		if($this->isExistByKey('SHAREHOLDING_ID', $shareholding_id)) {
-			$list = $this->select()->where('SHAREHOLDING_ID = ?', $shareholding_id);
-			$this->select()->order('DATE ASC');
+			$select = $this->select();
+			$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE'));
+			$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
+			$maxTanggal =  $select->query()->fetch();
 			
-			$list = $list->query()->fetchAll();
-			$amount = 0;
-			foreach($list as $k=>$d) {
-				$amount = $d['AMOUNT'];
-			}
-			return $amount;
+			$select = $this->select();
+			$select->from('SHAREHOLDING_AMOUNTS');
+			$select->where('SHAREHOLDING_ID =?',$shareholding_id);
+			$select->where('DATE = ?',$maxTanggal['MAX_DATE']);
+			$list = $select->query()->fetch();
+			return $list['AMOUNT'];
+			
 		} else {
+			
 			return 0;
 		}
 	}
@@ -97,17 +101,18 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		$select->columns('SHAREHOLDING_ID');	
 		$select->where('SHAREHOLDING_ID');	
 		$select->group('SHAREHOLDING_ID');
-		//$select->order('DATE DESC');
+		$select->order('DATE DESC');
 		//die($select);
 		return $select->query()->fetchAll();
 	}
 	
-    public function getIdamount($idd)
+    public function getIdamount($shareholdingid)
 	{
 		$select = $this->select();
-		$select->from('SHAREHOLDING_AMOUNTS', array(new Zend_Db_Expr("MAX(SHAREHOLDING_AMOUNT_ID) AS maxID")));
-		$select->where('SHAREHOLDING_ID = ?', $idd);
-		return $select->query()->fetchAll();
+		$select->from('SHAREHOLDING_AMOUNTS', array(new Zend_Db_Expr("MAX(DATE) AS maxID")));
+		$select->where('SHAREHOLDING_ID = ?', $shareholdingid);
+		//return $select->query()->fetchAll();
+		return $select->query()->fetch();
 	}
 	
 	public function getSum()
@@ -123,5 +128,20 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		} catch(Exception $e) {
 			return 0;
 		}
+	}
+	
+	public function getMaxAmounth($l,$shareholdingid){
+		//echo $shareholdingid; die;
+		$select = $this->select();
+		$select->from('SHAREHOLDING_AMOUNTS','AMOUNT');
+		$select->where('SHAREHOLDING_ID = ? ',$shareholdingid);
+		$select->where('DATE = ? ',$l);
+	
+		
+		
+//		echo $select->__toString();
+		return $res['AMOUNT'] = $select->query()->fetch();
+		
+		
 	}
 }
