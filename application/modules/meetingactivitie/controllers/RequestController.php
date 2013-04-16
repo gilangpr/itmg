@@ -59,7 +59,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 			'data' => array()
 		);
 		try{
-		//$inModel = new Application_Model_Investors();
+			$inModel = new Application_Model_Investors();
 			$miModel = new Application_Model_Meetinginvestor();
 			$in_id = $this->_getParam('id',0);
 			$this->_model->insert(array(
@@ -70,6 +70,9 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 				'NOTES' => '',
 				'CREATED_DATE' => date('Y-m-d H:i:s')
 			));
+			$inModel->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
 			if($this->_model->isExistByKey('MEETING_EVENT',$this->_posts['MEETING_EVENT'])){
 				$ma_id = $this->_model->getPkByKey('MEETING_EVENT',$this->_posts['MEETING_EVENT']);
 				$miModel->insert(array(
@@ -132,15 +135,20 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 			'data' => array()
 		);
 		//Call Model Investor
+		$modelInvestors = new Application_Model_Investors();
 		$maModel = new Application_Model_Meetingactivitie();
 		try {
 			// Insert Data :
 			//get id params
 			$ma_id = $this->_posts['id'];
+			$in_id = $this->_posts['INVESTOR_ID'];
 			if($maModel->isExistByKey('MEETING_ACTIVITIE_ID', $ma_id)) {
  				$this->_model->update(array(
 					'NOTES' => $this->_posts['NOTES']),
  				$this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id));
+ 				$modelInvestors->update(array(
+ 					'MODIFIED_DATE_INVESTOR' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
 			}
 			else {
 				$this->_error_code = 404;

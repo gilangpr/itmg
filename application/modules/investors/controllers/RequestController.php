@@ -72,17 +72,21 @@ class Investors_RequestController extends Zend_Controller_Action
 		$id = $data['data']['INVESTOR_ID'];
 		
 		try {
-			$ITmodel = new Application_Model_InvestorType();
-			$LOmodel = new Application_Model_Locations();
-			$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE', $data['data']['INVESTOR_TYPE']);
-			$LO_id = $LOmodel->getPkByKey('LOCATION', $data['data']['LOCATION']);
+			$ITmodel = new Application_Model_InvestorType();//memanggil model Investor type
+			$LOmodel = new Application_Model_Locations();//memanggil model Locations
+			$IT_id = $ITmodel->getPkByKey('INVESTOR_TYPE', $data['data']['INVESTOR_TYPE']);//mengambi PK Investor Type
+			$LO_id = $LOmodel->getPkByKey('LOCATION', $data['data']['LOCATION']);//mengambil PK Locations
 			$this->_model->update(array(
 					'COMPANY_NAME' => $data['data']['COMPANY_NAME'],
 					'INVESTOR_TYPE_ID' => $IT_id,
 					'LOCATION_ID' => $LO_id,
 					'EQUITY_ASSETS' => $data['data']['EQUITY_ASSETS'],
-					'STYLE' => $data['data']['STYLE']
+					'STYLE' => $data['data']['STYLE'],
+					'MODIFIED_DATE' => date('Y-m-d H:i:s')
 					),$this->_model->getAdapter()->quoteInto('INVESTOR_ID = ?', $id));
+			//$this->_model->update(array(
+			//		'MODIFIED_DATE' =>date('Y-m-d H:i:s')
+			//	));
 			
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
@@ -132,8 +136,14 @@ class Investors_RequestController extends Zend_Controller_Action
 			if(isset($this->_posts['EQUITY_ASSETS'])) {
 				$EQUITY_ASSETS = $this->_posts['EQUITY_ASSETS'];
 				$EQmodel = new Application_Model_Equityasset();
+				if($EQUITY_ASSETS != '' || !empty($EQUITY_ASSETS)) {
 				$min = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MIN_VALUE');
 				$max = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MAX_VALUE');
+				} else {
+					$min = 0;
+					// max cari dari investor yang equity asset paling gede brapa;
+					$max = 999999999;
+				}
 				if(strtolower($EQUITY_ASSETS) == 'small') {
 					$q->where("EQUITY_ASSETS >= $min AND EQUITY_ASSETS <= $max");
 				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
@@ -143,6 +153,7 @@ class Investors_RequestController extends Zend_Controller_Action
 				} else {
 					$q->where('EQUITY_ASSETS >= 0');
 				}
+				
 				/*
 				if(strtolower($EQUITY_ASSETS) == 'small') {
 					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
@@ -153,7 +164,7 @@ class Investors_RequestController extends Zend_Controller_Action
 				} else {
 					$q->where('EQUITY_ASSETS >= 0');
 				}
-				*/
+				//*/
 			}
 			
 			if(isset($this->_posts['INVESTOR_TYPE'])) {
@@ -220,7 +231,8 @@ class Investors_RequestController extends Zend_Controller_Action
 							$_dt = array(
 									'INVESTOR_TYPE_ID' => $modelInvestorType->getPkByKey('INVESTOR_TYPE', $this->_posts['INVESTOR_TYPE']),
 									'EQUITY_ASSETS' => $this->_posts['EQUITY_ASSETS'],
-									'STYLE' => $this->_posts['STYLE']
+									'STYLE' => $this->_posts['STYLE'],
+									'MODIFIED_DATE' => date('Y-m-d H:i:s')
 							);
 						} else if($this->_posts['btype'] == 'company-address') {
 							$modelLocation = new Application_Model_Locations();
@@ -232,13 +244,15 @@ class Investors_RequestController extends Zend_Controller_Action
 									'PHONE_2' => $this->_posts['PHONE_2'],
 									'EMAIL_1' => $this->_posts['EMAIL_1'],
 									'EMAIL_2' => $this->_posts['EMAIL_2'],
-									'WEBSITE' => $this->_posts['WEBSITE']
+									'WEBSITE' => $this->_posts['WEBSITE'],
+									'MODIFIED_DATE' => date('Y-m-d H:i:s')
 									);
 						}
 						$this->_model->update($_dt, $this->_model->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['id']));
 					} else {
 						$this->_model->update(array(
-								$this->_posts['type'] => $this->_posts[$this->_posts['type']]
+								$this->_posts['type'] => $this->_posts[$this->_posts['type']],
+								'MODIFIED_DATE' => date('Y-m-d H:i:s')
 						),$this->_model->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['id']));
 					}
 				}catch(Exception $e) {
@@ -270,8 +284,8 @@ class Investors_RequestController extends Zend_Controller_Action
 				->from('INVESTORS',array('*'))
 				->setIntegrityCheck(false)
 				->where('INVESTORS.INVESTOR_ID = ?', $id)
-				->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('*'))
-				->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('*'));
+				->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('INVESTOR_TYPE'))
+				->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('LOCATION'));
 				//->join('SECTOR_HOLDINGS','SECTOR_HOLDINGS.INVESTOR_ID = INVESTORS.INVESTOR_ID',array('*'));
 			$details = $q->query()->fetch();
 			$d = $conModel->select()
@@ -337,8 +351,7 @@ class Investors_RequestController extends Zend_Controller_Action
 				$new_name = microtime() . $filExt ;
 				rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 				/* End of : Rename file */
-			} 
-			try{
+				try{
 		
 				$inputFileName = $upload->getDestination() . '/' . $new_name;
 				$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
@@ -448,6 +461,13 @@ class Investors_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 			}
+			}
+			else{
+				$this->_error_code = 902;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			} 
+			
 		} 
 		catch(Zend_File_Transfer_Exception $e) {
 					$this->_error_code = $e->getCode();

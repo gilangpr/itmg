@@ -11,8 +11,8 @@ class Application_Model_Investors extends MyIndo_Ext_Abstract
 		$q = $this->select()
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
-		->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('*'))
-		->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('*'))
+		->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('INVESTOR_TYPE'))
+		->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('LOCATION'))
 		->limit($limit, $offset);
 		
 		return $q->query()->fetchAll();

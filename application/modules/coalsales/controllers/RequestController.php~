@@ -63,7 +63,13 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		try {
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
+<<<<<<< HEAD
 			if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
+=======
+			//$PID = $modelCoalsales->getValueByKey('TITLE', $this->_post['TITLE'], 'PEER_ID');
+			//PRINT_R($PID);die;
+			if ($modelCS->isExistByKey('PEER_ID', $peer_id)) {
+>>>>>>> 036a830a2a2c08cbf64c0183873bb3a08e62d02c
 				$this->_model->insert(array(
 					'PEER_ID' => $peer_id,
 					'TITLE' => $this->_post['TITLE'],
@@ -72,7 +78,10 @@ class Coalsales_RequestController extends Zend_Controller_Action
 					'VOLUME' => $this->_post['VOLUME'],
 					'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
+<<<<<<< HEAD
 				/* Check Title */
+=======
+>>>>>>> 036a830a2a2c08cbf64c0183873bb3a08e62d02c
 				if(!$modelTitle->isExistByKey('TITLE', $this->_posts['TITLE'])) {
 					$modelTitle->insert(array(
 							'TITLE' => $this->_posts['TITLE'],

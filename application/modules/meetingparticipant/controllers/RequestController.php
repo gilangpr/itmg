@@ -35,6 +35,7 @@ class Meetingparticipant_RequestController extends Zend_Controller_Action
 			'data' => array()
 		);
 		$meetingModel = new Application_Model_Meetingactivitie();
+		$inModel = new Application_Model_Investors();
 		try {
 			// Insert Data :
 			$meetingAcid = $this->_getParam('id',0);
@@ -43,6 +44,9 @@ class Meetingparticipant_RequestController extends Zend_Controller_Action
 					'MEETING_ACTIVITIE_ID'=>$meetingAcid,
 					'PARTICIPANT_ID'=>$this->_posts['PARTICIPANT_ID']
  					));
+ 			$inModel->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
 			}
 			else {
 				$this->_error_code = 404;
@@ -103,17 +107,23 @@ class Meetingparticipant_RequestController extends Zend_Controller_Action
 		/*
 		GET POST ID
 		*/
+		$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 		$pa_id = (isset($this->_posts['PARTICIPANT_ID'])) ? $this->_posts['PARTICIPANT_ID'] : 0;
 		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
 		$data = array(
 				'data' => array()
 				);
+		$inModel = new Application_Model_Investors();
 		try {
 			 //Delete
 			$where=array();
 			$where[]= $this->_model->getAdapter()->quoteInto('PARTICIPANT_ID = ?', $pa_id);
 			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
 			$this->_model->delete($where);
+
+			$inModel->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

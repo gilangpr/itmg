@@ -36,6 +36,7 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 		);
 		//Call Model Investor
 		$maModel = new Application_Model_Meetingactivitie();
+		$inModel = new Application_Model_Investors();
 		try {
 			// Insert Data :
 			//get id params
@@ -45,6 +46,9 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 					'MEETING_ACTIVITIE_ID'=>$ma_id,
 					'CONTACT_ID'=>$this->_posts['CONTACT_ID']
  					));
+ 			$inModel->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
 			}
 			else {
 				$this->_error_code = 404;
@@ -102,17 +106,22 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 	
 	public function destroyAction()
 	{	
+		$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 		$co_id = (isset($this->_posts['CONTACT_ID'])) ? $this->_posts['CONTACT_ID'] : 0;
 		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
 		$data = array(
 				'data' => array()
 				);
+		$modelInvestors = new Application_Model_Investors();
 		try {
 			 //Delete
 			$where=array();
 			$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
 			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
 			$this->_model->delete($where);
+			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
