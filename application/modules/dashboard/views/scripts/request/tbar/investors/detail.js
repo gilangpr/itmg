@@ -10,6 +10,14 @@ if(selected.length > 0) {
 			clicksToMoveEditor: 1,
 	        autoCancel: false
 	    });
+	var cellEditing3 = Ext.create('Ext.grid.plugin.RowEditing', {
+			clicksToMoveEditor: 1,
+	        autoCancel: false
+	    });
+	var cellEditing4 = Ext.create('Ext.grid.plugin.RowEditing', {
+			clicksToMoveEditor: 1,
+	        autoCancel: false
+	    });
 	
 	storeINVESTORS = loadStore('Investors');
 	storeIT = loadStore('InvestorTypes');
@@ -56,7 +64,7 @@ if(selected.length > 0) {
 		storeId: "Contacts",
 		proxy:{extraParams:{id:selected[0].data.INVESTOR_ID},"type":"ajax","api":{"read":"\/contacts\/request\/read","create":"\/contacts\/request\/create","update":"\/contacts\/request\/update","destroy":"\/contacts\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"CONTACT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
 		sorter: {"property":"CONTACT_ID","direction":"ASC"}});
-	
+	storeCO.autoSync = true;
 	storeCO.load();
 	
 	/*
@@ -102,7 +110,7 @@ if(selected.length > 0) {
 	        "direction": "ASC"
 	    },
 	});
-	
+	storeSH.autoSync= true;
 	storeSH.load();
 	
 	/*
@@ -148,7 +156,7 @@ if(selected.length > 0) {
 	        "direction": "ASC"
 	    },
 	});
-	
+	storePD.autoSync=true;
 	storePD.load();
 	
 	/*
@@ -535,6 +543,7 @@ if(selected.length > 0) {
 					border: false,
 					minHeight: 150,
 					maxHeight: 150,
+					plugins:[cellEditing2],
 					autoScroll: true,
 					id: 'investors-detail-key-persons-grid-' + data.INVESTOR_ID,
 					store: storeCO,
@@ -551,22 +560,35 @@ if(selected.length > 0) {
 					columns: [{
 						text: 'Name',
 						flex: 1,
-						dataIndex: 'NAME'
+						dataIndex: 'NAME',
+						editor:{
+							name:'NAME'
+						}
 					},{
 						text: 'Position',
 						width: 200,
 						align: 'center',
-						dataIndex: 'POSITION'
+						dataIndex: 'POSITION',
+						editor:{
+							name:'POSITION'
+						}
 					},{
 						text: 'Email',
 						width: 200,
 						align: 'center',
-						dataIndex: 'EMAIL'
+						dataIndex: 'EMAIL',
+						editor:{
+							name:'EMAIL',
+							vtype:'email'
+						}
 					},{
 						text: 'Phone',
 						width: 200,
 						align: 'center',
-						dataIndex: 'PHONE_1'
+						dataIndex: 'PHONE_1',
+						editor:{
+							name:'PHONE_1'
+						}
 					}]
 				}],
 				tbar: [{
@@ -711,7 +733,8 @@ if(selected.length > 0) {
 												Ext.Ajax.request({
 													url: sd.baseUrl + '/contacts/request/destroy',
 													params: {
-														id: __data.CONTACT_ID
+														id: __data.CONTACT_ID,
+														INVESTOR_ID:data.INVESTOR_ID
 													},
 													success: function(d) {
 														var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object

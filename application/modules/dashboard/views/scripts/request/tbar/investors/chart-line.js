@@ -64,6 +64,7 @@
 						minWidth: 500,
 						minHeight: 200,
 						border: false,
+						plugins:[cellEditing4],
 						id: 'investors-details-portofolio-distribution-grid-data-' + data.INVESTOR_ID,
 						store: storePD,
 						tbar: [{
@@ -167,7 +168,8 @@
 														Ext.Ajax.request({
 															url: sd.baseUrl + '/portfoliodistribution/request/destroy',
 															params: {
-																PORTFOLIO_DISTRIBUTION_ID: __data.PORTFOLIO_DISTRIBUTION_ID
+																PORTFOLIO_DISTRIBUTION_ID: __data.PORTFOLIO_DISTRIBUTION_ID,
+																INVESTOR_ID:data.INVESTOR_ID
 															},
 															success: function(d) {
 																var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
@@ -204,12 +206,19 @@
 						columns: [{
 							text: 'Title',
 							flex: 1,
-							dataIndex: 'TITLE'
+							dataIndex: 'TITLE',
+							editor:{
+								name:'TITLE'
+							}
 						},{
 							text: 'Value',
 							width: 120,
 							align: 'center',
-							dataIndex: 'VALUE'
+							dataIndex: 'VALUE',
+							editor:{
+								name:'VALUE',
+								xtype:'numberfield'
+							}
 						}]
 					}]
 				}).show();

@@ -123,7 +123,9 @@ if(__selected.length > 0) {
                 							if(form.getForm().isValid()) {
                 								form.getForm().submit({
                 									url: sd.baseUrl + '/meetingcontact/request/create/id/'+meeting__id.MEETING_ACTIVITIE_ID,
-                									
+                									params:{
+                                                        INVESTOR_ID:meeting__id.INVESTOR_ID
+                                                    },
                 									success: function(d, e) {
                 										var json = Ext.decode(e.response.responseText);
                                                         var store = loadStore('Meetingcontacts');
@@ -179,7 +181,8 @@ if(__selected.length > 0) {
                                                         url: sd.baseUrl + '/meetingcontact/request/destroy',
                                                         params: {
                                                             CONTACT_ID: mmc.CONTACT_ID,
-                                                            MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID
+                                                            MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -302,6 +305,9 @@ if(__selected.length > 0) {
                                                         if (form.isValid()) {
                                                             form.submit({
                                                                 url: sd.baseUrl + '/meetingparticipant/request/create/id/' + meeting__id.MEETING_ACTIVITIE_ID,
+                                                                params:{
+                                                                    INVESTOR_ID:meeting__id.INVESTOR_ID
+                                                                },
                                                                 success: function(d) {
                                                                     //console.log(data);
                                                                     var json = Ext.decode(d.responseText);
@@ -368,7 +374,8 @@ if(__selected.length > 0) {
                                                         url: sd.baseUrl + '/meetingparticipant/request/destroy',
                                                         params: {
                                                             PARTICIPANT_ID: mmp.PARTICIPANT_ID,
-                                                            MEETING_ACTIVITIE_ID: mmp.MEETING_ACTIVITIE_ID
+                                                            MEETING_ACTIVITIE_ID: mmp.MEETING_ACTIVITIE_ID,
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -421,7 +428,7 @@ if(__selected.length > 0) {
             		listeners:{
             			click:function(){
                             Ext.create('Ext.Window', {
-                                    title: 'Add New Contacts',
+                                    title: 'Add New Documents',
                                     id: 'MD',
                                     draggable: false,
                                     modal: true,
@@ -462,6 +469,9 @@ if(__selected.length > 0) {
                                                         if (form.isValid()) {
                                                             form.submit({
                                                                 url: sd.baseUrl + '/meetingdocumentation/request/create/id/' + meeting__id.MEETING_ACTIVITIE_ID,
+                                                                params:{
+                                                                    INVESTOR_ID:meeting__id.INVESTOR_ID
+                                                                },
                                                                 waitMsg: 'Uploading document, please wait..',
                                                                 success: function(de, ef) {
                                                                 var json = Ext.decode(ef.response.responseText);
@@ -640,7 +650,8 @@ if(__selected.length > 0) {
                                         waitMsg: 'Updateing data, please wait..',
                                          //var store=loadStore('Meetingactivities'),
                                         params: {
-                                            id: meeting__id.MEETING_ACTIVITIE_ID
+                                            id: meeting__id.MEETING_ACTIVITIE_ID,
+                                            INVESTOR_ID:meeting__id.INVESTOR_ID
                                             //type: 'NOTES'
                                         },
                                         success: function(d, e) {
