@@ -178,6 +178,7 @@ function loadContent(param1, editor) {
 													displayField: e.dataIndex,
 												    width: 500,
 												    labelWidth: 130,
+												    pageSize: 10,
 												    store: Ext.data.StoreManager.lookup(st),
 												    typeAhead: true,
 												    editable: false

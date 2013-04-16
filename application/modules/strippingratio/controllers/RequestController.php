@@ -56,10 +56,11 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		$modelPeer = new Application_Model_StrippingRatio();
+		$modelPeer = new Application_Model_Peers();
 		try {
 			/* INSERT STRIPPING RATIO DATA */
 			$peer_id = $this->_getParam('id',0);
+			die($peer_id);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				
 				/* UPDATE IF TITLE IS EXIST */

@@ -183,9 +183,15 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		);
 		try {
 			$_q = $this->_modelSp->select()
-				->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
-				if($_q->query()->rowCount() == 0) {
+			->from('SHAREPRICES', array('sum(value) as total'))
+			->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+			$_x = $_q->query()->fetch();
+				//->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+			if(isset($_x['total']) && $_x['total'] == 0) {
 				// Delete
+				$this->_modelSp->delete(
+						$this->_modelSp->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']));
+				
 				$this->_model3->delete(
 						$this->_model3->getAdapter()->quoteInto(
 								'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']

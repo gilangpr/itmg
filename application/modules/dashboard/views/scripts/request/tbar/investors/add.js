@@ -164,14 +164,18 @@ if(!c.up().items.get(id)) {
 				},{
 					fieldLabel: 'Company Overview',
 					name: 'COMPANY_OVERVIEW',
-					xtype: 'htmleditor',
+					xtype: 'textarea',
 					height: 150,
+					msgTarget:'under',
+					maxLength:1000
 					//plugins:[myplugin]
 				},{
 					fieldLabel: 'Investment Strategy',
 					name: 'INVESTMENT_STRATEGY',
-					xtype: 'htmleditor',
-					height: 150
+					xtype: 'textarea',
+					height: 150,
+					msgTarget:'under',
+					maxLength:1000
 				}]
 			}]
 		}]
