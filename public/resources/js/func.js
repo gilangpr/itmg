@@ -194,6 +194,12 @@ function loadContent(param1, editor) {
 										}
 										
 										store.loadPage(1);
+										store.on('datachanged', function(d, i ,e) {
+											var _tdata = d.proxy.reader.jsonData;
+											if(!_tdata.success) {
+												Ext.Msg.alert('Error !', _tdata.error_message);
+											}
+										});
 										tp.add(tabcontent);
 										
 									}

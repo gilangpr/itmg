@@ -129,7 +129,7 @@ class News_RequestController extends Zend_Controller_Action
 				$mimeModel = new Application_Model_Mime();
 				$rrcModel = new Application_Model_NewsCategory();
 	
-				$adp->setDestination(APPLICATION_PATH . '/../public/uploads/news/');
+				$adp->setDestination(APPLICATION_PATH . '/../public/upload/news/');
 				$adp->addValidator('Extension',false,'doc,docx,xls,xlsx,pdf,txt');
 				try {
 						
@@ -159,7 +159,7 @@ class News_RequestController extends Zend_Controller_Action
 								'DESCRIPTION' => '',
 								'FILE_NAME' => $new_name,
 								'FILE_SIZE' => (int)$fileInfo['FILE_PATH']['size'],
-								'FILE_PATH' => '/uploads/research/' . $new_name,
+								'FILE_PATH' => '/upload/news/' . $new_name,
 								'FILE_TYPE' => $mimeModel->getValueByKey('EXTENSION', $filExt, 'MIME_TYPE'),
 								'CREATED_DATE' => date('Y-m-d H:i:s')
 						));

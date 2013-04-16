@@ -194,7 +194,7 @@ class Research_RequestController extends Zend_Controller_Action
 				$mimeModel = new Application_Model_Mime();
 				$rrcModel = new Application_Model_ResearchReportCategory();
 				
-				$adp->setDestination(APPLICATION_PATH . '/../public/uploads/research/');
+				$adp->setDestination(APPLICATION_PATH . '/../public/upload/researchs/');
 				$adp->addValidator('Extension',false,'doc,docx,xls,xlsx,pdf,txt');
 				try {
 					
@@ -224,7 +224,7 @@ class Research_RequestController extends Zend_Controller_Action
 								'DESCRIPTION' => '',
 								'FILE_NAME' => $new_name,
 								'FILE_SIZE' => (int)$fileInfo['FILE_PATH']['size'],
-								'FILE_PATH' => '/uploads/research/' . $new_name,
+								'FILE_PATH' => '/upload/researchs/' . $new_name,
 								'FILE_TYPE' => $mimeModel->getValueByKey('EXTENSION', $filExt, 'MIME_TYPE'),
 								'CREATED_DATE' => date('Y-m-d H:i:s')
 								));
