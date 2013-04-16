@@ -97,16 +97,16 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$data = $this->getRequest()->getRawBody();//mengambil data json
 		$data = Zend_Json::decode($data);//merubah data json menjadi array
 		$id = $data['data']['SHAREHOLDING_ID'];
-		
+ 		 
 		try {
 			$status = new Application_Model_InvestorStatus();
-			$val = $status->getPkByKey('INVESTOR_STATUS', $data['data']['INVESTOR_STATUS']);
-			$this->_model->update(array(
-					'INVESTOR_NAME' => $data['data']['INVESTOR_NAME'],
-					'INVESTOR_STATUS_ID' => $val,
-					'ACCOUNT_HOLDER' => $data['data']['ACCOUNT_HOLDER'],
-					),$this->_model->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $id));
-			
+				$val = $status->getPkByKey('INVESTOR_STATUS', $data['data']['INVESTOR_STATUS']);
+				$this->_model->update(array(
+						'INVESTOR_NAME' => $data['data']['INVESTOR_NAME'],
+						'INVESTOR_STATUS_ID' => $val,
+						'ACCOUNT_HOLDER' => $data['data']['ACCOUNT_HOLDER'],
+				),$this->_model->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $id));
+				
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

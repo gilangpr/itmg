@@ -14,11 +14,37 @@ if(!c.up().items.get(id)) {
 			type: 'string'
 		}]
 	});
+	
 	var store = Ext.create("Ext.data.Store", {
 		model: "ShareholdingAmount",
 		storeId: "ShareholdingAmounts",
-		proxy:{"type":"ajax","api":{"read":"\/shareholdings\/request\/get-list-amount","create":"\/shareholdings\/request\/amount","update":"\/shareholdings\/request\/upamount","destroy":"\/shareholdings\/request\/des"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"SHAREHOLDING_AMOUNT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
-		sorter: {"property":"SHAREHOLDING_AMOUNT_ID","direction":"ASC"}});
+		autoLoad: true,
+        autoSync: true,
+		proxy:{
+			"type":"ajax",
+			"api":{"read":"\/shareholdings\/request\/get-list-amount",
+				"create":"\/shareholdings\/request\/amount",
+				"update":"\/shareholdings\/request\/upamount",
+				"destroy":"\/shareholdings\/request\/des"
+					},
+					"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},
+					"reader":{
+						"idProperty":"SHAREHOLDING_AMOUNT_ID",
+						"type":"json",
+						"root":"data.items",
+						"totalProperty":"data.totalCount"
+							},
+							"writer":{
+								"type":"json",
+								"root":"data",
+								"writeAllFields":true
+								}
+							},
+		sorter: {
+			"property":"SHAREHOLDING_AMOUNT_ID",
+			"direction":"ASC"
+				}
+							});
 	
 	store.load({
 		params: {
