@@ -91,9 +91,14 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 			try {
 				
 				
+			if(!$this->_model->isExistByKey('INVESTOR_STATUS', $data['data']['INVESTOR_STATUS'])){
 				$this->_model->update(array(
 						'INVESTOR_STATUS' => $data['data']['INVESTOR_STATUS'],
 				),$this->_model->getAdapter()->quoteInto('INVESTOR_STATUS_ID = ?', $id));
+				} else {
+					$this->_error_message = 'Data Being Used';
+					$this->_success = false;
+				}
 					
 			}catch(Exception $e) {
 				$this->_error_code = $e->getCode();
