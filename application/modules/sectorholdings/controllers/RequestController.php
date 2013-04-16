@@ -34,7 +34,7 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 			'data' => array()
 		);
-		
+		$inModel = new Application_Model_Investors();
 		try {
 			// Insert Data :
  			$this->_model->insert(array(
@@ -43,6 +43,9 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
 					'VALUE'=> $this->_posts['VALUE'],
  					'CREATED_DATE' => date('Y-m-d H:i:s')
  					));
+ 			$inModel->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['id']));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
@@ -70,7 +73,7 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		
+		$modelInvestors = new Application_Model_Investors();
 		try {
 			$posts = $this->getRequest()->getRawBody();
 			$posts = Zend_Json::decode($posts);
@@ -80,6 +83,9 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
 					'VALUE' => $posts['data']['VALUE']
 					),
 					$this->_model->getAdapter()->quoteInto('SECTOR_HOLDING_ID = ?', $posts['data']['SECTOR_HOLDING_ID']));
+			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $posts['data']['INVESTOR_ID']));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
@@ -94,6 +100,7 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 				);
+		$inModel = new Application_Model_Investors();
 		try {
 			//Delete
 			
@@ -101,6 +108,9 @@ class Sectorholdings_RequestController extends Zend_Controller_Action
  					$this->_model->getAdapter()->quoteInto(
  				'SECTOR_HOLDING_ID = ?', $this->_posts['SECTOR_HOLDING_ID']
  							));
+			$inModel->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

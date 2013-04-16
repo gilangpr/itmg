@@ -41,6 +41,7 @@ class Meetingdocumentation_RequestController extends Zend_Controller_Action
 				//$mimeModel = new Application_Model_Mime();
 				$MDModel = new Application_Model_Meetingdocumentation();
 				$MAmodel = new Application_Model_Meetingactivitie();
+				$inModel = new Application_Model_Investors();
 				$adp->setDestination(APPLICATION_PATH ."/../public/upload/meetings/");
 				$adp->addValidator('Extension',false, array('doc','docx','xls','xlsx','pdf','txt','case'=>true));
 				try {
@@ -65,6 +66,7 @@ class Meetingdocumentation_RequestController extends Zend_Controller_Action
 						$mdID=$this->_getParam('id',0);	
 						//$rrcID = $rrcModel->getPkByKey('NEWS_CATEGORY', $this->_posts['CATEGORY']);
 						/* End of : Get Research Report Category ID */
+						$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 						if($MAmodel->isExistByKey('MEETING_ACTIVITIE_ID',$mdID)){
 						$this->_model->insert(array(
 								'MEETING_ACTIVITIE_ID' => $mdID,
@@ -75,6 +77,9 @@ class Meetingdocumentation_RequestController extends Zend_Controller_Action
 								//'FILE_TYPE' => $mimeModel->getValueByKey('EXTENSION', $filExt, 'MIME_TYPE'),
 								'CREATED_DATE' => date('Y-m-d H:i:s')
 						));
+						$inModel->update(array(
+								'MODIFIED_DATE'=> date('Y-m-d H:i:s')
+							),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?',$in_id));
 						}
 						else{
 							$this->_error_code=101;
@@ -149,6 +154,8 @@ class Meetingdocumentation_RequestController extends Zend_Controller_Action
 					/* End of : Delete file */
 					
 					$this->_model->delete($this->_model->getAdapter()->quoteInto($this->_model->getPK() . ' = ?', $this->_posts[$this->_model->getPK()]));
+
+					
 					
 				}catch(Exception $e) {
 					$this->_error_code = $e->getCode();

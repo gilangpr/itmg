@@ -48,6 +48,7 @@
 						minWidth: 500,
 						minHeight: 200,
 						border: false,
+						plugins:[cellEditing3],
 						store: storeSH,
 						id: 'investors-detail-sector-holding-data-grid-' + data.INVESTOR_ID,
 						tbar: [{
@@ -151,7 +152,8 @@
 														Ext.Ajax.request({
 															url: sd.baseUrl + '/sectorholdings/request/destroy',
 															params: {
-																SECTOR_HOLDING_ID: __data.SECTOR_HOLDING_ID
+																SECTOR_HOLDING_ID: __data.SECTOR_HOLDING_ID,
+																INVESTOR_ID:data.INVESTOR_ID
 															},
 															success: function(d) {
 																var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
@@ -188,12 +190,19 @@
 						columns: [{
 							text: 'Title',
 							flex: 1,
-							dataIndex: 'TITLE'
+							dataIndex: 'TITLE',
+							editor:{
+								name:'TITLE'
+							}
 						},{
 							text: 'Value',
 							width: 120,
 							align: 'center',
-							dataIndex: 'VALUE'
+							dataIndex: 'VALUE',
+							editor:{
+								name:'VALUE',
+								xtype:'numberfield'
+							}
 						}]
 					}]
 				}).show();
