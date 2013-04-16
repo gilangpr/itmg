@@ -102,7 +102,9 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 		$peer_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
-			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
+			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id)
+			->order('SELLING_PRICE_ID DESC')
+			->limit(3, 0);
 			$list = $list->query()->fetchAll();
 
 			$content = array();
@@ -120,8 +122,9 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 						//$content[$i]['NAME'] = ($i==0) ? 'IDR' : 'USD';
 						$content[$i]['VALUE_' . $list[$k]['TITLE']] = ($i==0) ? $list[$k]['VALUE_USD'] : $list[$k]['VALUE_IDR'];
 					}
-					$content[$k]['TITLE'] = $d['TITLE'];
+					//$content[$k]['TITLE'] = $d['TITLE'];
 				}
+				$list[$k]['TITLE'] = $d['TITLE'];
 			}
 
 			$data = array(
