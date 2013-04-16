@@ -49,6 +49,9 @@ class Contacts_RequestController extends Zend_Controller_Action
 					'POSITION'=>$this->_posts['POSITION'],
  					'CREATED_DATE' => date('Y-m-d H:i:s')
  					));
+ 			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $investor_id));
 			}
 			else {
 				$this->_error_code = 404;
@@ -91,16 +94,15 @@ class Contacts_RequestController extends Zend_Controller_Action
 	}
 	public function updateAction()
 	{
-		//update shareholding amount table
 		$data = array(
 				'data' => array()
 		);
 
-	    //$models = new Application_Model_ShareholdingAmounts();
+	   
 		$data = $this->getRequest()->getRawBody();//mengambil data json
 		$data = Zend_Json::decode($data);//merubah data json menjadi array
 		$id = $data['data']['CONTACT_ID'];
-	
+		$modelInvestors = new Application_Model_Investors();
 		try {
 			
 			$this->_model->update(array(
@@ -109,6 +111,9 @@ class Contacts_RequestController extends Zend_Controller_Action
 					'EMAIL'=>$data['data']['EMAIL'],
 					'PHONE_1'=>$data['data']['PHONE_1']
 			),$this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $id));
+			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $data['data']['INVESTOR_ID']));
 			
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
@@ -120,15 +125,20 @@ class Contacts_RequestController extends Zend_Controller_Action
 	}
 	public function destroyAction()
 	{	$contact_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
+		$investor_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 		$data = array(
 				'data' => array()
 				);
+		$modelInvestors = new Application_Model_Investors();
 		try {
 			// Delete
  			 $this->_model->delete(
  			 		$this->_model->getAdapter()->quoteInto(
  					'CONTACT_ID = ?', $contact_id
  							));
+ 			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $investor_id));
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
