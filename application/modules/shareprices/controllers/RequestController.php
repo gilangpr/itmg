@@ -57,7 +57,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$this->_limit = $this->_limit * count($spRes);
 		$this->_start = $this->_start * count($spRes);
 
-		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE ASC');
+		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE DESC');
 
 		$_temp = '';
 		$_temp2 = '';

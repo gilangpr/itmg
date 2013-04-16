@@ -189,6 +189,9 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 				//->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
 			if(isset($_x['total']) && $_x['total'] == 0) {
 				// Delete
+				$this->_modelSp->delete(
+						$this->_modelSp->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']));
+				
 				$this->_model3->delete(
 						$this->_model3->getAdapter()->quoteInto(
 								'SHAREPRICES_NAME_ID = ?', $this->_posts['SHAREPRICES_NAME_ID']
