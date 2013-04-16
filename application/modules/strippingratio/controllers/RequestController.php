@@ -101,7 +101,9 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 		$modelPeer = new Application_Model_StrippingRatio();
 		$peer_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
-			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
+			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id)
+			->order('STRIPPING_RATIO_ID DESC')
+			->limit(3, 0);
 			$list = $list->query()->fetchAll();
 				
 			$attr = array(
