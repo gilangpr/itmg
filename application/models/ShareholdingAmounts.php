@@ -43,15 +43,20 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	public function getAmount($shareholding_id)
 	{
 		if($this->isExistByKey('SHAREHOLDING_ID', $shareholding_id)) {
-			$select = $this->select();
-			$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE'));
-			$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
-			$maxTanggal =  $select->query()->fetch();
-			
+// 			$select = $this->select();
+// 			$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE'));
+// 			$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
+// 			$maxTanggal =  $select->query()->fetch();
+						$select = $this->select();
+						$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE','MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+						$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
+						$maxTanggal =  $select->query()->fetch();
+
 			$select = $this->select();
 			$select->from('SHAREHOLDING_AMOUNTS');
 			$select->where('SHAREHOLDING_ID =?',$shareholding_id);
 			$select->where('DATE = ?',$maxTanggal['MAX_DATE']);
+			$select->where('SHAREHOLDING_AMOUNT_ID = ?', $maxTanggal['MAX_ID']);
 			$list = $select->query()->fetch();
 			return $list['AMOUNT'];
 			
