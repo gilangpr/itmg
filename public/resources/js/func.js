@@ -162,12 +162,6 @@ function loadContent(param1, editor) {
 										var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 											clicksToMoveEditor: 1,
 									        autoCancel: false,
-									        listeners: {
-									        	click: {
-									                element: 'el', //bind to the underlying el property on the panel
-									                fn: function(){ console.log('click el'); }
-									            }
-									    	}
 									    });
 										
 										Ext.each(records.raw.contents.columns, function(e, i) {
