@@ -351,8 +351,7 @@ class Investors_RequestController extends Zend_Controller_Action
 				$new_name = microtime() . $filExt ;
 				rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $new_name);
 				/* End of : Rename file */
-			} 
-			try{
+				try{
 		
 				$inputFileName = $upload->getDestination() . '/' . $new_name;
 				$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
@@ -462,6 +461,13 @@ class Investors_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 			}
+			}
+			else{
+				$this->_error_code = 902;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			} 
+			
 		} 
 		catch(Zend_File_Transfer_Exception $e) {
 					$this->_error_code = $e->getCode();
