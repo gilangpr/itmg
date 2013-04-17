@@ -138,10 +138,15 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	public function getMaxAmounth($l,$shareholdingid){
 		//echo $shareholdingid; die;
 		$select = $this->select();
+		$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+		$select->where('SHAREHOLDING_ID = ?',$shareholdingid);
+		$maxId =  $select->query()->fetch();
+		
+		$select = $this->select();
 		$select->from('SHAREHOLDING_AMOUNTS','AMOUNT');
 		$select->where('SHAREHOLDING_ID = ? ',$shareholdingid);
 		$select->where('DATE = ? ',$l);
-	
+		$select->where('SHAREHOLDING_AMOUNT_ID = ? ',$maxId);
 		
 		
 //		echo $select->__toString();
