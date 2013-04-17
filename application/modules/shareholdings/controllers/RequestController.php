@@ -206,7 +206,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array(
 						'items' => $list,
-						'totalCount' => $this->_model->count()
+						'totalCount' => count($list)
 				)
 		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
@@ -249,8 +249,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		try {
 			
 			$models->update(array(
-					'AMOUNT' => $data['data']['AMOUNT'],
-					'MODIFIED_DATE' => $data['data'][date('Y-m-d H:i:s')]
+					'AMOUNT' => $data['data']['AMOUNT']
 			),$models->getAdapter()->quoteInto('SHAREHOLDING_AMOUNT_ID = ?', $id));
 			
 		}catch(Exception $e) {
