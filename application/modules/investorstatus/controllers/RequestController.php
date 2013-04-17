@@ -91,9 +91,14 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 			try {
 				
 				
+			if(!$this->_model->isExistByKey('INVESTOR_STATUS', $data['data']['INVESTOR_STATUS'])){
 				$this->_model->update(array(
 						'INVESTOR_STATUS' => $data['data']['INVESTOR_STATUS'],
 				),$this->_model->getAdapter()->quoteInto('INVESTOR_STATUS_ID = ?', $id));
+				} else {
+					$this->_error_message = 'Data Being Used';
+					$this->_success = false;
+				}
 					
 			}catch(Exception $e) {
 				$this->_error_code = $e->getCode();
@@ -116,9 +121,9 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 				$query = $share->select()
 				->where('INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']);
 
-                	if ($query->query()->rowCount() > 0) {
+                if ($query->query()->rowCount() > 0) {
                 		
-                		$this->_error_message = 'Data Being Used';
+                		$this->_error_message = 'Delete failed, data is being used.';
 			            $this->_success = false;
                 		
                 } else {
@@ -128,11 +133,10 @@ class Investorstatus_RequestController extends Zend_Controller_Action
                 					'INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']
                 			));
                 	
-                	$this->_error_message = 'Data Succes Deleted';
+                	$this->_error_message = 'Data successfully deleted.';
                 	$this->_success = false;
                
-				
-			}
+				}
 			}
 			catch(Exception $e) {
 				

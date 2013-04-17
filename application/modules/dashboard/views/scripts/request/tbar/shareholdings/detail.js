@@ -13,14 +13,14 @@ if(selected.length > 0) {
 		var store = Ext.create("Ext.data.Store", {
 			model: "ShareholdingAmount",
 			storeId: "ShareholdingAmounts",
-			proxy:{"type":"ajax","api":{"read":"\/shareholdings\/request\/get-list-amount","create":"\/shareholdings\/request\/amount","update":"\/shareholdings\/request\/upamount","destroy":"\/shareholdings\/request\/des"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"SHAREHOLDING_AMOUNT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+			proxy:{
+				extraParams: {
+					id: data.SHAREHOLDING_ID
+				},
+				"type":"ajax","api":{"read":"\/shareholdings\/request\/get-list-amount","create":"\/shareholdings\/request\/amount","update":"\/shareholdings\/request\/upamount","destroy":"\/shareholdings\/request\/des"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"SHAREHOLDING_AMOUNT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
 			sorter: {"property":"SHAREHOLDING_AMOUNT_ID","direction":"ASC"}});
 		
-		store.load({
-			params: {
-				id: data.SHAREHOLDING_ID /* single param */
-			}
-		});
+		store.load();
 		//console.log(id);
 		store.autoSync = true;
 		var comboBbar2 = new Ext.form.ComboBox({
@@ -55,6 +55,14 @@ if(selected.length > 0) {
 			store.loadPage(1);
 		}, this);
 		
+		var _idDetailShareholding = 'shareholding-amount-list-' + id;
+		Ext.EventManager.onWindowResize(function() {
+//			var _c = Ext.getCmp(_idDetailShareholding);
+//			if(typeof(_c) !== 'undefined') {
+//			_c.height = _c.up().getHeight() - 56;
+//			_c.doLayout();
+//			}
+		});
 		// End of : bottom toolbar
 		c.up().add(Ext.create('Ext.panel.Panel', {
 			title: 'Detail : ' + data.INVESTOR_NAME,
@@ -67,7 +75,7 @@ if(selected.length > 0) {
 				border: false,
 				store: store,
 				plugins: [cellEditing],//memanggil plugin
-				id: 'shareholding-amount-list-' + id,
+				id: _idDetailShareholding,
 				bbar: bbar2,
 				height: c.up().getHeight() - 56,//letak pagingtoolbar
 				columns: [{

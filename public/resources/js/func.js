@@ -178,10 +178,15 @@ function loadContent(param1, editor) {
 													displayField: e.dataIndex,
 												    width: 500,
 												    labelWidth: 130,
+												    pageSize: 10,
 												    store: Ext.data.StoreManager.lookup(st),
 												    typeAhead: true,
 												    editable: false
 												});
+											} else {
+												if(e.dataType == 'int' || e.dataType == 'float') {
+													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.,/i');
+												}
 											}
 										});
 									
@@ -229,7 +234,8 @@ function getStore(data) {
 		storeId: data.stores.storeName,
 		proxy: data.stores.proxy,
 		sorters: data.stores.sorters,
-		autoSync: true
+		autoSync: true,
+		//remoteSort: true
 	});
 	return store;
 }

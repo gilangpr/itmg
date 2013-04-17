@@ -56,7 +56,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		$modelPeer = new Application_Model_StrippingRatioYear();
+		$modelPeer = new Application_Model_Peers();
 		try {
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
@@ -97,7 +97,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 
 	public function readAction()
 	{
-		$modelPeer = new Application_Model_StrippingRatioYear();
+		$modelPeer = new Application_Model_Peers();
 		$peer_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);

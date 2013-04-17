@@ -444,11 +444,13 @@ if(selected.length > 0) {
 					bodyPadding: '5 5 5 5',
 					id: 'investors-detail-company-overview-form-' + data.INVESTOR_ID,
 					items: [{
-						xtype: 'htmleditor',
+						xtype: 'textarea',
 						name: 'COMPANY_OVERVIEW',
 						value: data.COMPANY_OVERVIEW,
 						minHeight: 160,
-						allowBlank: false
+						allowBlank: false,
+						msgTarget:'under',
+						maxLength:1000
 					}],
 					buttons: [{
 						text: 'Update',
@@ -491,11 +493,13 @@ if(selected.length > 0) {
 					bodyPadding: '5 5 5 5',
 					id: 'investors-detail-investment-strategy-form-' + data.INVESTOR_ID,
 					items: [{
-						xtype: 'htmleditor',
+						xtype: 'textarea',
 						name: 'INVESTMENT_STRATEGY',
 						value: data.INVESTMENT_STRATEGY,
 						minHeight: 160,
-						allowBlank: false
+						allowBlank: false,
+						msgTarget:'under',
+						maxLength:1000
 					}],
 					buttons: [{
 						text: 'Update',
