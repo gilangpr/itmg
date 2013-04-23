@@ -6,7 +6,7 @@
 //		}]
 //	});
 var storeSR = Ext.create('Ext.data.Store',{
-    storeId: 'InvestorStatus',
+    storeId: 'InvestorStatus_',
     model: 'InvestorStatus',
     proxy: {
         type: 'ajax',
@@ -98,7 +98,8 @@ Ext.create('Ext.Window', {
 			minChars: 3,
 			pageSize: 10,
 			typeAhead: true,
-			allowBlank: false
+			allowBlank: false,
+			editable: false
 		},{
 			fieldLabel: 'Account Holder',
 			name: 'ACCOUNT_HOLDER',

@@ -219,15 +219,18 @@ if(__selected.length > 0) {
                 columns:[{
                 	text:'Company name',
                     dataIndex:'COMPANY_NAME',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                 	text:'Name',
                     dataIndex:'NAME',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                 	text:'Email',
                     dataIndex:'EMAIL',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                     text:'Position',
                     dataIndex:'POSITION',
@@ -247,15 +250,18 @@ if(__selected.length > 0) {
                 columns:[{
                     text:'Name Participants',
                     dataIndex:'NAME_PART',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                     text:'Email',
                     dataIndex:'EMAIL_PART',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                     text:'Initials',
                     dataIndex:'INITIAL_PART',
-                    width:200
+                    width:100,
+                    align: 'center'
                 }],
             	tbar:[{
             		xtype:'button',
@@ -607,7 +613,8 @@ if(__selected.length > 0) {
             	columns:[{
             		text:'Documents Title',
                     dataIndex:'DOCUMENTATION_TITLE',
-                    width:200
+                    width:200,
+                    flex: 1
             	},{
                     text:'File Name',
                     dataIndex:'FILE_NAME',

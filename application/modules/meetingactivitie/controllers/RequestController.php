@@ -152,7 +152,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 					'NOTES' => $this->_posts['NOTES']),
  				$this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id));
  				$modelInvestors->update(array(
- 					'MODIFIED_DATE_INVESTOR' => date('Y-m-d H:i:s')
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
  				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
 			}
 			else {

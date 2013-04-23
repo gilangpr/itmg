@@ -88,7 +88,7 @@ Ext.create('Ext.Window', {
 				fieldLabel: 'Company Name',
 				name: 'PEER_NAME',
 				emptyText: 'All',
-				allowBlank: false,
+				allowBlank: true,
 				name: 'PEER_NAME',
 				store: storeSP,
 				minChars: 3,

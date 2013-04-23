@@ -56,13 +56,17 @@ class Financialperform_RequestController extends Zend_Controller_Action
 		$data = array(
 			'data' => array()
 		);
-		$modelPeer = new Application_Model_FinancialPerform();
+		$modelPeer = new Application_Model_Peers();
 		try {
 			/* INSERT FINANCIAL PERFORMANCE DATA */
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				
-				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
+				$_q = $this->_model->select()
+				->where('TITLE = ?', $this->_posts['TITLE'])
+				->where('PEER_ID = ?', $peer_id);
+				
+				if($_q->query()->rowCount() == 0) {
 				$this->_model->insert(array(
 						'PEER_ID' => $peer_id,
 						'TITLE' => $this->_posts['TITLE'],
