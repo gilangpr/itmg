@@ -9,6 +9,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
+	protected $_data;
 	
 	public function init()
 	{
@@ -27,6 +28,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
+		
 	}
 	
 	public function createAction()
@@ -94,9 +96,48 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		}
 	public function readAction()
 	{
+		
+// 		$list = $this->_model->getListLimitMeetingActivities($this->_limit, $this->_start, 'MEETING_DATE ASC');
+// 		$_temp = '';
+// 		$_temp2 = '';
+// 		$_i = 0;
+// 		foreach($list as $k=>$d) {
+// 			if($_temp == '') {
+// 				$_temp = $d['MEETING_ACTIVITIE_ID'];
+// 				$this->_data['data']['items'][$_i]['COMPANY_NAME'] = '';
+// 				//$this->_data['data']['items'][$_i]['INITIAL_PART'] = $this->_model->getInitial($d['INITIAL_PART']);
+// 			}
+// 			if($_temp != $d['MEETING_ACTIVITIE_ID']) {
+// 				$_i++;
+// 				$_temp = $d['MEETING_ACTIVITIE_ID'];
+// 				$this->_data['data']['items'][$_i]['COMPANY_NAME'] = '';
+// 			}
+// 			if(!isset($this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'])) {
+// 				$originalDate = $d['MEETING_DATE'];
+// 				$newDate = date("d-m-Y", strtotime($originalDate));
+// 				$this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'] = $d['MEETING_ACTIVITIE_ID'];
+// 				$this->_data['data']['items'][$_i]['MEETING_DATE'] = $newDate;
+// 				$this->_data['data']['items'][$_i]['MEETING_EVENT'] = $d['MEETING_EVENT'];
+// 			}
+			
+// 			// Set Company Name :
+// 			if($this->_data['data']['items'][$_i]['COMPANY_NAME'] != '') {
+// 				$this->_data['data']['items'][$_i]['COMPANY_NAME'] .= ', ';
+// 			}
+// 			$this->_data['data']['items'][$_i]['COMPANY_NAME'] .= $d['COMPANY_NAME'];
+// 		}
+		//print_r($this->_model->getInitial());
+		//$this->_data['data']['totalCount'] = $this->_model->count();
+
+// 		$data = array(
+// 				'data' => array(
+// 					'items' => $list,
+// 					'totalCount' => $this->_model->count()
+// 				)				
+// 		);
 		$data = array(
 				'data' => array(
-				'items' => $this->_model->getListLimit($this->_limit, $this->_start),
+				'items' => $this->_model->getListLimitMeetingActivities($this->_limit, $this->_start),
 						'totalCount' => $this->_model->count()
 				)
 		);

@@ -115,7 +115,7 @@ Ext.onReady(function() {
 		        itemId: 'startdt',
 		        vtype: 'daterange',
 		        endDateField: 'enddt',
-		        emptyText: 'End Date',
+		        emptyText: 'Start Date',
 				labelWidth: 140,
 				width: 320,
 				allowBlank: false
@@ -128,13 +128,13 @@ Ext.onReady(function() {
 	            itemId: 'enddt',
 	            vtype: 'daterange',
 	            startDateField: 'startdt',
-	            emptyText: 'Start Date',
+	            emptyText: 'End Date',
 				labelWidth: 140,
 				width: 320,
 				allowBlank: false
 			},{
 				xtype: 'combobox',
-				fieldLabel: 'Shareprices Name',
+				fieldLabel: 'Company Name',
 				id: 'shareprices-name',
 				name: 'SHAREPRICES_NAME',
 				displayField: 'SHAREPRICES_NAME',
@@ -143,7 +143,7 @@ Ext.onReady(function() {
 				store: storeSR,
 				multiSelect: true,
 				minChars: 3,
-				emptyText: 'Select shareprices name',
+				emptyText: 'Select company name',
 				multiSelect: true,
 				typeAhead: false,
 				editable: false,
@@ -198,17 +198,17 @@ Ext.onReady(function() {
 									series[i] = {
 										type: 'line',
 										highlight: {
-											size: 7,
-											radius: 7
+											size: 5,
+											radius: 5
 										},
 										axis: 'left',
 										xField: 'DATE',
 										yField: json.data.names[i],
 						                markerConfig: {
 						                    type: 'circle',
-						                    size: 4,
-						                    radius: 4,
-						                    'stroke-width': 0
+						                    size: 2,
+						                    radius: 2,
+						                    'stroke-width': 1
 						                }
 									};
 								}

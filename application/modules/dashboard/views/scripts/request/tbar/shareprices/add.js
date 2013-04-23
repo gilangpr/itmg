@@ -84,14 +84,14 @@ Ext.create('Ext.Window', {
 	        xtype: 'datefield'
 	    },{
 			xtype: 'combobox',
-			fieldLabel: 'Shareprices Name',
+			fieldLabel: 'Company Name',
 			id: 'shareprices-name',
 			name: 'SHAREPRICES_NAME',
 			displayField: 'SHAREPRICES_NAME',
 			labelWidth: 110,
 			store: storeSR,
 			minChars: 3,
-			emptyText: 'Select shareprices name',
+			emptyText: 'Select company name',
 			typeAhead: true,
 			allowBlank: false
 		},{

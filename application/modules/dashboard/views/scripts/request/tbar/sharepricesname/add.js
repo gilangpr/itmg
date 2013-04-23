@@ -1,5 +1,5 @@
 Ext.create('Ext.Window', {
-	title: 'Add New Shareprices Name',
+	title: 'Add New Company Name',
 	draggable: false,
 	modal: true,
 	width: 350,
@@ -16,10 +16,10 @@ Ext.create('Ext.Window', {
 			id: 'shareprices-add-form',
 			waitMsgTarget: true,
 			items: [{
-				fieldLabel: 'Name',
+				fieldLabel: 'Company Name',
 				allowBlank: false,
 				name: 'SHAREPRICES_NAME',
-				emptyText: 'Insert shareprices name',
+				emptyText: 'Insert company name',
 			}]
 		}]
 	}],

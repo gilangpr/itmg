@@ -235,7 +235,7 @@ function getStore(data) {
 		proxy: data.stores.proxy,
 		sorters: data.stores.sorters,
 		autoSync: true,
-		//remoteSort: true
+		remoteSort: true
 	});
 	return store;
 }
