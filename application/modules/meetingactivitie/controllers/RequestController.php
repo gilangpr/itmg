@@ -93,10 +93,15 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		}
 	public function readAction()
-	{
+	{	$full = $this->_model->getListLimit($this->_limit, $this->_start);
+		
+		//$list = $this->_model->getListMeetingactivitieLimit($this->_limit, $this->_start);
+		//foreach ($list as $d) {
+			
+		//}
 		$data = array(
 				'data' => array(
-				'items' => $this->_model->getListLimit($this->_limit, $this->_start),
+				'items' => $full ,
 						'totalCount' => $this->_model->count()
 				)
 		);
