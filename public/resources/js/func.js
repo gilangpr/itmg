@@ -161,7 +161,7 @@ function loadContent(param1, editor) {
 										
 										var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 											clicksToMoveEditor: 1,
-									        autoCancel: false
+									        autoCancel: false,
 									    });
 										
 										Ext.each(records.raw.contents.columns, function(e, i) {
