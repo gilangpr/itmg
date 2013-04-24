@@ -63,6 +63,7 @@ class Application_Model_Shareholdings extends MyIndo_Ext_Abstract
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
 		->join('INVESTOR_STATUS', 'INVESTOR_STATUS.INVESTOR_STATUS_ID = SHAREHOLDINGS.INVESTOR_STATUS_ID', array('*'))
+		->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('DATE'))
 		->limit($limit, $offset);
 		
 		return $q->query()->fetchAll();
