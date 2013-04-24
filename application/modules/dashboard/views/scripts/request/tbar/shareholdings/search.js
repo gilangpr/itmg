@@ -172,6 +172,10 @@ Ext.create('Ext.Window', {
 						xtype: 'gridpanel',
 						height: c.up().getHeight() - 56,
 						columns: [{
+							text: 'Date',
+							dataIndex: 'DATE',
+							align: 'center'
+						},{
 							text: 'Investor Name',
 							dataIndex: 'INVESTOR_NAME',
 							width: 200,
@@ -181,10 +185,6 @@ Ext.create('Ext.Window', {
 							dataIndex: 'AMOUNT',
 							renderer: Ext.util.Format.numberRenderer('0.,/i'),
 							align: 'right'
-						},{
-							text: 'Date',
-							dataIndex: 'DATE',
-							align: 'center'
 						}]
 					});
 					c.up().setActiveTab(_id);

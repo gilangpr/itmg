@@ -184,8 +184,10 @@ function loadContent(param1, editor) {
 												    editable: false
 												});
 											} else {
-												if(e.dataType == 'int' || e.dataType == 'float') {
+												if(e.dataType == 'int') {
 													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.,/i');
+												} else if(e.dataType == 'float'){
+													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.00,/i');
 												}
 											}
 										});

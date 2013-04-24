@@ -30,7 +30,8 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$this->_success = true;
 	}
 	
-	public function createAction() {
+	public function createAction()
+	{
 		
 		$data = array(
 				'data' => array()
@@ -61,15 +62,13 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
-	public function amountAction() {
-	    
-		//insert to shareholding amount table
+	public function amountAction()
+	{
 		$data = array(
 				'data' => array()
 		);
 		
-		try {
-			// Do insert query :			
+		try {		
 			$shareholder_id = $this->_model->getValueByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME'], 'SHAREHOLDING_ID');
 			$table = new Application_Model_ShareholdingAmounts();		
 			$table->insert(array(
@@ -123,7 +122,8 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-			
+		
+		if(!isset($this->_posts['sort'])) {	
 		$modelSA = new Application_Model_ShareholdingAmounts();
 	    $list = $this->_model->getListInvestorsLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
         $lastId = $this->_model->getLastId();
@@ -133,44 +133,100 @@ class Shareholdings_RequestController extends Zend_Controller_Action
         foreach ($data as $k => $e) {
         	
         	$shareholdingid = $data[$k]['SHAREHOLDING_ID'];
-        	$idmax = $modelSA->getIdamount( $e['SHAREHOLDING_ID']); // get max date terakhir
+        	$idmax = $modelSA->getIdamount( $e['SHAREHOLDING_ID']); //max date terakhir
         	foreach ($idmax as $x => $l) {
-        		$amountid = $modelSA->getMaxAmounth($l,$shareholdingid); // get value amounth
+        		$amountid = $modelSA->getMaxAmounth($l,$shareholdingid); //value amounth
         		$jml += $amountid['AMOUNT'];
         	}
         }
 		foreach($list as $k=>$d) {	
-			$list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
-		}
+		    $list[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 
+		}
 		$sum = 0;
 		foreach($list as $k=>$d) {
 			$sum += $d['AMOUNT'];
-
 		}
         
 		foreach($list as $k=>$d) {
 			if($sum > 0) {
                $list[$k]['PERCENTAGE'] = number_format(($d['AMOUNT'] / $sum) * 100,2);
-
 			}
 		}
-				
+		
 		$c = count($list);
 		$list[$c]['SHAREHOLDING_ID'] = $lastId+1;
 		$list[$c]['ACCOUNT_HOLDER'] = 'TOTAL';
 		$list[$c]['AMOUNT'] = $jml;
 		$list[$c]['PERCENTAGE'] = 100;		
 		$c = count($list);
-		
-		 $data = array(
-				'data' => array(
-						'items' => $list,
-						'Total' => count($list),
-						'totalCount' => $this->_model->count(),
-				));
+
+		 	$data = array(
+		 			'data' => array(
+		 					'items' => $list,
+		 					'Total' => count($list),
+		 					'totalCount' => $this->_model->count(),
+		 			));
+		 	
+		 }  else {
+				try {
+					$modelSA = new Application_Model_ShareholdingAmounts();
+					$sort = Zend_Json::decode($this->_posts['sort']);
+					$q = $this->_model->select()
+					->setIntegrityCheck(false)
+					->from('SHAREHOLDINGS', array('*'))
+					->join('INVESTOR_STATUS', 'INVESTOR_STATUS.INVESTOR_STATUS_ID = SHAREHOLDINGS.INVESTOR_STATUS_ID', array('INVESTOR_STATUS'))
+					->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('AMOUNT','DATE'))
+					->limit($this->_limit, $this->_start);
+
+					if($sort[0]['property'] == 'INVESTOR_STATUS') {
+						$q->order('INVESTOR_STATUS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
+					} else if($sort[0]['property'] == 'AMOUNT') {
+						$q->order('SHAREHOLDING_AMOUNTS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
+					} else {
+						$q->order('SHAREHOLDINGS.' . $sort[0]['property'] . ' ' .$sort[0]['direction']);
+					}
+					$lastId = $this->_model->getLastId();
+					$data = $modelSA->getTotal();
+					$jml = 0;
+					foreach ($data as $k => $e) {
 						 
+						$shareholdingid = $data[$k]['SHAREHOLDING_ID'];
+						$idmax = $modelSA->getIdamount( $e['SHAREHOLDING_ID']); 
+						foreach ($idmax as $x => $l) {
+							$amountid = $modelSA->getMaxAmounth($l,$shareholdingid);
+							$jml += $amountid['AMOUNT'];
+						}
+					}
+					$c = $q->query()->fetchAll();
+					foreach($c as $k=>$d) {
+						$c[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
+					}
+					foreach($c as $k=>$d) {
+						$c[$k]['DATE'] = $modelSA->getDate($d['SHAREHOLDING_ID']);
+					}
+		            foreach($c as $k=>$d) {
+		            	if($jml > 0) {
+		            		$c[$k]['PERCENTAGE'] = number_format(($d['AMOUNT'] / $jml) * 100,2);
+		            	}
+		            }
+
+		            $t = count($c);
+		            $c[$t]['SHAREHOLDING_ID'] = $lastId+1;
+		            $c[$t]['ACCOUNT_HOLDER'] = 'TOTAL';
+		            $c[$t]['AMOUNT'] = $jml;
+		            $c[$t]['PERCENTAGE'] = 100;
+		            $t = count($c);
+
+					$data['data']['items'] = $c;
+					$data['data']['Total'] = count($c);
+					$data['data']['totalCount'] = $this->_model->count();
+					
+				}catch(Exception $e) {
+					echo $e->getMessage();
+				}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		 }
 	}
 	
 	public function destroyAction()
@@ -206,7 +262,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array(
 						'items' => $list,
-						'totalCount' => count($list)
+						'totalCount' => $this->_model->count()
 				)
 		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
@@ -249,7 +305,8 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		try {
 			
 			$models->update(array(
-					'AMOUNT' => $data['data']['AMOUNT']
+					'AMOUNT' => $data['data']['AMOUNT'],
+					'MODIFIED_DATE' => $data['data'][date('Y-m-d H:i:s')]
 			),$models->getAdapter()->quoteInto('SHAREHOLDING_AMOUNT_ID = ?', $id));
 			
 		}catch(Exception $e) {
