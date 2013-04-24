@@ -51,11 +51,6 @@ if(selected.length > 0) {
     if(!c.up().items.get(id)){
         var data = selected[0].data;
         var maxWidth = 221;
-//        /* Store Resources and Reserves */
-//        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-//			clicksToMoveEditor: 1,
-//	        autoCancel: false
-//	    });
         
         <?php echo $this->render('/request/tbar/peers/ref/stores.js') ?>
         
@@ -69,7 +64,6 @@ if(selected.length > 0) {
             border: false,
             items: [{
                 title: 'Peers Detail',
-                collapsible: true,
                 region: 'west',
                 width: '50%',
                 autoScroll: true,
