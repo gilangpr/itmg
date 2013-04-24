@@ -9,25 +9,25 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 // 		$q = $this->select()
 // 		->setIntegrityCheck(false)
 // 		->from('MEETING_ACTIVITIE_INVESTOR', array('*'))
-// 		->join('MEETING_ACTIVITIE', 'MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID', array('MEETING_EVENT', 'MEETING_DATE'))
-// 		->join('INVESTORS', 'INVESTORS.INVESTOR_ID = MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID', array('COMPANY_NAME'))
+// 		->joinLeft('MEETING_ACTIVITIE', 'MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID', array('MEETING_EVENT', 'MEETING_DATE'))
+// 		->joinLeft('INVESTORS', 'INVESTORS.INVESTOR_ID = MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID', array('COMPANY_NAME'))
 // 		->order($order)
 // 		->limit($limit, $offset);
 // 		return $q->query()->fetchAll();
 // 	}
 	
-// 	public function getListLimitMeetingActivities($limit, $offset, $order) {
-// 		$q = $this->select()
-// 		->setIntegrityCheck(false)
-// 		->from($this->_name, array('*'))
-// 		->joinInner('MEETING_ACTIVITIE_INVESTOR', 'MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID', array('MEETING_ACTIVITIE_ID'))
-// 		->joinInner('INVESTORS', 'INVESTORS.INVESTOR_ID = MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID', array('COMPANY_NAME'))
-// 		->joinInner('MEETING_ACTIVITIE_ITM', 'MEETING_ACTIVITIE_ITM.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID', array('PARTICIPANT_ID'))
-// 		->joinInner('ITM_PARTICIPANTS', 'ITM_PARTICIPANTS.PARTICIPANT_ID = MEETING_ACTIVITIE_ITM.PARTICIPANT_ID', array('INITIAL_PART'))
-// 		->order($order)
-// 		->limit($limit, $offset);
-// 		return $q->query()->fetchAll();
-// 	}
+	public function getListLimitMeetingActivities($limit, $offset, $order) {
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->joinLeft('MEETING_ACTIVITIE_INVESTOR', 'MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID', array('MEETING_ACTIVITIE_ID'))
+		->joinLeft('INVESTORS', 'INVESTORS.INVESTOR_ID = MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID', array('COMPANY_NAME'))
+		->joinLeft('MEETING_ACTIVITIE_ITM', 'MEETING_ACTIVITIE_ITM.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID', array('PARTICIPANT_ID'))
+		->joinLeft('ITM_PARTICIPANTS', 'ITM_PARTICIPANTS.PARTICIPANT_ID = MEETING_ACTIVITIE_ITM.PARTICIPANT_ID', array('INITIAL_PART'))
+		->order($order)
+		->limit($limit, $offset);
+		return $q->query()->fetchAll();
+	}
 // 	public function getInitial() {
 // 		$q = $this->select()
 // 		->setIntegrityCheck(false)

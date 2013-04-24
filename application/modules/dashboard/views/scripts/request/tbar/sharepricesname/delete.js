@@ -49,5 +49,5 @@ if(selected.length > 0) {
 		}]
 	}).show();
 } else {
-	Ext.Msg.alert('Message', 'You did not select any Shareprices Name');
+	Ext.Msg.alert('Message', 'You did not select any company name');
 }

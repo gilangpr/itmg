@@ -236,8 +236,9 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },{
-            	title:'ITM Participants',
+            },
+            {
+            	title:'Meeting Participants',
             	border:false,
             	region:'north',
             	xtype:'gridpanel',
