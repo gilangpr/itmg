@@ -9,9 +9,7 @@ body{
 	margin-top: 10px;
 	margin-left: 10px;
 }
-#main-content-body {
-	background: #fff url(../../images/back3.jpg) center center no-repeat;
-}
+
 .strong {
 	font-weight: 800;
 }

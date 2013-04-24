@@ -62,7 +62,7 @@ if(__selected.length > 0) {
             layout: 'border',
             autoScroll: true,
             border: false,
-            items:[/*{
+            items:[{
             	title: 'Meeting Contacts',
                 border: false,
                 region:'north',
@@ -236,9 +236,8 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },*/
-            {
-            	title:'Meeting Participants',
+            },{
+            	title:'ITM Participants',
             	border:false,
             	region:'north',
             	xtype:'gridpanel',

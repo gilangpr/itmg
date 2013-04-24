@@ -5,6 +5,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	protected $_model;
 	protected $_limit;
 	protected $_start;
+	protected $_offset;
 	protected $_posts;
 	protected $_error_code;
 	protected $_error_message;
@@ -123,8 +124,9 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		
-		if(!isset($this->_posts['sort'])) {	
+		if(!isset($this->_posts['sort'])) {
 		$modelSA = new Application_Model_ShareholdingAmounts();
+		$sort = Zend_Json::decode($this->_posts['sort']);
 	    $list = $this->_model->getListInvestorsLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
         $lastId = $this->_model->getLastId();
 	    /* start sum amount */
@@ -176,9 +178,10 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 					->setIntegrityCheck(false)
 					->from('SHAREHOLDINGS', array('*'))
 					->join('INVESTOR_STATUS', 'INVESTOR_STATUS.INVESTOR_STATUS_ID = SHAREHOLDINGS.INVESTOR_STATUS_ID', array('INVESTOR_STATUS'))
-					->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('AMOUNT','DATE'))
+					->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('AMOUNT'))
+					->group('SHAREHOLDING_ID')
 					->limit($this->_limit, $this->_start);
-
+                    
 					if($sort[0]['property'] == 'INVESTOR_STATUS') {
 						$q->order('INVESTOR_STATUS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
 					} else if($sort[0]['property'] == 'AMOUNT') {
@@ -186,6 +189,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 					} else {
 						$q->order('SHAREHOLDINGS.' . $sort[0]['property'] . ' ' .$sort[0]['direction']);
 					}
+
 					$lastId = $this->_model->getLastId();
 					$data = $modelSA->getTotal();
 					$jml = 0;
@@ -199,6 +203,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 						}
 					}
 					$c = $q->query()->fetchAll();
+					
 					foreach($c as $k=>$d) {
 						$c[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID']);
 					}
@@ -218,13 +223,20 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		            $c[$t]['PERCENTAGE'] = 100;
 		            $t = count($c);
 
-					$data['data']['items'] = $c;
-					$data['data']['Total'] = count($c);
-					$data['data']['totalCount'] = $this->_model->count();
-					
+// 					$data['data']['items'] = $c;
+// 					$data['data']['Total'] = count($c);
+// 					$data['data']['totalCount'] = $this->_model->count();
+		            $data = array(
+		            		'data' => array(
+		            				'items' => $c,
+		            				'Total' => count($c),
+		            				'totalCount' => $this->_model->count(),
+		            		));
+		            
 				}catch(Exception $e) {
 					echo $e->getMessage();
 				}
+		 //}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		 }
 	}

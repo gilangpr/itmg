@@ -39,11 +39,7 @@ class Peers_RequestController extends Zend_Controller_Action
 				)
 		);
 		} else {
-			if($this->_posts['name'] != '')  {
-				$list = $this->_model->getListByKey('PEER_NAME', $this->_posts['name']);
-			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start);
-			}
+			$list = $this->_model->getListByKey('PEER_NAME', $this->_posts['name']);
 			$data = array('data'=>array(
 					'items' => $list,
 					'totalCount' => count($list)

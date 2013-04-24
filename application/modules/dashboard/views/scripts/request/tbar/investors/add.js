@@ -37,7 +37,6 @@ Ext.extend (Ext.ux.form.HtmlEditorCounterPlugin, Ext.util.Observable, {
 *End
 */
 //var myplugin = new Ext.ux.form.HtmlEditorCounterPlugin ({prefix: 'Current size is '});
-
 if(!c.up().items.get(id)) {
 	
 	Ext.define('InvestorType', {//model

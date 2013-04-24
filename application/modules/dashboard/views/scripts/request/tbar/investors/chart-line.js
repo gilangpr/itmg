@@ -211,11 +211,10 @@
 								name:'TITLE'
 							}
 						},{
-							text: 'Value (USD BN)',
+							text: 'Value',
 							width: 120,
 							align: 'center',
 							dataIndex: 'VALUE',
-							//renderer:changePD,
 							editor:{
 								name:'VALUE',
 								xtype:'numberfield'

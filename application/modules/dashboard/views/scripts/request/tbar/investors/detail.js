@@ -74,13 +74,7 @@ if(selected.length > 0) {
 	/*
 	 * Sector Holdings
 	 */
-	function change(val) {
-        if (val > 0) {
-            return '<span style="color:green;">' + val + '%</span>';
-        }
-        return val;
-    }
-    
+	
 	var storeSH = Ext.create('Ext.data.Store', {
 		model: 'SectorHolding',
 		storeId: 'SectorHoldings',
@@ -115,10 +109,10 @@ if(selected.length > 0) {
 	        "property": "TITLE",
 	        "direction": "ASC"
 	    },
-	    
 	});
 	storeSH.autoSync= true;
 	storeSH.load();
+	
 	/*
 	 * End of : Sector Holdings
 	 */
@@ -126,12 +120,7 @@ if(selected.length > 0) {
 	/*
 	 * Portfolio Distributions
 	 */
-	function changePD(val) {
-        if (val > 0) {
-            return '<span style="color:green;">' + val + '&nbsp USD BN</span>';
-        }
-        return val;
-    }
+	
 	var storePD = Ext.create('Ext.data.Store', {
 		model: 'PortfolioDistribution',
 		storeId: 'PortfolioDistributions',
@@ -801,8 +790,7 @@ if(selected.length > 0) {
 						text: 'Meeting Date',
 						align: 'center',
 						width: 100,
-						dataIndex: 'MEETING_DATE',
-						renderer : Ext.util.Format.dateRenderer('d/m/Y')
+						dataIndex: 'MEETING_DATE'
 					},{
 						text: 'Meeting Event',
 						flex: 1,
