@@ -19,8 +19,25 @@ class MyIndo_Plugin_Acl extends Zend_Controller_Plugin_Abstract
 		} else {
 			$modelGM = new Application_Model_GroupMembers();
 			$groups = array();
-			$list = $modelGM->getListByKey('USERNAME', $this->_objAuth->getIdentity());
-			$view->active_user = $this->_objAuth->getIdentity();
+			
+			$usr = explode('\\', $this->_objAuth->getIdentity());
+			if(isset($usr[1])) {
+				$usr2 = explode('_', $usr[1]);
+				$name = '';
+				foreach($usr2 as $k=>$d) {
+					if($k>0) {
+						$name .= ' ';
+					}
+					$name .= ucfirst($d);
+				}
+				$view->active_user = $name;
+				$view->username = $usr[1];
+				$list = $modelGM->getListByKey('USERNAME', $usr[1]);
+			} else {
+				$view->active_user = $this->_objAuth->getIdentity();
+				$view->username = ucfirst($view->active_user);
+				$list = $modelGM->getListByKey('USERNAME', $view->username);
+			}
 			foreach($list as $k=>$d) {
 				$groups[] = (int)$d['GROUP_ID'];
 			}

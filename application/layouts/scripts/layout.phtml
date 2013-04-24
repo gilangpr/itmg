@@ -49,7 +49,7 @@
 	</head>
 	<body>
 		<div class="logout-box">
-			<p>Welcome, Administrator | <a href="<?php echo $this->url(array('module'=>'dashboard','controller'=>'login','action'=>'logout'),null,true)?>"><img src="<?php echo $this->baseUrl('images/logout.png')?>"/> Logout</a></p>
+			<p>Welcome, <?php echo $this->username?> | <a href="<?php echo $this->url(array('module'=>'dashboard','controller'=>'login','action'=>'logout'),null,true)?>"><img src="<?php echo $this->baseUrl('images/logout.png')?>"/> Logout</a></p>
 		</div>
 		<div class="head">
 			<img class="logo" src="<?php echo $this->baseUrl('images/logo.png')?>" />
