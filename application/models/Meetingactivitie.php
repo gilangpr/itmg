@@ -26,7 +26,7 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 // 		->limit($limit, $offset);
 // 		return $q->query()->fetchAll();
 // 	}
-	
+	/*
 	public function getListLimitMeetingActivities($limit, $offset, $order) {
 		$q = $this->select()
 		->setIntegrityCheck(false)
@@ -59,4 +59,4 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	return $q->query()->fetchAll();
 	}
 	*/
-}
+//}

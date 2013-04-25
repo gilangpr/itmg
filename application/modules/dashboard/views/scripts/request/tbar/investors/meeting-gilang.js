@@ -150,6 +150,125 @@ if(__selected.length > 0) {
                 		}
                 	}
                 },{
+                    xtype: 'button',
+                    text: 'Add New Participants',
+                    iconCls: 'icon-go',
+                    listeners: {
+                        click: function() {
+                            Ext.create('Ext.Window', {
+                                title: 'Add New Participants',
+                                id: 'CO',
+                                draggable: false,
+                                modal: true,
+                                width: 400,
+                                align: 'center',
+                                resizable: false,
+                                items: [{
+                                    xtype: 'panel',
+                                    border: false,
+                                    items: [{
+                                        xtype: 'form',
+                                        layout: 'form',
+                                        id: 'add-new-participants-form',
+                                        border: false,
+                                        bodyPadding: '5 5 5 5',
+                                        defaultType: 'textfield',
+                                        waitMsgTarget: true,
+                                        items: [{
+                                            fieldLabel: 'Name <span style="color:red;">*</span>',
+                                            allowBlank: false,
+                                            name: 'NAME'
+                                        },{
+                                            fieldLabel: 'Phone 1 &nbsp<span style="color:red;">*</span>',
+                                            allowBlank: false,
+                                            name: 'PHONE1_PARTICIPANT',
+                                        },{
+                                            fieldLabel: 'Phone 2',
+                                            allowBlank: true,
+                                            name: 'PHONE2_PARTICIPANT',
+                                    
+                                        },{
+                                            fieldLabel:'Email <span style="color:red;">*</span>',
+                                            allowBlank:false,
+                                            name:'EMAIL_PARTICIPANT',
+                                            vtype:'email'                   
+                                        },{
+                                            fieldLabel: 'Address',
+                                            name: 'ADDRESS_PARTICIPANT',
+                                            xtype: 'htmleditor',
+                                            height: 150
+                           
+                                        },{
+                                            xtype: 'radiofield',
+                                            name: 'SEX',
+                                            value: 'Male',
+                                            fieldLabel: 'Sex',
+                                            boxLabel: 'Male',
+                                            checked: true
+                                        },{
+                                            xtype: 'radiofield',
+                                            name: 'SEX',
+                                            value: 'Female',
+                                            fieldLabel: '',
+                                            labelSeparator: '',
+                                            hideEmptyLabel: false,
+                                            boxLabel: 'Female'
+                                        },{
+                                            fieldLabel: 'Position <span style="color:red;">*</span>',
+                                            allowBlank: false,
+                                            name: 'POSITION_PARTICIPANT'
+                                        },{
+                                            xtype: 'checkboxfield',
+                                            name: 'KEY_PERSON',
+                                            fieldLabel: 'Key Person'                                            
+                                        }]
+                                    }],
+                                    buttons: [{//===Save Contacts
+                                        text: 'Save',
+                                        listeners: {
+                                            click: function() {
+                                                var form = Ext.getCmp('add-new-participants-form').getForm();
+                                                var store = loadStore ('Meetingcontacts');
+                                                
+                                                if (form.isValid()) {
+                                                    form.submit({
+                                                        url: sd.baseUrl + '/meetingcontact/request/cr',
+                                                        params:{
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID,
+                                                            MEETING_ACTIVITIE_ID:meeting__id.MEETING_ACTIVITIE_ID
+                                                        },
+                                                        success: function(d, e) {
+                                                            var json = Ext.decode(e.response.responseText);
+                                                            var store = loadStore('Meetingcontacts');
+                                                                store.load({
+                                                                    params: {
+                                                                    id: meeting__id.MEETING_ACTIVITIE_ID
+                                                                    }
+                                                                }); // Refresh grid data,
+                                                            Ext.Msg.alert('Message', 'Data successfully saved.');
+                                                            Ext.getCmp('CO').close();
+                                                        },
+                                                        failure: function(d, e) {
+                                                            var json = Ext.decode(e.response.responseText);
+                                                            Ext.Msg.alert('Error', 'Sorry,Data already exist!!!');
+                                                        }
+                                                        });
+                                                }
+                                            }
+                                        }
+                                    },{
+                                        text: 'Cancel',
+                                        listeners: {
+                                            click: function() {
+                                                this.up().up().up().close();
+                                            }
+                                        }
+                                    }] 
+                                }]
+                            }).show();
+                        }
+                    }
+                },{
                 	xtype:'button',
                 	text:'Delete Meeting Contacts',
                 	iconCls:'icon-stop',

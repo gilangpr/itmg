@@ -1298,7 +1298,7 @@ Ext.create('Ext.Window', {
 				allowBlank: true,
 				//editable: false,
 				minChars:3,
-				flex:1
+				flex:1,
 				editable: false
 			},{
 				fieldLabel: 'Location',
@@ -1311,7 +1311,7 @@ Ext.create('Ext.Window', {
 				allowBlank: true,
 				//editable: false,
 				minChars:1,
-				flex:1
+				flex:1,
 				editable: false
 			},{
 				fieldLabel: 'Format',

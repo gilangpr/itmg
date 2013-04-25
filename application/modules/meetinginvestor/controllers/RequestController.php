@@ -143,7 +143,17 @@ class Meetinginvestor_RequestController extends Zend_Controller_Action
                 }
                 $this->_data['data']['items'][$_i]['NAME'] .= $_d['NAME'];
             }
-           
+
+           	$participant = new Application_Model_Participant();
+			$partName = $participant->getName($Meet_Id);
+			//print_r($partName);
+			foreach ($partName as $n=>$m) {
+				if ($this->_data['data']['items'][$_i]['NAME'] != '') {
+					$this->_data['data']['items'][$_i]['NAME'] .= ', ';
+				}
+				$this->_data['data']['items'][$_i]['NAME'] .= $m['NAME'];
+			}
+
             $meetingParticipant = new Application_Model_Meetingparticipant();
             $initialPart = $meetingParticipant->getInitial($Meet_Id);
             foreach ($initialPart as $_x=>$_y) {
