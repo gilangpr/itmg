@@ -57,7 +57,22 @@ class Shareprices_RequestController extends Zend_Controller_Action
 		$this->_limit = $this->_limit * count($spRes);
 		$this->_start = $this->_start * count($spRes);
 
-		$list = $this->_model->getListLimit($this->_limit, $this->_start, 'DATE DESC');
+		if(isset($this->_posts['sort'])) {
+			$sort = Zend_Json::decode($this->_posts['sort']);
+			if($sort[0]['property'] == 'DATE') {
+				$q = $this->_model->select()
+				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
+				->limit($this->_limit, $this->_start);
+				$list = $q->query()->fetchAll();
+			}else {
+				// $q = $this->_model->select()
+				// ->order('VALUE '. $sort[0]['direction'])
+				// ->limit($this->_limit, $this->_start);
+				// $list = $q->query()->fetchAll();
+			}
+		} else {
+			$list = $this->_model->getListLimit($this->_limit, $this->_start);
+		}
 
 		$_temp = '';
 		$_temp2 = '';
