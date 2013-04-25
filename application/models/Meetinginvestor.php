@@ -10,7 +10,17 @@ class Application_Model_Meetinginvestor extends MyIndo_Ext_Abstract
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
 		->join('INVESTORS','INVESTORS.INVESTOR_ID = MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID',array('COMPANY_NAME'))
-		->join('CONTACTS', 'CONTACTS.INVESTOR_ID = INVESTORS.INVESTOR_ID', array('NAME','INVESTOR_ID'))
+		//->join('CONTACTS', 'CONTACTS.INVESTOR_ID = INVESTORS.INVESTOR_ID', array('NAME','INVESTOR_ID'))
+		->where('MEETING_ACTIVITIE_ID = ?', $metId);
+		return $q->query()->fetchAll();
+	}
+	
+	public function getName($metId) {
+		$q = $this->select()
+		->setIntegrityCheck(false)
+		->from($this->_name, array('*'))
+		->join('INVESTORS','INVESTORS.INVESTOR_ID = MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID',array('COMPANY_NAME'))
+		->join('CONTACTS', 'CONTACTS.INVESTOR_ID = INVESTORS.INVESTOR_ID', array('NAME'))
 		->where('MEETING_ACTIVITIE_ID = ?', $metId);
 		return $q->query()->fetchAll();
 	}
