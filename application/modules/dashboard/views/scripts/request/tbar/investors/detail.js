@@ -262,14 +262,14 @@ if(selected.length > 0) {
 						items: [{
 							xtype: 'numberfield',
 							name: 'EQUITY_ASSETS',
-							fieldLabel: 'Equity Assets',
+							fieldLabel: 'Equity Assets <span style="color:red;">*</span>',
 							minValue: 0,
 							value: data.EQUITY_ASSETS,
 							allowBlank: false
 						},{
 							xtype: 'combobox',
 							name: 'INVESTOR_TYPE',
-							fieldLabel: 'Investor Type',
+							fieldLabel: 'Investor Type <span style="color:red;">*</span>',
 							allowBlank: false,
 							store: storeIT,
 							displayField: 'INVESTOR_TYPE',
@@ -277,7 +277,7 @@ if(selected.length > 0) {
 						},{
 							xtype: 'textfield',
 							name: 'STYLE',
-							fieldLabel: 'Style',
+							fieldLabel: 'Style <span style="color:red;">*</span>',
 							value: data.STYLE,
 							allowBlank: false
 						}],
@@ -368,7 +368,7 @@ if(selected.length > 0) {
 							value: data.ADDRESS
 						},{
 							xtype: 'combobox',
-							fieldLabel: 'Location',
+							fieldLabel: 'Location <span style="color:red;">*</span>',
 							name: 'LOCATION',
 							displayField: 'LOCATION',
 							allowBlank: false,
@@ -377,32 +377,32 @@ if(selected.length > 0) {
 						},{
 							xtype: 'textfield',
 							name: 'PHONE_1',
-							fieldLabel: 'Phone #1',
+							fieldLabel: 'Phone 1 <span style="color:red;">*</span>',
 							allowBlank: false,
 							value: data.PHONE_1
 						},{
 							xtype: 'textfield',
 							name: 'PHONE_2',
-							fieldLabel: 'Phone #2',
+							fieldLabel: 'Phone 2',
 							allowBlank: true,
 							value: data.PHONE_2
 						},{
 							xtype: 'textfield',
 							name: 'EMAIL_1',
-							fieldLabel: 'Email #1',
+							fieldLabel: 'Email 1 <span style="color:red;">*</span>',
 							allowBlank: false,
 							value: data.EMAIL_1
 						},{
 							xtype: 'textfield',
 							name: 'EMAIL_2',
-							fieldLabel: 'Email #2',
+							fieldLabel: 'Email 2',
 							allowBlank: true,
 							value: data.EMAIL_2
 						},{
 							xtype: 'textfield',
 							name: 'FAX',
 							fieldLabel: 'Fax',
-							allowBlank: false,
+							allowBlank: true,
 							value: data.FAX
 						},{
 							xtype: 'textfield',
@@ -632,11 +632,11 @@ if(selected.length > 0) {
                                         defaultType: 'textfield',
                                         waitMsgTarget: true,
                                         items: [{
-                                            fieldLabel: 'Name',
+                                            fieldLabel: 'Name <span style="color:red;">*</span>',
                                             allowBlank: false,
                                             name: 'NAME'
                                 		},{
-                                            fieldLabel: 'Phone 1',
+                                            fieldLabel: 'Phone 1 &nbsp<span style="color:red;">*</span>',
                                             allowBlank: false,
                                             name: 'PHONE_1',
                                   		},{
@@ -645,8 +645,8 @@ if(selected.length > 0) {
                                             name: 'PHONE_2',
                                     
                                			},{
-											fieldLabel:'Email',
-											//allowBlank:false,
+											fieldLabel:'Email <span style="color:red;">*</span>',
+											allowBlank:false,
 											name:'EMAIL',
 											vtype:'email'					
 										},{
@@ -671,7 +671,7 @@ if(selected.length > 0) {
 										 	hideEmptyLabel: false,
 										 	boxLabel: 'Female'
 		  								},{
-                                            fieldLabel: 'Position',
+                                            fieldLabel: 'Position <span style="color:red;">*</span>',
                                             allowBlank: false,
                                             name: 'POSITION'
                                 		}]
@@ -802,12 +802,12 @@ if(selected.length > 0) {
 						align: 'center',
 						width: 100,
 						dataIndex: 'MEETING_DATE',
-						renderer : Ext.util.Format.dateRenderer('d/m/Y')
+						renderer : Ext.util.Format.dateRenderer('d-m-Y')
 					},{
 						text: 'Meeting Event',
 						flex: 1,
 						dataIndex: 'MEETING_EVENT'
-					},{
+					}/*,{
 						text: 'Start Time',
 						align: 'center',
 						width: 150,
@@ -817,6 +817,14 @@ if(selected.length > 0) {
 						align: 'center',
 						width: 150,
 						dataIndex: 'END_TIME'
+					}*/,{
+						text:'Name',
+						flex:1,
+						dataIndex:'NAME'
+					},{
+						text:'Initials',
+						flex:1,
+						dataIndex:'INITIAL_PART'
 					}]
 				}],
 				tbar: [{
@@ -1001,23 +1009,23 @@ if(selected.length > 0) {
 		                                defaultType: 'textfield',
 		                                waitMsgTarget: true,
 		                                items: [{
-											fieldLabel: 'Meeting Event',
+											fieldLabel: 'Meeting Event <span style="color:red;">*</span>',
 											allowBlank: false,
 											name: 'MEETING_EVENT'
 										},{
 											xtype:'datefield',
-											fieldLabel: 'Meeting Date',
+											fieldLabel: 'Meeting Date <span style="color:red;">*</span>',
 											allowBlank: false,
 											name: 'MEETING_DATE',
 											format:'Y-m-d'
 										},{
 											xtype:'timefield',
-											fieldLabel: 'Start Time',
+											fieldLabel: 'Start Time <span style="color:red;">*</span>',
 											allowBlank: false,
 											name: 'START_TIME'
 										},{
 											xtype:'timefield',
-											fieldLabel: 'End Time',
+											fieldLabel: 'End Time <span style="color:red;">*</span>',
 											allowBlank: false,
 											name: 'END_TIME'
 										}]

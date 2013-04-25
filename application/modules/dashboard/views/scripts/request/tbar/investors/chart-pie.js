@@ -24,11 +24,24 @@
 				}
 			},
 			label: {
-				field: 'TITLE',
+				field: ['TITLE'],
 				contrast: true,
-				display: 'none',
-				font: '12px Arial'
-			}
+				display: 'rotate',
+				font: '11px Arial'
+			},
+			tips: {
+                  trackMouse: false,
+                  width: 140,
+                  height: 35,
+                  renderer: function(storeItem, item) {
+                    //calculate percentage.
+                    var total = 0;
+                    storeSH.each(function(rec) {
+                        total += rec.get('VALUE');
+                    });
+                    this.setTitle(storeItem.get('TITLE') + ': ' + Math.round(storeItem.get('VALUE') / total * 100) + '%');
+                  }
+            }
 		}]
 	}],
 	tbar: [{
@@ -70,7 +83,7 @@
 											bodyPadding: '5 5 5 5',
 											items: [{
 												xtype: 'textfield',
-												fieldLabel: 'Title',
+												fieldLabel: 'Title <span style="color:red;">*</span>',
 												name: 'TITLE',
 												allowBlank: false
 											},{

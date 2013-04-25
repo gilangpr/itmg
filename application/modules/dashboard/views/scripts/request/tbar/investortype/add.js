@@ -16,7 +16,7 @@ Ext.create('Ext.Window', {
 			id: 'investortype-add-form',
 			waitMsgTarget: true,
 			items: [{
-				fieldLabel: 'Investor Type',
+				fieldLabel: 'Investor Type <span style="color:red;">*</span>',
 				allowBlank: false,
 				name: 'INVESTOR_TYPE'
 			}]

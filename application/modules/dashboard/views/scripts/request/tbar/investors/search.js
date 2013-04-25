@@ -1240,7 +1240,6 @@ Ext.create('Ext.Window', {
 				minChars: 3,
 				allowBlank: true,
 				flex:1,
-				pageSize: 10,
 				anchor:'100%'
 			},{
 				fieldLabel: 'Contact Person',
@@ -1252,7 +1251,6 @@ Ext.create('Ext.Window', {
 				allowBlank: true,
 				minChars:3,
 				flex:1,
-				pageSize:10
 			}/*,{
 				fieldLabel: 'Equity Assets',
 				emptyText: 'All',
@@ -1299,8 +1297,7 @@ Ext.create('Ext.Window', {
 				allowBlank: true,
 				//editable: false,
 				minChars:3,
-				flex:1,
-				pageSize:10,
+				flex:1
 			},{
 				fieldLabel: 'Location',
 				emptyText: 'All',
@@ -1312,8 +1309,7 @@ Ext.create('Ext.Window', {
 				allowBlank: true,
 				//editable: false,
 				minChars:1,
-				flex:1,
-				pageSize:10
+				flex:1
 			},{
 				fieldLabel: 'Format',
 				emptyText: 'List',
