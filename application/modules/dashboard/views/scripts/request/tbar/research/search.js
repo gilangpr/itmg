@@ -1,5 +1,7 @@
 var storeRR = loadStore('ResearchReports');
 var storeRRC = loadStore('ResearchReportCategorys');
+var storeRC = loadStore('Companys');
+
 var storeRR_curpage = storeRR.currentPage;
 storeRR.load({
 	params: {
@@ -9,6 +11,12 @@ storeRR.load({
 storeRRC.load({
 	params: {
 		all: 1
+	}
+});
+
+storeRC.load({
+	params: {
+		all : 1
 	}
 });
 Ext.create('Ext.Window', {
@@ -47,6 +55,16 @@ Ext.create('Ext.Window', {
 			allowBlank: true,
 			minChars: 2,
 			emptyText: 'All Category'
+		},{
+			xtype: 'combobox',
+			name: 'COMPANY',
+			store: storeRC,
+			displayField: 'COMPANY',
+			typeAhead: false,
+			editable: false,
+			emptyText: 'Select Company',
+			fieldLabel: 'Company',
+			allowBlank: false
 		}]
 	}],
 	buttons: [{

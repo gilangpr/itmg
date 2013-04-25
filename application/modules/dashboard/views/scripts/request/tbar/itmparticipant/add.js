@@ -18,11 +18,11 @@ Ext.create('Ext.Window', {
 			id: 'itmparticipant-add-form',
 			waitMsgTarget: true,
 			items: [{
-		   		fieldLabel: 'Name',
+		   		fieldLabel: 'Name <span style="color:red;">*</span>',
 		  		allowBlank: false,
 		     	name: 'NAME_PART'
             },{
-		        fieldLabel: 'Phone 1',
+		        fieldLabel: 'Phone 1 <span style="color:red;">*</span>',
 		        allowBlank: false,
 		        name: 'PHONE_PART1',
             },{
@@ -30,8 +30,8 @@ Ext.create('Ext.Window', {
 		        allowBlank: true,
 		        name: 'PHONE_PART2',
             },{
-				fieldLabel:'Email',
-				//allowBlank:false,
+				fieldLabel:'Email <span style="color:red;">*</span>',
+				allowBlank:false,
 				name:'EMAIL_PART',
 				vtype:'email'					
 			},{
@@ -55,12 +55,12 @@ Ext.create('Ext.Window', {
 				hideEmptyLabel: false,
 				boxLabel: 'Female'
 			},{
-		        fieldLabel: 'Position',
+		        fieldLabel: 'Position <span style="color:red;">*</span>',
 		        allowBlank: false,
 		        name: 'POSITION_PART'
             },{
-            	fieldLabel: 'Initial',
-            	allowblank: false,
+            	fieldLabel: 'Initial <span style="color:red;">*</span>',
+            	allowBlank: false,
             	name: 'INITIAL_PART'
             }]
 		}]

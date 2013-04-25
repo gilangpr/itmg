@@ -41,8 +41,9 @@ class News_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
-			$rrcModel = new Application_Model_NewsCategory();
-				
+			$ncatModel = new Application_Model_NewsCategory();
+			$ncomModel = new Application_Model_Company();
+			
 			if(!isset($this->_posts['search'])) {
 	
 				/* Not search query */
@@ -59,7 +60,8 @@ class News_RequestController extends Zend_Controller_Action
 				}
 	
 				foreach($list as $k=>$d) {
-					$list[$k]['NEWS_CATEGORY'] = $rrcModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
+					$list[$k]['NEWS_CATEGORY'] = $ncatModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
+					$list[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
 				}
 	
 				$this->_data['data']['items'] = $list;
@@ -81,8 +83,8 @@ class News_RequestController extends Zend_Controller_Action
 						
 					/* Category */
 					if(isset($this->_posts['category'])) {
-						if($rrcModel->isExistByKey('NEWS_CATEGORY', $this->_posts['category'])) {
-							$catID = $rrcModel->getPkByKey('NEWS_CATEGORY', $this->_posts['category']);
+						if($ncatModel->isExistByKey('NEWS_CATEGORY', $this->_posts['category'])) {
+							$catID = $ncatModel->getPkByKey('NEWS_CATEGORY', $this->_posts['category']);
 							$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID = ?', $catID);
 						} else {
 							$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID LIKE ?', '%%');
@@ -90,22 +92,45 @@ class News_RequestController extends Zend_Controller_Action
 					} else {
 						$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID LIKE ?', '%' . $this->_posts['category'] . '%');
 					}
-						
+					/* Category*/
+					
+					/* Company */
+					if (isset($this->_posts['company'])) {
+						if ($ncomModel->isExistByKey('COMPANY_NAME', $this->_posts['company'])) {
+							$comID = $ncomModel->getPkByKey('COMPANY_NAME', $this->_posts['company']);
+							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID = ?', $comID);
+						} else {
+							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%%');
+						}
+					} else {
+						$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%' . $this->_posts['company'] . '%');
+					}
+					/* Company */
+					
+					/* Source */
+					if(isset($this->_posts['source'])) {
+						$where[] = $this->_model->getAdapter()->quoteInto('SOURCE LIKE ?', '%' . $this->_posts['source'] . '%');
+					} else {
+						$where[] = $this->_model->getAdapter()->quoteInto('SOURCE LIKE ?', '%%');
+					}
+					/* Source */
+					
 					$query = $this->_model->select()
 					->where($where[0])
 					->where($where[1])
 					->limit($this->_model->count(), $this->_start);
 						
 					$list = $query->query()->fetchAll();
-						
+					
 					foreach($list as $k=>$d) {
-						$list[$k]['NEWS_CATEGORY'] = $rrcModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
-					}
 						
+						$list[$k]['NEWS_CATEGORY'] = $ncatModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
+						$lisk[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
+					}
+
 				} else {
 					$list = array();
 				}
-	
 				$this->_data['data']['items'] = $list;
 				$this->_data['data']['totalCount'] = count($list);
 			}
@@ -127,7 +152,8 @@ class News_RequestController extends Zend_Controller_Action
 				/* File upload process: */
 				$adp = new Zend_File_Transfer_Adapter_Http();
 				$mimeModel = new Application_Model_Mime();
-				$rrcModel = new Application_Model_NewsCategory();
+				$ncatModel = new Application_Model_NewsCategory();
+				$ncomModel = new Application_Model_Company();
 	
 				$adp->setDestination(APPLICATION_PATH . '/../public/upload/news/');
 				$adp->addValidator('Extension',false,'doc,docx,xls,xlsx,pdf,txt');
@@ -149,13 +175,19 @@ class News_RequestController extends Zend_Controller_Action
 						rename($adp->getDestination() . '/' . $fileInfo['FILE_PATH']['name'], $adp->getDestination() . '/' . $new_name);
 						/* End of : Rename file */
 	
-						/* Get Research Report Category ID */
-						$rrcID = $rrcModel->getPkByKey('NEWS_CATEGORY', $this->_posts['CATEGORY']);
-						/* End of : Get Research Report Category ID */
+						/* Get News Category ID */
+						$ncatID = $ncatModel->getPkByKey('NEWS_CATEGORY', $this->_posts['CATEGORY']);
+						/* End of : Get News Category ID */
+						
+						/* Get News Company ID */
+						$ncomID = $ncomModel->getPkByKey('COMPANY_NAME', $this->_posts['COMPANY_NAME']);
+						/* End of : Get News Company ID */
 	
 						$this->_model->insert(array(
-								'NEWS_CATEGORY_ID' => $rrcID,
+								'NEWS_CATEGORY_ID' => $ncatID,
+								'COMPANY_ID' => $ncomID,
 								'TITLE' => $this->_posts['TITLE'],
+								'SOURCE' => $this->_posts['SOURCE'],
 								'DESCRIPTION' => '',
 								'FILE_NAME' => $new_name,
 								'FILE_SIZE' => (int)$fileInfo['FILE_PATH']['size'],
@@ -163,6 +195,8 @@ class News_RequestController extends Zend_Controller_Action
 								'FILE_TYPE' => $mimeModel->getValueByKey('EXTENSION', $filExt, 'MIME_TYPE'),
 								'CREATED_DATE' => date('Y-m-d H:i:s')
 						));
+						
+						
 	
 	
 					} else {
@@ -193,7 +227,8 @@ class News_RequestController extends Zend_Controller_Action
 	public function updateAction()
 	{
 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
-			$rrcModel = new Application_Model_NewsCategory();
+			$ncatModel = new Application_Model_NewsCategory();
+			$ncomModel = new Application_Model_Company();
 			try {
 	
 				$data = $this->getRequest()->getRawBody();
@@ -207,24 +242,35 @@ class News_RequestController extends Zend_Controller_Action
 						$catID = 0;
 						/* Check for valid category */
 						if(isset($data['data']['NEWS_CATEGORY'])) {
-							if($rrcModel->isExistByKey('NEWS_CATEGORY', $data['data']['NEWS_CATEGORY'])) {
+							if($ncatModel->isExistByKey('NEWS_CATEGORY', $data['data']['NEWS_CATEGORY'])) {
 								try {
-									$catID = $rrcModel->getPkByKey('NEWS_CATEGORY', $data['data']['NEWS_CATEGORY']);
+									$ncatID = $ncatModel->getPkByKey('NEWS_CATEGORY', $data['data']['NEWS_CATEGORY']);
 									$validCat = true;
 								} catch(Exception $e) {
 									$validCat = false;
 								}
 							}
 						}
+						
+						if(isset($data['data']['COMPANY_NAME'])) {
+							if ($ncomModel->isExistByKey('COMPANY_NAME', $data['data']['COMPANY_NAME'])) {
+								try {
+									$ncomID = $ncomModel->getPkByKey('COMPANY_NAME', $data['data']['COMPANY_NAME']); 
+									$validCom = true;
+								} catch (Exception $e) {
+									$validCom = false;
+								}
+							}
+						}
 	
-						if(!$validCat) {
+						if(!$validCat . $validCom) {
 							$this->_model->update(array(
 									'TITLE' => $data['data']['TITLE']
 							),$where);
 						} else {
 							$this->_model->update(array(
 									'TITLE' => $data['data']['TITLE'],
-									'NEWS_CATEGORY_ID' => $catID
+									'NEWS_CATEGORY_ID' => $ncatID
 							),$where);
 						}
 	
@@ -302,4 +348,26 @@ class News_RequestController extends Zend_Controller_Action
 			echo file_get_contents(APPLICATION_PATH . '/../public' . $this->_model->getValueByKey($this->_model->getPK(), $id, 'FILE_PATH'));
 		}
 	}
+	
+// 	public function autocomAction()
+// 	{
+// 		if ($this->_posts['query'] == '') {
+	
+// 			$data = array(
+// 					'data' => array(
+// 							'items' => $this->_model->getListLimit($this->_limit, $this->_start, 'TITLE ASC'),
+// 							'totalCount' => $this->_model->count()
+// 					)
+// 			);
+// 		} else {
+// 			$data = array(
+// 					'data' => array(
+// 							'items' => $this->_model->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
+// 							'totalCount' => $this->_model->count()
+// 					)
+// 			);
+// 		}
+			
+// 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+// 	}
 }

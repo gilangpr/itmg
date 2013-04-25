@@ -74,8 +74,9 @@ class Peerrs_RequestController extends Zend_Controller_Action
 		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 			$list = $this->_model->select()->where('PEER_ID = ?', $peer_id);
 			$list = $list->query()->fetchAll();
-						
+			
 			/* Add total */
+			/*
 			$sum = array(
 					'RESOURCES'=> 0,
 					'RESERVES' => 0,
@@ -92,6 +93,7 @@ class Peerrs_RequestController extends Zend_Controller_Action
 			$list[$c]['RESOURCES'] = $sum['RESOURCES'];
 			$list[$c]['RESERVES'] = $sum['RESERVES'];
 			$list[$c]['AREA'] = $sum['AREA'];
+			*/
 			/* End of : Add Total */
 			
 			$data = array(

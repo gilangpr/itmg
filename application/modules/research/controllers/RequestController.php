@@ -42,6 +42,7 @@ class Research_RequestController extends Zend_Controller_Action
 	{
 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
 			$rrcModel = new Application_Model_ResearchReportCategory();
+			$companyModel = new Application_Model_Company();
 			
 			if(!isset($this->_posts['search'])) {
 				
@@ -60,6 +61,7 @@ class Research_RequestController extends Zend_Controller_Action
 				
 				foreach($list as $k=>$d) {
 					$list[$k]['RESEARCH_REPORT_CATEGORY'] = $rrcModel->getValueByKey('RESEARCH_REPORT_CATEGORY_ID', $d['RESEARCH_REPORT_CATEGORY_ID'], 'RESEARCH_REPORT_CATEGORY');
+					$list[$k]['COMPANY'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY');
 				}
 				
 				$this->_data['data']['items'] = $list;
@@ -91,6 +93,18 @@ class Research_RequestController extends Zend_Controller_Action
 						$where[] = $this->_model->getAdapter()->quoteInto('RESEARCH_REPORT_CATEGORY_ID LIKE ?', '%' . $this->_posts['category'] . '%');
 					}
 					
+					/* Company */
+					if (isset($this->_posts['company'])) {
+						if ($companyModel->isExistByKey('COMPANY', $this->_posts['company'])) {
+							$comID = $companyModel->getPkByKey('COMPANY', $this->_posts['company']);
+							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID = ?', $comID);
+						} else {
+							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%%');
+						}
+					} else {
+						$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%' . $this->_posts['company'] . '%');
+					}
+					
 					$query = $this->_model->select()
 					->where($where[0])
 					->where($where[1])
@@ -100,6 +114,7 @@ class Research_RequestController extends Zend_Controller_Action
 					
 					foreach($list as $k=>$d) {
 						$list[$k]['RESEARCH_REPORT_CATEGORY'] = $rrcModel->getValueByKey('RESEARCH_REPORT_CATEGORY_ID', $d['RESEARCH_REPORT_CATEGORY_ID'], 'RESEARCH_REPORT_CATEGORY');
+						$list[$k]['COMPANY'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY');
 					}
 					
 				} else {

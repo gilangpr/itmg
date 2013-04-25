@@ -16,7 +16,7 @@ Ext.create('Ext.Window', {
 			id: 'locations-add-form',
 			waitMsgTarget: true,
 			items: [{
-				fieldLabel: 'Location',
+				fieldLabel: 'Location <span style="color:red;">*</span>',
 				allowBlank: false,
 				name: 'LOCATION'
 			}]

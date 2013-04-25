@@ -1237,7 +1237,10 @@ Ext.create('Ext.Window', {
                 displayField: 'COMPANY_NAME',
                 typeAhead: true,
 				name: 'COMPANY_NAME',
-				allowBlank: true
+				minChars: 3,
+				allowBlank: true,
+				flex:1,
+				anchor:'100%'
 			},{
 				fieldLabel: 'Contact Person',
 				emptyText: 'All',
@@ -1245,6 +1248,9 @@ Ext.create('Ext.Window', {
                 displayField: 'NAME',
                 typeAhead: true,
 				name: 'CONTACT_PERSON',
+				allowBlank: true,
+				minChars:3,
+				flex:1,
 				allowBlank: true
 			}/*,{
 				fieldLabel: 'Equity Assets',
@@ -1290,6 +1296,9 @@ Ext.create('Ext.Window', {
                 typeAhead: true,
 				name: 'INVESTOR_TYPE',
 				allowBlank: true,
+				//editable: false,
+				minChars:3,
+				flex:1,
 				editable: false
 			},{
 				fieldLabel: 'Location',
@@ -1300,6 +1309,9 @@ Ext.create('Ext.Window', {
                 typeAhead: true,
 				name: 'LOCATION',
 				allowBlank: true,
+				//editable: false,
+				minChars:1,
+				flex:1,
 				editable: false
 			},{
 				fieldLabel: 'Format',
