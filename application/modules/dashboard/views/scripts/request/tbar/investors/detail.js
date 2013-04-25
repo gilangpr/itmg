@@ -1,7 +1,7 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var selected = c.getSelectionModel().getSelection();
 if(selected.length > 0) {
-	var id = 'investors-detail-' + selected[0].id;
+	var id = 'investors-detail-' + selected[0].data.INVESTOR_ID;
 	var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToMoveEditor: 1,
 	        autoCancel: false

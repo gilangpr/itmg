@@ -69,6 +69,7 @@ class Shareprices_RequestController extends Zend_Controller_Action
 				// ->order('VALUE '. $sort[0]['direction'])
 				// ->limit($this->_limit, $this->_start);
 				// $list = $q->query()->fetchAll();
+				$list = $this->_model->getListLimit($this->_limit, $this->_start);
 			}
 		} else {
 			$list = $this->_model->getListLimit($this->_limit, $this->_start);
