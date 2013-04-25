@@ -4,8 +4,6 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 {
 	protected $_name = 'MEETING_ACTIVITIE';
 	protected $_id = 'MEETING_ACTIVITIE_ID';
-
-
 	
 	public function getListLimitMeetingActivities($limit, $offset, $order) {
 		$q = $this->select()

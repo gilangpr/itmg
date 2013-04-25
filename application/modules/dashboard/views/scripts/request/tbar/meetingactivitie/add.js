@@ -18,23 +18,23 @@ Ext.create('Ext.Window', {
             defaultType: 'textfield',
             waitMsgTarget: true,
             items: [{
-            	fieldLabel: 'Meeting Event',
+            	fieldLabel: 'Meeting Event <span style="color:red;">*</span>',
             	allowBlank: false,
                 name: 'MEETING_EVENT'
             },{
              	xtype:'datefield',
-                fieldLabel: 'Meeting Date',
+                fieldLabel: 'Meeting Date <span style="color:red;">*</span>',
                 allowBlank: false,
                 name: 'MEETING_DATE',
                 format:'Y-m-d'
             },{
              	xtype:'timefield',
-                fieldLabel: 'Start Time',
+                fieldLabel: 'Start Time <span style="color:red;">*</span>',
                 allowBlank: false,
                 name: 'START_TIME'
             },{
                 xtype:'timefield',
-                fieldLabel: 'End Time',
+                fieldLabel: 'End Time <span style="color:red;">*</span>',
                 allowBlank: false,
                 name: 'END_TIME'
             }]

@@ -99,18 +99,18 @@ if(!c.up().items.get(id)) {
 				id: 'add-new-investor-form',
 				defaultType: 'textfield',
 				items: [{
-					fieldLabel: 'Company Name',
+					fieldLabel: 'Company Name <span style="color:red;">*</span>',
 					name: 'COMPANY_NAME',
 					allowBlank: false
 				},{
-					fieldLabel: 'Equity Asset',
+					fieldLabel: 'Equity Asset <span style="color:red;">*</span>',
 					name: 'EQUITY_ASSETS',
 					xtype: 'numberfield',
 					minValue: 0,
 					allowBlank: false
 				},{
 					xtype: 'combobox',
-					fieldLabel: 'Investor Type',
+					fieldLabel: 'Investor Type <span style="color:red;">*</span>',
 					name: 'INVESTOR_TYPE_ID',
 					labelWidth: 130,
 					store: Ext.data.StoreManager.lookup('InvestorTypes'),
@@ -121,7 +121,7 @@ if(!c.up().items.get(id)) {
 					minChars: 2,
 					emptyText: 'Select Investor Type'
 				},{
-					fieldLabel: 'Style',
+					fieldLabel: 'Style <span style="color:red;">*</span>',
 					name: 'STYLE',
 					allowBlank: false
 				},{
@@ -131,7 +131,7 @@ if(!c.up().items.get(id)) {
 					height: 150
 				},{
 					xtype: 'combobox',
-					fieldLabel: 'Location',
+					fieldLabel: 'Location <span style="color:red;">*</span>',
 					name: 'LOCATION_ID',
 					labelWidth: 130,
 					store: Ext.data.StoreManager.lookup('Locations'),
@@ -142,21 +142,24 @@ if(!c.up().items.get(id)) {
 					minChars: 2,
 					emptyText: 'Select Location'
 				},{
-					fieldLabel: 'Phone Number #1',
+					fieldLabel: 'Phone Number 1 <span style="color:red;">*</span>',
 					name: 'PHONE_1',
+					allowBlank:false,
 					labelWidth: 130
 				},{
-					fieldLabel: 'Phone Number #2',
+					fieldLabel: 'Phone Number 2',
 					name: 'PHONE_2',
 					labelWidth: 130,
 				},{
 					fieldLabel: 'Fax',
 					name: 'FAX'
 				},{
-					fieldLabel: 'Email #1',
-					name: 'EMAIL_1'
+					fieldLabel: 'Email 1 <span style="color:red;">*</span>',
+					name: 'EMAIL_1',
+					vtype:'email',
+					allowBlank:false
 				},{
-					fieldLabel: 'Email #2',
+					fieldLabel: 'Email 2',
 					name: 'EMAIL_2'
 				},{
 					fieldLabel:'Website',

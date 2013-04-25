@@ -86,7 +86,7 @@
 											bodyPadding: '5 5 5 5',
 											items: [{
 												xtype: 'textfield',
-												fieldLabel: 'Title',
+												fieldLabel: 'Title <span style="color:red;">*</span>',
 												name: 'TITLE',
 												allowBlank: false
 											},{
