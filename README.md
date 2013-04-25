@@ -1,3 +1,0 @@
-itmg
-====
-git repository

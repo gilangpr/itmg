@@ -62,7 +62,7 @@ if(__selected.length > 0) {
             layout: 'border',
             autoScroll: true,
             border: false,
-            items:[/*{
+            items:[{
             	title: 'Meeting Contacts',
                 border: false,
                 region:'north',
@@ -236,8 +236,7 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },*/
-            {
+            },{
             	title:'Meeting Participants',
             	border:false,
             	region:'north',
@@ -290,7 +289,7 @@ if(__selected.length > 0) {
                                             waitMsgTarget: true,
                                             items: [{
                                                         xtype: 'combobox',
-                                                        fieldLabel: 'ITM Participants',
+                                                        fieldLabel: 'ITM Participants <span style="color:red;">*</span>',
                                                         name: 'PARTICIPANT_ID',
                                                         labelWidth: 130,
                                                         store: Ext.data.StoreManager.lookup('Itmparticipants'),
@@ -454,13 +453,13 @@ if(__selected.length > 0) {
                                             defaultType: 'textfield',
                                             waitMsgTarget: true,
                                             items: [{
-                                                        fieldLabel: 'Documentation Title',
+                                                        fieldLabel: 'Documentation Title <span style="color:red;">*</span>',
                                                         name: 'DOCUMENTATION_TITLE',
                                                         allowBlank:false
                                                     },{
                                                         xtype: 'filefield',
                                                         name: 'FILE_PATH',
-                                                        fieldLabel: 'File upload',
+                                                        fieldLabel: 'File upload <span style="color:red;">*</span>',
                                                         allowBlank:false,
                                                         emptyText:'Please select a document'
                                                     }]

@@ -11,9 +11,17 @@ if(selected.length > 0) {
 	if(!c.up().items.get(id)){
 		var data = selected[0].data;
         var maxWidth = 221;
+<<<<<<< HEAD
         var max_length_title = 15;
         var grid_height = 180;
         var TITLE = (data.PEER_NAME.length > max_length_title) ? data.PEER_NAME.substring(0,max_length_title) + '...' : data.PEER_NAME;
+=======
+//        /* Store Resources and Reserves */
+//        var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+//			clicksToMoveEditor: 1,
+//	        autoCancel: false
+//	    });
+>>>>>>> b22af8be51f62f77c368145bb1ecb7c8962ce5f8
         
 		/* Rendering Files */
 
@@ -30,7 +38,13 @@ if(selected.length > 0) {
             closable: true,
             autoScroll: true,
             border: false,
+<<<<<<< HEAD
             items: [{ /* Peers Detail */
+=======
+            items: [{
+                title: 'Peers Detail',
+                collapsible: true,
+>>>>>>> b22af8be51f62f77c368145bb1ecb7c8962ce5f8
                 region: 'west',
                 width: '50%',
                 autoScroll: true,

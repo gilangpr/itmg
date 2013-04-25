@@ -1240,7 +1240,6 @@ Ext.create('Ext.Window', {
 				minChars: 3,
 				allowBlank: true,
 				flex:1,
-				pageSize: 10,
 				anchor:'100%'
 			},{
 				fieldLabel: 'Contact Person',
@@ -1252,7 +1251,7 @@ Ext.create('Ext.Window', {
 				allowBlank: true,
 				minChars:3,
 				flex:1,
-				pageSize:10
+				allowBlank: true
 			}/*,{
 				fieldLabel: 'Equity Assets',
 				emptyText: 'All',
@@ -1293,27 +1292,27 @@ Ext.create('Ext.Window', {
 				emptyText: 'All',
 				store: Ext.data.StoreManager.lookup('InvestorTypes'),
                 displayField: 'INVESTOR_TYPE',
-                //valueField:'INVESTOR_TYPE',
+                valueField:'INVESTOR_TYPE',
                 typeAhead: true,
 				name: 'INVESTOR_TYPE',
 				allowBlank: true,
 				//editable: false,
 				minChars:3,
-				flex:1,
-				pageSize:10,
+				flex:1
+				editable: false
 			},{
 				fieldLabel: 'Location',
 				emptyText: 'All',
 				store: Ext.data.StoreManager.lookup('Locations'),
                 displayField: 'LOCATION',
-                //valueField:'LOCATION',
+                valueField:'LOCATION',
                 typeAhead: true,
 				name: 'LOCATION',
 				allowBlank: true,
 				//editable: false,
 				minChars:1,
-				flex:1,
-				pageSize:10
+				flex:1
+				editable: false
 			},{
 				fieldLabel: 'Format',
 				emptyText: 'List',

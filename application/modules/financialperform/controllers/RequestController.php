@@ -56,7 +56,7 @@ class Financialperform_RequestController extends Zend_Controller_Action
 		$data = array(
 			'data' => array()
 		);
-		$modelPeer = new Application_Model_Peers();
+		$modelPeer = new Application_Model_FinancialPerform();
 		try {
 			/* INSERT FINANCIAL PERFORMANCE DATA */
 			$peer_id = $this->_getParam('id',0);

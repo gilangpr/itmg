@@ -86,7 +86,7 @@
 											bodyPadding: '5 5 5 5',
 											items: [{
 												xtype: 'textfield',
-												fieldLabel: 'Title',
+												fieldLabel: 'Title <span style="color:red;">*</span>',
 												name: 'TITLE',
 												allowBlank: false
 											},{
@@ -211,11 +211,10 @@
 								name:'TITLE'
 							}
 						},{
-							text: 'Value (USD BN)',
+							text: 'Value',
 							width: 120,
 							align: 'center',
 							dataIndex: 'VALUE',
-							//renderer:changePD,
 							editor:{
 								name:'VALUE',
 								xtype:'numberfield'

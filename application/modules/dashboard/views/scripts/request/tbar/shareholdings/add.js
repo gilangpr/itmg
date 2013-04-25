@@ -89,7 +89,7 @@ Ext.create('Ext.Window', {
 			allowBlank: false
 		},{
 			xtype: 'combobox',
-			fieldLabel: 'Investor Status',
+			fieldLabel: 'Investor Type',
 			//store: Ext.data.StoreManager.lookup('InvestorStatus'),
 			id: 'investor-status',
 			name: 'INVESTOR_STATUS',

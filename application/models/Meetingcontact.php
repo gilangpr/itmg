@@ -18,4 +18,14 @@ class Application_Model_Meetingcontact extends MyIndo_Ext_Abstract
 		
 		return $q->query()->fetchAll();
 	}
+	public function getContactName($In_Id,$Meet_Id)
+	{
+		$q = $this->select()
+        ->setIntegrityCheck(false)
+        ->from($this->_name, array('*'))
+        ->join('CONTACTS','CONTACTS.CONTACT_ID = MEETING_ACTIVITIE_CONTACT.CONTACT_ID',array('NAME'))
+        ->where('CONTACTS.INVESTOR_ID = ?', $In_Id)
+        ->where('MEETING_ACTIVITIE_CONTACT.MEETING_ACTIVITIE_ID = ?', $Meet_Id);
+        return $q->query()->fetchAll();
+	}
 }

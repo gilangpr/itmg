@@ -24,8 +24,12 @@ if(selected.length > 0) {
 						success: function(data) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
-							var store = loadStore('Locations');
-							store.loadPage(store.currentPage);
+							if(!json.success) {
+								Ext.Msg.alert('Error', json.error_message);
+							} else {
+								var store = loadStore('Locations');
+								store.loadPage(1);
+							}
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object

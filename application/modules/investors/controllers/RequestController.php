@@ -129,6 +129,7 @@ class Investors_RequestController extends Zend_Controller_Action
 					} else {
 						$q->order('INVESTORS.' . $sort[0]['property'] . ' ' .$sort[0]['direction']);
 					}
+					//echo $q;die;
 					$data['data']['items'] = $q->query()->fetchAll();
 					$data['data']['totalCount'] = count($data['data']['items']);
 				}catch(Exception $e) {
