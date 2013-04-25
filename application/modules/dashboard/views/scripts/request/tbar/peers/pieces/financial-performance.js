@@ -59,6 +59,7 @@
     				            anchor: '100%',
     				        },
                             items: [{
+                                xtype: 'textfield',
                                 fieldLabel: 'Title',
                                 allowBlank: false,
                                 name: 'TITLE'
