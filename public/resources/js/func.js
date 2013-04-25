@@ -161,7 +161,7 @@ function loadContent(param1, editor) {
 										
 										var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 											clicksToMoveEditor: 1,
-									        autoCancel: false
+									        autoCancel: false,
 									    });
 										
 										Ext.each(records.raw.contents.columns, function(e, i) {
@@ -183,6 +183,12 @@ function loadContent(param1, editor) {
 												    typeAhead: true,
 												    editable: false
 												});
+											} else {
+												if(e.dataType == 'int') {
+													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.,/i');
+												} else if(e.dataType == 'float'){
+													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.00,/i');
+												}
 											}
 										});
 									
@@ -230,7 +236,8 @@ function getStore(data) {
 		storeId: data.stores.storeName,
 		proxy: data.stores.proxy,
 		sorters: data.stores.sorters,
-		autoSync: true
+		autoSync: true,
+		remoteSort: true
 	});
 	return store;
 }

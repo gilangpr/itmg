@@ -1,5 +1,5 @@
 Ext.create('Ext.Window', {
-	title: 'Add New Investor Status',
+	title: 'Add New Investor Type',
 	draggable: false,
 	modal: true,
 	width: 350,

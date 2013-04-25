@@ -189,29 +189,33 @@ Ext.create('Ext.Window', {
 		text: 'Search',
 		listeners: {
 			click: function() {
+				var form = Ext.getCmp('news-search-form').getForm();
 				var rTitle = Ext.getCmp('news-title').getValue();
 				var rCategory = Ext.getCmp('news-category').getValue();
-				if(typeof(rTitle) === 'undefined') {
-					rTitle = '';
-				}
-				if(typeof(rCategory) === 'undefined') {
-					rCategory = '';
-				}
-				storeRR.load({
-					params: {
-						search: 1,
-						title: rTitle,
-						category: rCategory
-					},
-					callback: function(d, i, e) {
-						Ext.getCmp('news-search-window').close();
-						if(d.length == 0) {
-							Ext.Msg.alert('Message', 'No data found.');
-						} else {
-							Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
-						}
+				
+				if(form.isValid()) {
+					if(typeof(rTitle) === 'undefined') {
+						rTitle = '';
 					}
-				});
+					if(typeof(rCategory) === 'undefined') {
+						rCategory = '';
+					}
+					storeRR.load({
+						params: {
+							search: 1,
+							title: rTitle,
+							category: rCategory
+						},
+						callback: function(d, i, e) {
+							Ext.getCmp('news-search-window').close();
+							if(d.length == 0) {
+								Ext.Msg.alert('Message', 'No data found.');
+							} else {
+								Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
+							}
+						}
+					});
+				}
 			}
 		}
 	},{

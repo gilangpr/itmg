@@ -43,5 +43,5 @@ if(selected.length > 0) {
 		}]
 	}).show();
 } else {
-	Ext.Msg.alert('Message', 'You did not select any Research');
+	Ext.Msg.alert('Message', 'You did not select any News');
 }

@@ -1,8 +1,10 @@
 Ext.create('Ext.Window', {
 	title: 'Add New ITM Participant',
+	id: 'add-new-itm-contact-window',
 	draggable: false,
 	modal: true,
 	width: 400,
+	height: 420,
 	resizable: false,
 	items: [{
 		xtype: 'panel',
@@ -16,11 +18,11 @@ Ext.create('Ext.Window', {
 			id: 'itmparticipant-add-form',
 			waitMsgTarget: true,
 			items: [{
-		   		fieldLabel: 'Name',
+		   		fieldLabel: 'Name <span style="color:red;">*</span>',
 		  		allowBlank: false,
 		     	name: 'NAME_PART'
             },{
-		        fieldLabel: 'Phone 1',
+		        fieldLabel: 'Phone 1 <span style="color:red;">*</span>',
 		        allowBlank: false,
 		        name: 'PHONE_PART1',
             },{
@@ -28,33 +30,38 @@ Ext.create('Ext.Window', {
 		        allowBlank: true,
 		        name: 'PHONE_PART2',
             },{
-				fieldLabel:'Email',
-				//allowBlank:false,
+				fieldLabel:'Email <span style="color:red;">*</span>',
+				allowBlank:false,
 				name:'EMAIL_PART',
 				vtype:'email'					
 			},{
 				fieldLabel: 'Address',
 				name: 'ADDRESS_PART',
-				xtype: 'htmleditor',
+				xtype: 'textarea',
 				height: 150
             },{
 		        xtype: 'radiofield',
 				name: 'SEX_PART',
-				value: 'MAN',
+				value: 'Male',
 				fieldLabel: 'Sex',
-				boxLabel: 'Man'
+				checked: true,
+				boxLabel: 'Male'
             },{
 				xtype: 'radiofield',
 				name: 'SEX_PART',
-				value: 'WOMAN',
+				value: 'Female',
 				fieldLabel: '',
 				labelSeparator: '',
 				hideEmptyLabel: false,
-				boxLabel: 'Woman'
+				boxLabel: 'Female'
 			},{
-		        fieldLabel: 'Position',
+		        fieldLabel: 'Position <span style="color:red;">*</span>',
 		        allowBlank: false,
 		        name: 'POSITION_PART'
+            },{
+            	fieldLabel: 'Initial <span style="color:red;">*</span>',
+            	allowBlank: false,
+            	name: 'INITIAL_PART'
             }]
 		}]
 	}],
@@ -73,6 +80,7 @@ Ext.create('Ext.Window', {
 							form.reset();
 							store.loadPage(1); // Refresh grid data
 							Ext.Msg.alert('Success', 'Data has been saved');
+							Ext.getCmp('add-new-itm-contact-window').close();
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText);

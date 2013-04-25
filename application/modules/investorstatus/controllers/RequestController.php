@@ -121,9 +121,9 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 				$query = $share->select()
 				->where('INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']);
 
-                	if ($query->query()->rowCount() > 0) {
+                if ($query->query()->rowCount() > 0) {
                 		
-                		$this->_error_message = 'Data Being Used';
+                		$this->_error_message = 'Delete failed, data is being used.';
 			            $this->_success = false;
                 		
                 } else {
@@ -133,11 +133,10 @@ class Investorstatus_RequestController extends Zend_Controller_Action
                 					'INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']
                 			));
                 	
-                	$this->_error_message = 'Data Succes Deleted';
+                	$this->_error_message = 'Data successfully deleted.';
                 	$this->_success = false;
                
-				
-			}
+				}
 			}
 			catch(Exception $e) {
 				

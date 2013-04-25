@@ -219,22 +219,25 @@ if(__selected.length > 0) {
                 columns:[{
                 	text:'Company name',
                     dataIndex:'COMPANY_NAME',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                 	text:'Name',
                     dataIndex:'NAME',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                 	text:'Email',
                     dataIndex:'EMAIL',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                     text:'Position',
                     dataIndex:'POSITION',
                     width:200
                 }]
             },{
-            	title:'ITM Participants',
+            	title:'Meeting Participants',
             	border:false,
             	region:'north',
             	xtype:'gridpanel',
@@ -246,15 +249,18 @@ if(__selected.length > 0) {
                 columns:[{
                     text:'Name Participants',
                     dataIndex:'NAME_PART',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                     text:'Email',
                     dataIndex:'EMAIL_PART',
-                    width:200
+                    width:200,
+                    flex: 1
                 },{
                     text:'Initials',
                     dataIndex:'INITIAL_PART',
-                    width:200
+                    width:100,
+                    align: 'center'
                 }],
             	tbar:[{
             		xtype:'button',
@@ -283,7 +289,7 @@ if(__selected.length > 0) {
                                             waitMsgTarget: true,
                                             items: [{
                                                         xtype: 'combobox',
-                                                        fieldLabel: 'ITM Participants',
+                                                        fieldLabel: 'ITM Participants <span style="color:red;">*</span>',
                                                         name: 'PARTICIPANT_ID',
                                                         labelWidth: 130,
                                                         store: Ext.data.StoreManager.lookup('Itmparticipants'),
@@ -447,13 +453,13 @@ if(__selected.length > 0) {
                                             defaultType: 'textfield',
                                             waitMsgTarget: true,
                                             items: [{
-                                                        fieldLabel: 'Documentation Title',
+                                                        fieldLabel: 'Documentation Title <span style="color:red;">*</span>',
                                                         name: 'DOCUMENTATION_TITLE',
                                                         allowBlank:false
                                                     },{
                                                         xtype: 'filefield',
                                                         name: 'FILE_PATH',
-                                                        fieldLabel: 'File upload',
+                                                        fieldLabel: 'File upload <span style="color:red;">*</span>',
                                                         allowBlank:false,
                                                         emptyText:'Please select a document'
                                                     }]
@@ -606,7 +612,8 @@ if(__selected.length > 0) {
             	columns:[{
             		text:'Documents Title',
                     dataIndex:'DOCUMENTATION_TITLE',
-                    width:200
+                    width:200,
+                    flex: 1
             	},{
                     text:'File Name',
                     dataIndex:'FILE_NAME',

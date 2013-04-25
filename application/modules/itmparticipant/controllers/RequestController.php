@@ -56,6 +56,7 @@ class Itmparticipant_RequestController extends Zend_Controller_Action
 					'EMAIL_PART'=>$this->_posts['EMAIL_PART'],
 					'ADDRESS_PART'=>$this->_posts['ADDRESS_PART'],
 					'SEX_PART'=>$this->_posts['SEX_PART'],
+					'INITIAL_PART' => $this->_posts['INITIAL_PART'],
 					'POSITION_PART'=>$this->_posts['POSITION_PART'],
  					'CREATED_DATE' => date('Y-m-d H:i:s')
 			));

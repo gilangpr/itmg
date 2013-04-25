@@ -106,12 +106,36 @@ class Investors_RequestController extends Zend_Controller_Action
 				);
 		
 		if(!isset($this->_posts['TYPE'])) {
-			$data = array(
-				'data' => array(
-					'items' => $this->_model->getListInvestorsLimit($this->_limit, $this->_start),
-					'totalCount' => $this->_model->count()
-				)
-			);
+			if(!isset($this->_posts['sort'])) {
+				$data = array(
+					'data' => array(
+						'items' => $this->_model->getListInvestorsLimit($this->_limit, $this->_start),
+						'totalCount' => $this->_model->count()
+					)
+				);
+			} else {
+				try {
+					$sort = Zend_Json::decode($this->_posts['sort']);
+					$q = $this->_model->select()
+					->setIntegrityCheck(false)
+					->from('INVESTORS', array('*'))
+					->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('INVESTOR_TYPE'))
+					->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('LOCATION'))
+					->limit($this->_limit, $this->_start);
+					if($sort[0]['property'] == 'INVESTOR_TYPE') {
+						$q->order('INVESTOR_TYPE.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
+					} else if($sort[0]['property'] == 'LOCATION') {
+						$q->order('LOCATIONS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
+					} else {
+						$q->order('INVESTORS.' . $sort[0]['property'] . ' ' .$sort[0]['direction']);
+					}
+					//echo $q;die;
+					$data['data']['items'] = $q->query()->fetchAll();
+					$data['data']['totalCount'] = count($data['data']['items']);
+				}catch(Exception $e) {
+					echo $e->getMessage();
+				}
+			}
 		} else {
 			
 			// Search :
@@ -136,9 +160,9 @@ class Investors_RequestController extends Zend_Controller_Action
 			if(isset($this->_posts['EQUITY_ASSETS'])) {
 				$EQUITY_ASSETS = $this->_posts['EQUITY_ASSETS'];
 				$EQmodel = new Application_Model_Equityasset();
-				if($EQUITY_ASSETS != '' || !empty($EQUITY_ASSETS)) {
-				$min = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MIN_VALUE');
-				$max = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MAX_VALUE');
+				if($EQUITY_ASSETS != '' && !empty($EQUITY_ASSETS) && $EQUITY_ASSETS != 'All') {
+					$min = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MIN_VALUE');
+					$max = $EQmodel->getValueByKey('EQUITY_TYPE', $EQUITY_ASSETS, 'MAX_VALUE');
 				} else {
 					$min = 0;
 					// max cari dari investor yang equity asset paling gede brapa;
