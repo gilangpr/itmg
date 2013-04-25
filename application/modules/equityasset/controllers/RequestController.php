@@ -53,18 +53,24 @@ class Equityasset_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		try{
-		$data = array(
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			if(isset($this->_posts['sort'])) {
+				$sort = Zend_Json::decode($this->_posts['sort']);
+				$q = $this->_model->select()
+				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
+				->limit($this->_limit, $this->_start);
+				$list = $q->query()->fetchAll();
+			} else {
+				$list = $this->_model->getListLimit($this->_limit, $this->_start);
+			}
+			$data = array(
 				'data' => array(
-						'items' => $this->_model->getListLimit($this->_limit, $this->_start, 'MIN_VALUE ASC'),
-						'totalCount' => $this->_model->count()
+					'items' => $list,
+					'totalCount' => $this->_model->count()
 				)
-		);
-		}catch(Exception $e){
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
-			$this->_success = false;
+			);
 		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
