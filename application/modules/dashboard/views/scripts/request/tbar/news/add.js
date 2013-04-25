@@ -1,3 +1,16 @@
+var storeNews = Ext.create("Ext.data.Store", {
+	model: "News",
+	storeId: "Newss",
+	proxy:{"type":"ajax","api":{"read":"\/news\/request\/read","create":"\/news\/request\/create","update":"\/news\/request\/update","destroy":"\/news\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"NEWS_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+	sorter: {"property":"NEWS_ID","direction":"ASC"}});
+
+var storeNC = loadStore('Companys');
+storeNC.load ({
+	params: {
+		all: 1
+	}
+});
+
 var storeRC = loadStore('NewsCategorys');
 storeRC.load({
 	params: {
@@ -6,6 +19,7 @@ storeRC.load({
 });
 Ext.create('Ext.Window', {
 	title: 'Add News',
+	id: 'add-news-window',
 	width: 500,
 	draggable: false,
 	resizable: false,
@@ -32,8 +46,23 @@ Ext.create('Ext.Window', {
 				displayField: 'NEWS_CATEGORY',
 				typeAhead: false,
 				editable: false,
-				emptyText: 'Select category',
+				emptyText: 'Select Category',
 				fieldLabel: 'Category',
+				allowBlank: false
+			},{
+				xtype: 'combobox',
+				name: 'COMPANY_NAME',
+				store: storeNC,
+				displayField: 'COMPANY_NAME',
+				typeAhead: false,
+				editable: true,
+				emptyText: 'Select Company',
+				fieldLabel: 'Company',
+				allowBlank: false
+			},{
+				fieldLabel: 'Source',
+				name: 'SOURCE',
+				emptyText: 'News Source',
 				allowBlank: false
 			},{
 				xtype: 'filefield',
@@ -65,7 +94,8 @@ Ext.create('Ext.Window', {
 								buttons: Ext.Msg.OK
 							});
 							form.reset();
-							store.loadPage(store.currentPage);
+							storeNews.loadPage(store.currentPage);
+							Ext.getCmp('add-news-window').close();
 						},
 						failure: function(d, e) {
 							var json = Ext.decode(e.response.responseText);

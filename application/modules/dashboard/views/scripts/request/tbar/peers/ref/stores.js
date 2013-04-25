@@ -213,7 +213,7 @@ var storeSRY = Ext.create('Ext.data.Store',{
     proxy: {
         type: 'ajax',
         api: {
-            read: '/strippingratioyear/request/read',
+            read: '/strippingratioyear/request/read2',
             create: '/strippingratioyear/request/create',
             update: '/strippingratioyear/request/update',
             destroy: '/strippingratioyear/request/destroy'

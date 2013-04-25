@@ -4,6 +4,20 @@ storeRC.load({
 		all: 1
 	}
 });
+
+var storeRC2 = loadStore('Companys');
+storeRC2.load({
+	params: {
+		all: 1
+	}
+});
+
+var store = Ext.create("Ext.data.Store", {
+	model: "Company",
+	storeId: "Companys",
+	proxy:{"type":"ajax","api":{"read":"\/company\/request\/read","create":"\/company\/request\/create","update":"\/company\/request\/update","destroy":"\/company\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"COMPANY_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+	sorter: {"property":"COMPANY_ID","direction":"ASC"}});
+
 Ext.create('Ext.Window', {
 	title: 'Add New Research Report',
 	width: 500,
@@ -32,8 +46,18 @@ Ext.create('Ext.Window', {
 				displayField: 'RESEARCH_REPORT_CATEGORY',
 				typeAhead: false,
 				editable: false,
-				emptyText: 'Select category',
+				emptyText: 'Select Category',
 				fieldLabel: 'Category',
+				allowBlank: false
+			},{
+				xtype: 'combobox',
+				name: 'COMPANY',
+				store: storeRC2,
+				displayField: 'COMPANY',
+				typeAhead: false,
+				editable: false,
+				emptyText: 'Select Company',
+				fieldLabel: 'Company',
 				allowBlank: false
 			},{
 				xtype: 'filefield',

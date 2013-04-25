@@ -35,7 +35,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 
 	public function getTitleAction()
 	{
-		$titleList = $this->_model->select();
+		$peer_id = $this->getParam('id', 0);
 		$titleList = $titleList->query()->fetchAll();
 		$title = array(array('flex'=>1,'text'=>'','dataIndex'=>'NAME'));
 		foreach($titleList as $k=>$d) {
@@ -53,12 +53,29 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 
 	public function createAction()
 	{
+// 		$data = array(
+// 				'data' => array()
+// 		);
+		
+// 		try {
+// 			/* Insert Data */
+// 			$this->_model->insert(array(
+// 					'PEER_ID' => $this->_posts['PEER_ID'],
+// 					'TITLE' => $this->_posts['TITLE'],
+// 					'VALUE' => $this->_posts['VALUE'],
+// 					'CREATED_DATE' => date('Y-m-d H:i:s')
+// 			));
+// 		}catch(Exception $e) {
+// 			$this->_error_code = $e->getCode();
+// 			$this->_error_message = $e->getMessage();
+// 			$this->_success = false;
+// 		}
+		
 		$data = array(
 				'data' => array()
 		);
 		$modelPeer = new Application_Model_Peers();
 		try {
-			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				
@@ -75,7 +92,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 					
 					$this->_model->update(array(
 							'VALUE' => $this->_posts['VALUE']
-							), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_YEAR_ID = ?', 
+							), $this->_model->getAdapter()->quoteInto('PEER_ID = ?', 
 									$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
 									));
 					
@@ -136,6 +153,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+	
 	
 	public function updateAction()
 	{
