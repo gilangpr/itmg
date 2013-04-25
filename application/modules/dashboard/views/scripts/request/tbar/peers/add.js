@@ -18,15 +18,16 @@ if (!c.up().items.get(id)) {
 					if (form.isValid()) {
 						form.submit({
 							url: sd.baseUrl + '/peers/request/create',
-							success: function(data) {
-								var json = Ext.decode(data.responseText);
+							success: function(data, _e) {
+								var json = Ext.decode(_e.response.responseText);
+								console.log(json);
 								form.reset();
 								store.loadPage(1); // Refresh grid data
 								Ext.Msg.alert('Success', 'Data has been saved');
 								Ext.getCmp(id).close();
 							},
-							failure: function(data) {
-								var json = Ext.decode(data.responseText);
+							failure: function(data, _e) {
+								var json = Ext.decode(_e.response.responseText);
 								Ext.Msg.alert('Error', json.error_message);
 							}
 						})
@@ -39,9 +40,7 @@ if (!c.up().items.get(id)) {
 			iconCls: 'icon-stop',
 			listeners: {
 				click: function() {
-					if (confirm('Are you sure want to cancel ?')) {
-						this.up().up().close();
-					}
+					this.up().up().close();
 				}
 			}
 		}],
