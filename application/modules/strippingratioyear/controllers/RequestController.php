@@ -9,6 +9,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
+	protected $_data;
 
 	public function init()
 	{
@@ -27,6 +28,9 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
+
+		$this->_data = array();
+
 	}
 	public function indexAction()
 	{
@@ -35,7 +39,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 
 	public function getTitleAction()
 	{
-		$titleList = $this->_model->select();
+		$peer_id = $this->getParam('id', 0);
 		$titleList = $titleList->query()->fetchAll();
 		$title = array(array('flex'=>1,'text'=>'','dataIndex'=>'NAME'));
 		foreach($titleList as $k=>$d) {
@@ -53,16 +57,38 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 
 	public function createAction()
 	{
+// 		$data = array(
+// 				'data' => array()
+// 		);
+		
+// 		try {
+// 			/* Insert Data */
+// 			$this->_model->insert(array(
+// 					'PEER_ID' => $this->_posts['PEER_ID'],
+// 					'TITLE' => $this->_posts['TITLE'],
+// 					'VALUE' => $this->_posts['VALUE'],
+// 					'CREATED_DATE' => date('Y-m-d H:i:s')
+// 			));
+// 		}catch(Exception $e) {
+// 			$this->_error_code = $e->getCode();
+// 			$this->_error_message = $e->getMessage();
+// 			$this->_success = false;
+// 		}
+		
 		$data = array(
 				'data' => array()
 		);
 		$modelPeer = new Application_Model_Peers();
 		try {
-			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				
-				if(!$this->_model->isExistByKey('TITLE', $this->_posts['TITLE'])) {
+				$_q = $this->_model->select()
+				->where('TITLE = ?', $this->_posts['TITLE'])
+				->where('PEER_ID = ?', $peer_id);
+				$_res = $_q->query()->fetchAll();
+
+				if(count($_res) == 0) {
 				
 					$this->_model->insert(array(
 							'PEER_ID' => $peer_id,
@@ -75,7 +101,7 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 					
 					$this->_model->update(array(
 							'VALUE' => $this->_posts['VALUE']
-							), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_YEAR_ID = ?', 
+							), $this->_model->getAdapter()->quoteInto('PEER_ID = ?', 
 									$this->_model->getPkByKey('TITLE', $this->_posts['TITLE'])
 									));
 					
@@ -136,6 +162,35 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+
+	public function readDevAction()
+	{
+		$modelPeer = new Application_Model_Peers();
+		$peer_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
+		$data = array();
+		if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
+			
+			$q = $this->_model->select()
+			->from('STRIPPING_RATIO_YEAR', array('STRIPPING_RATIO_YEAR_ID','TITLE','VALUE'))
+			->where('PEER_ID = ?', $peer_id)
+			->limit($this->_posts['limit'], $this->_posts['start']);
+			$list = $q->query()->fetchAll();
+
+			$q = $this->_model->select()
+			->from('STRIPPING_RATIO_YEAR', array('STRIPPING_RATIO_YEAR_ID','TITLE','VALUE'))
+			->where('PEER_ID = ?', $peer_id);
+			$listAll = $q->query()->fetchAll();
+			
+			$data = array(
+				'data' => array(
+					'items' => $list,
+					'totalCount' => count($listAll)
+					)
+				);
+		}
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+	
 	
 	public function updateAction()
 	{
@@ -164,5 +219,60 @@ class Strippingratioyear_RequestController extends Zend_Controller_Action
 		}
 	
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
+	public function updateDevAction()
+	{
+		$data = Zend_Json::decode($this->getRequest()->getRawBody());
+		if(isset($data['data']['STRIPPING_RATIO_YEAR_ID'])) {
+			$id = $data['data']['STRIPPING_RATIO_YEAR_ID'];
+			if($this->_model->isExistByKey('STRIPPING_RATIO_YEAR_ID', $id)) {
+				try {
+					$this->_model->update(array(
+						'TITLE' => $data['data']['TITLE'],
+						'VALUE' => $data['data']['VALUE']
+						), $this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_YEAR_ID = ?', $id));
+					$this->_data = $data;
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->_error_code = 101;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
+		} else {
+			$this->_error_code = '901';
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
+	public function destroyDevAction()
+	{
+		if(isset($this->_posts['id'])) {
+			$id = $this->_posts['id'];
+			if($this->_model->isExistByKey('STRIPPING_RATIO_YEAR_ID', $id)) {
+				try {
+					$this->_model->delete($this->_model->getAdapter()->quoteInto('STRIPPING_RATIO_YEAR_ID = ?', $id));
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->_error_code = 101;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
+		} else {
+			$this->_error_code = '901';
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

@@ -5,6 +5,7 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	protected $_name = 'MEETING_ACTIVITIE';
 	protected $_id = 'MEETING_ACTIVITIE_ID';
 
+
 	/*	
 	public function getListMeetingactivitiesLimit(){
 	$q = $this->select()
@@ -15,7 +16,7 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	return $q->query()->fetchAll();
 	}
 	*/
-}
+
 // 	public function getListLimitMeetingActivities($limit, $offset, $order) {
 // 		$q = $this->select()
 // 		->setIntegrityCheck(false)
@@ -26,8 +27,8 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 // 		->limit($limit, $offset);
 // 		return $q->query()->fetchAll();
 // 	}
-	/*
-	public function getListLimitMeetingActivities($limit, $offset, $order) {
+
+	/*public function getListLimitMeetingActivities($limit, $offset, $order) {
 		$q = $this->select()
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
@@ -38,7 +39,8 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 		->order($order)
 		->limit($limit, $offset);
 		return $q->query()->fetchAll();
-	}
+	}*/
+
 // 	public function getInitial() {
 // 		$q = $this->select()
 // 		->setIntegrityCheck(false)
@@ -60,3 +62,6 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	}
 	*/
 //}
+
+}
+

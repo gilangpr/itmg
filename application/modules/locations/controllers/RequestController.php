@@ -31,12 +31,24 @@ class Locations_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		$data = array(
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			if(isset($this->_posts['sort'])) {
+				$sort = Zend_Json::decode($this->_posts['sort']);
+				$q = $this->_model->select()
+				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
+				->limit($this->_limit, $this->_start);
+				$list = $q->query()->fetchAll();
+			} else {
+				$list = $this->_model->getListLimit($this->_limit, $this->_start);
+			}
+			$data = array(
 				'data' => array(
-						'items' => $this->_model->getListLimit($this->_limit, $this->_start, 'LOCATION ASC'),
-						'totalCount' => $this->_model->count()
+					'items' => $list,
+					'totalCount' => $this->_model->count()
 				)
-		);
+			);
+		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -101,32 +113,53 @@ class Locations_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest() && isset($this->_posts['LOCATION_ID'])) {
-			
-			if($this->_model->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID'])) {
-				
-				try {
-					
-					$this->_model->delete($this->_model->getAdapter()->quoteInto('LOCATION_ID = ?', $this->_posts['LOCATION_ID']));
-					
-				}catch(Exception $e) {
-					$this->_error_code = $e->getCode();
-					$this->_error_message = $e->getMessage();
-					$this->_success = false;
+		try {
+			$modInvestor = new Application_Model_Investors();
+			$exist = $modInvestor->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID']);
+			if ($exist == '') {
+				if($this->_model->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID'])) {
+					try {
+						$this->_model->delete($this->_model->getAdapter()->quoteInto('LOCATION_ID = ?', $this->_posts['LOCATION_ID']));
+					} catch(Exception $e) {
+						$this->_error_code = $e->getCode();
+						$this->_error_message = $e->getMessage();
+						$this->_success = false;
+					}
 				}
-				
 			} else {
-				$this->_error_code = 101;
-				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_error_message = 'Delete failed, data is being used.';
 				$this->_success = false;
 			}
-			
-		} else {
-			$this->_error_code = 901;
-			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+		} catch(Exception $e) {
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
+// 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest() && isset($this->_posts['LOCATION_ID'])) {
+			
+// 			if($this->_model->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID'])) {
+				
+// 				try {
+					
+// 					$this->_model->delete($this->_model->getAdapter()->quoteInto('LOCATION_ID = ?', $this->_posts['LOCATION_ID']));
+					
+// 				}catch(Exception $e) {
+// 					$this->_error_code = $e->getCode();
+// 					$this->_error_message = $e->getMessage();
+// 					$this->_success = false;
+// 				}
+				
+// 			} else {
+// 				$this->_error_code = 101;
+// 				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+// 				$this->_success = false;
+// 			}
+			
+// 		} else {
+// 			$this->_error_code = 901;
+// 			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+// 			$this->_success = false;
+// 		}
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}

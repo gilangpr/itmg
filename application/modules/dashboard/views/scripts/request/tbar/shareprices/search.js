@@ -152,105 +152,111 @@ Ext.onReady(function() {
 						showLoadingWindow();
 						_storeShareprices.load({
 							callback: function(d,i,e,f) {
-								var json = Ext.decode(i.response.responseText);
-								var cols = [{
-									text: 'DATE',
-									dataIndex: 'DATE',
-									flex: 1
-								}];
-								var series = new Array();
-								for(var i=0;i<json.data.names.length;i++) {
-									cols[i+1] = {
-											flex: 1,
-											dataIndex: json.data.names[i],
-											text: json.data.names[i],
-											renderer: Ext.util.Format.numberRenderer('0.,/i')
-									};
-									series[i] = {
-										type: 'line',
-										highlight: {
-											size: 2,
-											radius: 2
-										},
-										axis: 'left',
-										xField: 'DATE',
-										yField: json.data.names[i],
-						                markerConfig: {
-						                    type: 'circle',
-						                    size: 2,
-						                    radius: 2,
-						                    'stroke-width': 1
-						                }
-									};
-								}
-								c.up().add({
-									title: 'Shareprices Search Result',
-									closable: true,
-									id: _id,
-									autoScroll: true,
-									xtype: 'panel',
-									layout: 'border',
-									items: [{
-										region: 'north',
-										minHeight: 154,
-										maxHeight: 154,
+								if(d.length == 0) {
+									Ext.Msg.alert('Message', 'No data found.');
+									closeLoadingWindow();
+								} else {
+									Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
+									var json = Ext.decode(i.response.responseText);
+									var cols = [{
+										text: 'DATE',
+										dataIndex: 'DATE',
+										flex: 1
+									}];
+									var series = new Array();
+									for(var i=0;i<json.data.names.length;i++) {
+										cols[i+1] = {
+												flex: 1,
+												dataIndex: json.data.names[i],
+												text: json.data.names[i],
+												renderer: Ext.util.Format.numberRenderer('0.,/i')
+										};
+										series[i] = {
+											type: 'line',
+											highlight: {
+												size: 2,
+												radius: 2
+											},
+											axis: 'left',
+											xField: 'DATE',
+											yField: json.data.names[i],
+							                markerConfig: {
+							                    type: 'circle',
+							                    size: 2,
+							                    radius: 2,
+							                    'stroke-width': 1
+							                }
+										};
+									}
+									c.up().add({
+										title: 'Shareprices Search Result',
+										closable: true,
+										id: _id,
 										autoScroll: true,
-										xtype: 'gridpanel',
-										border: false,
-										store: _storeShareprices,
-										columns: cols
-									},{
-										region: 'north',
-										title: 'Chart',
-										minHeight: 260,
-										maxHeight: 260,
-										width: 500,
-										border: false,
-										xtype: 'chart',
-										style: 'background: #fff',
-										animate: true,
-										store: _storeShareprices,
-										shadow: true,
-										theme: 'Category1',
-										legend: {
-											position: 'right'
-										},
-										axes: [{
-											type: 'Numeric',
-											minimum: 0,
-											position: 'left',
-											fields: json.data.names,
-											title: 'Shareprices',
-											minorTickSteps: 1,
-											grid: {
-												odd: {
-													opacity: 1,
-													fill: '#ddd',
-													stroke: '#bbb',
-													'stroke-width': 0.5
-												}
-											}
+										xtype: 'panel',
+										layout: 'border',
+										items: [{
+											region: 'north',
+											minHeight: 154,
+											maxHeight: 154,
+											autoScroll: true,
+											xtype: 'gridpanel',
+											border: false,
+											store: _storeShareprices,
+											columns: cols
 										},{
-											type: 'Category',
-											position: 'bottom',
-											fields: ['DATE'],
-											title: 'Date'
-										}],
-										series: series
-									}]
-								});
-								// c.up().add({
-								// 	title: 'Shareprices Search Result',
-								// 	closable: true,
-			     //                    id: _id,
-			     //                    autoScroll: true,
-								// 	xtype: 'gridpanel',
-								// 	border: false,
-								// 	store: _storeShareprices,
-								// 	columns: cols
-								// });
-								c.up().setActiveTab(_id);
-								closeLoadingWindow();
+											region: 'north',
+											title: 'Chart',
+											minHeight: 260,
+											maxHeight: 260,
+											width: 500,
+											border: false,
+											xtype: 'chart',
+											style: 'background: #fff',
+											animate: true,
+											store: _storeShareprices,
+											shadow: true,
+											theme: 'Category1',
+											legend: {
+												position: 'right'
+											},
+											axes: [{
+												type: 'Numeric',
+												minimum: 0,
+												position: 'left',
+												fields: json.data.names,
+												title: 'Shareprices',
+												minorTickSteps: 1,
+												grid: {
+													odd: {
+														opacity: 1,
+														fill: '#ddd',
+														stroke: '#bbb',
+														'stroke-width': 0.5
+													}
+												}
+											},{
+												type: 'Category',
+												position: 'bottom',
+												fields: ['DATE'],
+												title: 'Date'
+											}],
+											series: series
+										}]
+									});
+									// c.up().add({
+									// 	title: 'Shareprices Search Result',
+									// 	closable: true,
+				     //                    id: _id,
+				     //                    autoScroll: true,
+									// 	xtype: 'gridpanel',
+									// 	border: false,
+									// 	store: _storeShareprices,
+									// 	columns: cols
+									// });
+									c.up().setActiveTab(_id);
+									closeLoadingWindow();
+								}								
 							}
 						});						
 						f.up().close();

@@ -93,20 +93,8 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 			$this->_success = false;
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-		}
-	/*	
-	public function readAction()
-	{
-		$data = array(
-				'data' => array(
-				'items' => $this->_model->getListLimit($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
-				)
-		);
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-
 	}
-	*/	
+		
 	public function readAction()
 	{	
 		$full = $this->_model->getListLimit($this->_limit, $this->_start, 'MEETING_DATE ASC');
@@ -137,14 +125,23 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 			$meetingInvestor = new Application_Model_Meetinginvestor();
 			$metId = $d['MEETING_ACTIVITIE_ID'];
 			$companyName = $meetingInvestor->getCompanyName($metId);
+			$Name = $meetingInvestor->getName($metId);
+			//print_r($companyName);
 			foreach ($companyName as $_k=>$_d) {		
 				// Set Company Name :
-				if($this->_data['data']['items'][$_i]['COMPANY_NAME'] != '' && $this->_data['data']['items'][$_i]['NAME'] != '') {
+				if($this->_data['data']['items'][$_i]['COMPANY_NAME'] != '') {
 					$this->_data['data']['items'][$_i]['COMPANY_NAME'] .= ', ';
-					$this->_data['data']['items'][$_i]['NAME'] .= ', ';
 				} 
+				
 				$this->_data['data']['items'][$_i]['COMPANY_NAME'] .= $_d['COMPANY_NAME'];
-				$this->_data['data']['items'][$_i]['NAME'] .= $_d['NAME'];
+			}
+			foreach ($Name as $_j=>$_l) {
+				// Set Company Name :
+				if($this->_data['data']['items'][$_i]['NAME'] != '') {
+					$this->_data['data']['items'][$_i]['NAME'] .= ', ';
+				}
+			
+				$this->_data['data']['items'][$_i]['NAME'] .= $_l['NAME'];
 			}
 			$participant = new Application_Model_Participant();
 			$partName = $participant->getName($metId);

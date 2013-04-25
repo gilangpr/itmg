@@ -29,13 +29,22 @@
 				},
 				groups: <?php echo Zend_Json::encode($this->groups) . "\n"?>
 			});
+			function makeid(length){
+			    var text = "";
+			    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+			    for( var i=0; i < length; i++ )
+			        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+			    return text;
+			}
 			Ext.onReady(function(){
 				loadMenus();
 				Ext.create('Ext.tab.Panel', {
 					renderTo: 'content',
 					id: 'main-content',
 					padding: '1 0 0 0',
-					height: Ext.getBody().getViewSize().height - $('.head').height() - $("#nav").height()
+					height: Ext.getBody().getViewSize().height - $('.head').height() - $("#nav").height() - 30
 				});
 				
 				Ext.EventManager.onWindowResize(function() {

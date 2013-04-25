@@ -9,6 +9,8 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
+	protected $_data;
+	protected $_pk;
 
 	public function init()
 	{
@@ -27,6 +29,9 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
+
+		$this->_data = array();
+		$this->_pk = 'TOTAL_CASHCOST_ID';
 	}
 	public function indexAction()
 	{
@@ -187,5 +192,93 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 			$this->_success = false;
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
+	/* New function - Dev ( Gilang ) */
+
+	public function readDevAction()
+	{
+		$modelPeer = new Application_Model_Peers();
+		$id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
+		if($modelPeer->isExistByKey('PEER_ID', $id)) {
+				
+				$q = $this->_model->select()
+				->where('PEER_ID = ?', $id)
+				->order('TITLE DESC')
+				->limit($this->_posts['limit'], $this->_posts['start']);
+				$list = $q->query()->fetchAll();
+				
+				$q = $this->_model->select()
+				->where('PEER_ID = ?', $id);
+				$listAll = $q->query()->fetchAll();
+				
+				$this->_data = array(
+					'data' => array(
+						'items' => $list,
+						'totalCount' => count($listAll)
+						)
+					);
+
+		}
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
+	public function updateDevAction()
+	{
+		$data = Zend_Json::decode($this->getRequest()->getRawBody());
+		if(isset($data['data'][$this->_pk])) {
+			$id = $data['data'][$this->_pk];
+			if($this->_model->isExistByKey($this->_pk, $id)) {
+				try {
+					$this->_model->update(array(
+						'TITLE' => $data['data']['TITLE'],
+						'ROYALTY_USD' => $data['data']['ROYALTY_USD'],
+						'ROYALTY_IDR' => $data['data']['ROYALTY_IDR'],
+						'TOTAL_IDR' => $data['data']['TOTAL_IDR'],
+						'TOTAL_USD' => $data['data']['TOTAL_USD'],
+						'CURRENCY' => $data['data']['CURRENCY']
+						), $this->_model->getAdapter()->quoteInto($this->_pk . ' = ?', $id));
+					$this->_data = $data;
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->_error_code = 101;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
+		} else {
+			$this->_error_code = '901';
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
+	public function destroyDevAction()
+	{
+		if(isset($this->_posts['id'])) {
+			$id = $this->_posts['id'];
+			if($this->_model->isExistByKey($this->_pk, $id)) {
+				try {
+					$this->_model->delete($this->_model->getAdapter()->quoteInto($this->_pk . ' = ?', $id));
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->_error_code = 101;
+				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+				$this->_success = false;
+			}
+		} else {
+			$this->_error_code = '901';
+			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+			$this->_success = false;
+		}
+		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }
