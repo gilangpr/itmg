@@ -236,8 +236,7 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },
-            {
+            },{
             	title:'Meeting Participants',
             	border:false,
             	region:'north',

@@ -26,9 +26,7 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	{
 		try {
 			$wherenya = $this->select()->where('SHAREHOLDING_AMOUNT_ID = ?', $id);
-				//$wherenya = $this->_name->getAdapter()->quoteInto('SHAREHOLDING_AMOUNT_ID = ? ',$id);
 				$this->_name->delete($wherenya);
-				//'CREATED_DATE' => date('Y-m-d H:i:s')
 				
 				} catch ( Exception $e ) {
 					$this->_error_code = $e->getCode();
@@ -43,25 +41,53 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	public function getAmount($shareholding_id)
 	{
 		if($this->isExistByKey('SHAREHOLDING_ID', $shareholding_id)) {
-// 			$select = $this->select();
-// 			$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE'));
-// 			$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
-// 			$maxTanggal =  $select->query()->fetch();
 						$select = $this->select();
-						$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE','MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+						$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE'));
 						$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
 						$maxTanggal =  $select->query()->fetch();
+						
+// 						$select = $this->select();
+// 						$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+// 						$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
+// 						$maxId =  $select->query()->fetch();
 
 			$select = $this->select();
 			$select->from('SHAREHOLDING_AMOUNTS');
 			$select->where('SHAREHOLDING_ID =?',$shareholding_id);
 			$select->where('DATE = ?',$maxTanggal['MAX_DATE']);
-			$select->where('SHAREHOLDING_AMOUNT_ID = ?', $maxTanggal['MAX_ID']);
+			//$select->where('SHAREHOLDING_AMOUNT_ID = ?', $maxId['MAX_ID']);
 			$list = $select->query()->fetch();
 			return $list['AMOUNT'];
 			
 		} else {
 			
+			return 0;
+		}
+	}
+	
+	public function getDate($shareholding_id)
+	{
+		if($this->isExistByKey('SHAREHOLDING_ID', $shareholding_id)) {
+			$select = $this->select();
+			$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(DATE) as MAX_DATE'));
+			$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
+			$maxTanggal =  $select->query()->fetch();
+			
+// 			$select = $this->select();
+// 			$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+// 			$select->where('SHAREHOLDING_ID = ?',$shareholding_id);
+// 			$maxId =  $select->query()->fetch();
+			
+			$select = $this->select();
+			$select->from('SHAREHOLDING_AMOUNTS');
+			$select->where('SHAREHOLDING_ID =?',$shareholding_id);
+			$select->where('DATE = ?',$maxTanggal['MAX_DATE']);
+			//$select->where('SHAREHOLDING_AMOUNT_ID = ?',$maxId['MAX_ID']);
+			$c = $select->query()->fetch();
+			return $c['DATE'];
+				
+		} else {
+				
 			return 0;
 		}
 	}
@@ -100,14 +126,11 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 	{
 
 		$select = $this->select();
-		//$select->distinct('SHAREHOLDING_ID');
-		//$select->from('SHAREHOLDING_AMOUNTS',array('AMOUNT' => new Zend_Db_Expr('SUM(AMOUNT)')));//declare $_name => nama tabel
-		$select->from('SHAREHOLDING_AMOUNTS',array());//declare $_name => nama tabel
+		$select->from('SHAREHOLDING_AMOUNTS',array());
 		$select->columns('SHAREHOLDING_ID');	
 		$select->where('SHAREHOLDING_ID');	
 		$select->group('SHAREHOLDING_ID');
 		$select->order('DATE DESC');
-		//die($select);
 		return $select->query()->fetchAll();
 	}
 	
@@ -116,7 +139,6 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		$select = $this->select();
 		$select->from('SHAREHOLDING_AMOUNTS', array(new Zend_Db_Expr("MAX(DATE) AS maxID")));
 		$select->where('SHAREHOLDING_ID = ?', $shareholdingid);
-		//return $select->query()->fetchAll();
 		return $select->query()->fetch();
 	}
 	
@@ -135,13 +157,23 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		}
 	}
 	
-	public function getMaxAmounth($l,$shareholdingid){
-		//echo $shareholdingid; die;
+	public function getMaxAmounth($l,$shareholdingid)
+	{
+		$select = $this->select();
+		$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+		$select->where('SHAREHOLDING_ID = ?',$shareholdingid);
+		$maxId =  $select->query()->fetch();
+		
+		$select = $this->select();
+		$select->from('SHAREHOLDING_AMOUNTS',ARRAY('MAX(SHAREHOLDING_AMOUNT_ID) AS MAX_ID'));
+		$select->where('SHAREHOLDING_ID = ?',$shareholdingid);
+		$maxId =  $select->query()->fetch();
+		
 		$select = $this->select();
 		$select->from('SHAREHOLDING_AMOUNTS','AMOUNT');
 		$select->where('SHAREHOLDING_ID = ? ',$shareholdingid);
 		$select->where('DATE = ? ',$l);
-	
+		$select->where('SHAREHOLDING_AMOUNT_ID = ? ',$maxId);
 		
 		
 //		echo $select->__toString();

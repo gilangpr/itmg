@@ -1,32 +1,3 @@
-var storeSR = Ext.create('Ext.data.Store',{
-    storeId: 'SharepricesNames',
-    model: 'SharepricesName',
-    proxy: {
-        type: 'ajax',
-        api: {
-            read: '/sharepricesname/request/readauto'
-        },
-        actionMethods: {
-            create: 'POST'
-        },
-        reader: {
-            idProperty: 'SHAREPRICES_NAME',
-            type: 'json',
-            root: 'data.items',
-            totalProperty: 'data.totalCount'
-        },
-        writer: {
-            type: 'json',
-            root: 'data',
-            writeAllFields: true
-        }
-    },
-    sorter: {
-        property: 'SHAREPRICES_NAME_ID',
-        direction: 'ASC'
-    },
-    autoSync: true
-});
 Ext.create('Ext.Window', {
 	title: 'Add New Shareprices',
 	width: 400,
@@ -84,14 +55,14 @@ Ext.create('Ext.Window', {
 	        xtype: 'datefield'
 	    },{
 			xtype: 'combobox',
-			fieldLabel: 'Shareprices Name',
+			fieldLabel: 'Company Name',
 			id: 'shareprices-name',
 			name: 'SHAREPRICES_NAME',
 			displayField: 'SHAREPRICES_NAME',
 			labelWidth: 110,
-			store: storeSR,
+			store: Ext.data.StoreManager.lookup('SharepricesNames'),
 			minChars: 3,
-			emptyText: 'Select shareprices name',
+			emptyText: 'Select company name',
 			typeAhead: true,
 			allowBlank: false
 		},{

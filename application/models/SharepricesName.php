@@ -39,7 +39,7 @@ class Application_Model_SharepricesName extends MyIndo_Ext_Abstract
 		$q = $this->select()
 		->setIntegrityCheck(false)
 		->from($this->_name, array('*'))
-		->where('SHAREPRICES_NAME LIKE ?', $query. '%')
+		->where('SHAREPRICES_NAME LIKE ?', '%' .$query. '%')
 		->limit($limit, $offset);
 	
 		return $q->query()->fetchAll();

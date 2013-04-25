@@ -24,6 +24,12 @@ if (!c.up().items.get(id)) {
 								store.loadPage(1); // Refresh grid data
 								Ext.Msg.alert('Success', 'Data has been saved');
 								Ext.getCmp(id).close();
+								Ext.Ajax.request({
+									url: sd.baseUrl + '/request/tbar/peers/detail.js',
+									params: {
+										id: data.PEER_ID
+									}
+								});
 							},
 							failure: function(data) {
 								var json = Ext.decode(data.responseText);

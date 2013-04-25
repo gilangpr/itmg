@@ -32,12 +32,26 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		$data = array(
-				'data' => array(
-						'items' => $this->_model->getAll($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
-				)
-		);
+		
+		$modSN = new Application_Model_SharepricesName();
+		
+		if (!isset($this->_posts['query'])) {
+	
+			$data = array(
+					'data' => array(
+							'items' => $modSN->getAll($this->_limit, $this->_start, 'SHAREPRICES_NAME ASC'),
+							'totalCount' => $modSN->count()
+					)
+			);
+		} else {
+			$data = array(
+					'data' => array(
+							'items' => $modSN->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
+							'totalCount' => $modSN->count()
+					)
+			);
+		}
+			
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -135,33 +149,38 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 		try {
 			$posts = $this->getRequest()->getRawBody();
 			$posts = Zend_Json::decode($posts);
+			if ($this->_model->isExistByKey('SHAREPRICES_NAME', $posts['data']['SHAREPRICES_NAME'])) {
+				$this->_error_message = 'Edit failed';
+				$this->_success = false;
+			} else {
+				$this->_model2->update(array(
+						'TEXT' => $posts['data']['SHAREPRICES_NAME'],
+						'DATAINDEX' => $posts['data']['SHAREPRICES_NAME']
+				),
+						$this->_model2
+						->getAdapter()->quoteInto('CONTENT_COLUMN_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
 				
-			$this->_model2->update(array(
-					'TEXT' => $posts['data']['SHAREPRICES_NAME'],
-					'DATAINDEX' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model2
-					->getAdapter()->quoteInto('CONTENT_COLUMN_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-
-			$this->_model->update(array(
-					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-			
-			$this->_model3->update(array(
-					'NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model3->getAdapter()->quoteInto('MODEL_FIELD_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-			
-			$this->_model4->update(array(
-					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
-			
-			$this->_model4->update(array(
-					'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
-			),
-					$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+				$this->_model->update(array(
+						'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+				),
+						$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+					
+				$this->_model3->update(array(
+						'NAME' => $posts['data']['SHAREPRICES_NAME']
+				),
+						$this->_model3->getAdapter()->quoteInto('MODEL_FIELD_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+					
+				$this->_model4->update(array(
+						'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+				),
+						$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+					
+				$this->_model4->update(array(
+						'SHAREPRICES_NAME' => $posts['data']['SHAREPRICES_NAME']
+				),
+						$this->_model->getAdapter()->quoteInto('SHAREPRICES_NAME_ID = ?', $posts['data']['SHAREPRICES_NAME_ID']));
+					
+			}
 			
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
@@ -214,29 +233,6 @@ class Sharepricesname_RequestController extends Zend_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	public function readautoAction()
-	{
-		$modSN = new Application_Model_SharepricesName();
-		if ($this->_posts['query'] == '') {
-	
-			$data = array(
-					'data' => array(
-							'items' => $modSN->getAll($this->_limit, $this->_start, 'SHAREPRICES_NAME ASC'),
-							'totalCount' => $modSN->count()
-					)
-			);
-		} else {
-			$data = array(
-					'data' => array(
-							'items' => $modSN->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
-							'totalCount' => $modSN->count()
-					)
-			);
-		}
-			
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 }

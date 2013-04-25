@@ -109,10 +109,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getFpColumns($model)
 	{
-		$list = $model->select()
-		->from('FINANCIAL_PERFORM', array('TITLE'))
-		->distinct(true)
-		->order('CREATED_DATE DESC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
@@ -244,10 +241,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	protected function getSrColumns($model)
 	{
 		
-		$list = $model->select()
-		->from('STRIPPING_RATIO', array('TITLE'))
-		->distinct(true)
-		->order('CREATED_DATE DESC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
@@ -282,10 +276,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 	
 	protected function getSryColumns($model)
 	{
-		$list = $model->select()
-		->from('STRIPPING_RATIO_YEAR', array('TITLE'))
-		->order('CREATED_DATE DESC')->limit(5,0)
-		->distinct(true);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(5,0);
 		$list = $list->query()->fetchAll();
 		$columns = array();
 		foreach ($list as $k=>$d) {
@@ -319,10 +310,7 @@ class Dashboard_RequestController extends Zend_Controller_Action
 
 	protected function getAspColumns($model)
 	{
-		$list = $model->select()
-		->from('SELLING_PRICES', array('TITLE'))
-		->distinct(true)
-		->order('CREATED_DATE DESC')->limit(3,0);
+		$list = $model->select()->order('CREATED_DATE DESC')->limit(3,0);
 		$list = $list->query()->fetchAll();
 		$columns = array(array(
 				'flex' => 1,
