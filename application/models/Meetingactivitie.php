@@ -5,7 +5,6 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	protected $_name = 'MEETING_ACTIVITIE';
 	protected $_id = 'MEETING_ACTIVITIE_ID';
 
-<<<<<<< HEAD
 	/*	
 	public function getListMeetingactivitiesLimit(){
 	$q = $this->select()
@@ -17,7 +16,6 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	}
 	*/
 }
-=======
 // 	public function getListLimitMeetingActivities($limit, $offset, $order) {
 // 		$q = $this->select()
 // 		->setIntegrityCheck(false)
@@ -62,4 +60,3 @@ class Application_Model_Meetingactivitie extends MyIndo_Ext_Abstract
 	}
 	*/
 }
->>>>>>> f97dd018758a41e274c9bcad3d4d06ade13c1034
