@@ -51,7 +51,15 @@ class Researchcategory_RequestController extends Zend_Controller_Action
 					$this->_limit = $this->_model->count();
 				}
 				if(!isset($this->_posts['query']) || $this->_posts['query'] == '' || empty($this->_posts['query'])) {
-					$list = $this->_model->getListLimit($this->_limit, $this->_start, $this->_name . ' ASC');
+					if(isset($this->_posts['sort'])) {
+						$sort = Zend_Json::decode($this->_posts['sort']);
+						$q = $this->_model->select()
+						->order($sort[0]['property'] . ' '. $sort[0]['direction'])
+						->limit($this->_limit, $this->_start);
+						$list = $q->query()->fetchAll();
+					} else {
+						$list = $this->_model->getListLimit($this->_limit, $this->_start);
+					}
 				} else {
 					$where = $this->_model->getAdapter()->quoteInto($this->_name . ' LIKE ?', '%' . $this->_posts['query'] . '%');
 					$list = $this->_model->getListLimit($this->_limit, $this->_start, $this->_name . ' ASC', $where);
