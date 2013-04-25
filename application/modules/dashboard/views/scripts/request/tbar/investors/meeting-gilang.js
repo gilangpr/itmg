@@ -236,14 +236,11 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-<<<<<<< HEAD
             },{
             	title:'ITM Participants',
-=======
             },
             {
             	title:'Meeting Participants',
->>>>>>> f97dd018758a41e274c9bcad3d4d06ade13c1034
             	border:false,
             	region:'north',
             	xtype:'gridpanel',
