@@ -39,143 +39,132 @@ class Investorstatus_RequestController extends Zend_Controller_Action
 	
 	public function  readAction() 
 	{
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
-			if(isset($this->_posts['sort'])) {
-				$sort = Zend_Json::decode($this->_posts['sort']);
-				$q = $this->_model->select()
-				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
-				->limit($this->_limit, $this->_start);
-				$list = $q->query()->fetchAll();
-			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start);
-			}
-			$data = array(
+		$data = array(
 				'data' => array(
-					'items' => $list,
-					'totalCount' => $this->_model->count()
+						'items' => $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_STATUS ASC'),
+						'totalCount' => $this->_model->count()
 				)
-			);
-		}
+		);
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}	
+		}	
 		
-	public function createAction() {
-	
-		$data = array(
-				'data' => array()
-		);
+		public function createAction() {
+		
+			$data = array(
+					'data' => array()
+			);
 
-		if($this->_model->isExistByKey('INVESTOR_STATUS', $this->_posts['INVESTOR_STATUS'])) {
+			if($this->_model->isExistByKey('INVESTOR_STATUS', $this->_posts['INVESTOR_STATUS'])) {
+					
+				$this->_success = false;
+				$this->_error_message = 'Investor Status already exist.';
+			} else {
+				try {
+					// Do insert query :
+					$this->_model->insert(array(
+							'INVESTOR_STATUS'=> $this->_posts['INVESTOR_STATUS'],
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
 				
-			$this->_success = false;
-			$this->_error_message = 'Investor Status already exist.';
-		} else {
-			try {
-				// Do insert query :
-				$this->_model->insert(array(
-						'INVESTOR_STATUS'=> $this->_posts['INVESTOR_STATUS'],
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			}
 			
+			MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		}
+		
+		public function updateAction()
+		{
+		
+			$data = array(
+					'data' => array()
+			);
+		
+			$data = $this->getRequest()->getRawBody();//mengambil data json
+			$data = Zend_Json::decode($data);//merubah data json menjadi array
+			$id = $data['data']['INVESTOR_STATUS_ID'];
+		
+			try {
+				
+				
+			if(!$this->_model->isExistByKey('INVESTOR_STATUS', $data['data']['INVESTOR_STATUS'])){
+				$this->_model->update(array(
+						'INVESTOR_STATUS' => $data['data']['INVESTOR_STATUS'],
+				),$this->_model->getAdapter()->quoteInto('INVESTOR_STATUS_ID = ?', $id));
+				} else {
+					$this->_error_message = 'Data Being Used';
+					$this->_success = false;
+				}
+					
 			}catch(Exception $e) {
 				$this->_error_code = $e->getCode();
 				$this->_error_message = $e->getMessage();
 				$this->_success = false;
 			}
+		
+			MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		}
 		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	public function updateAction()
-	{
-	
-		$data = array(
-				'data' => array()
-		);
-	
-		$data = $this->getRequest()->getRawBody();//mengambil data json
-		$data = Zend_Json::decode($data);//merubah data json menjadi array
-		$id = $data['data']['INVESTOR_STATUS_ID'];
-	
-		try {
-			
-			
-		if(!$this->_model->isExistByKey('INVESTOR_STATUS', $data['data']['INVESTOR_STATUS'])){
-			$this->_model->update(array(
-					'INVESTOR_STATUS' => $data['data']['INVESTOR_STATUS'],
-			),$this->_model->getAdapter()->quoteInto('INVESTOR_STATUS_ID = ?', $id));
-			} else {
-				$this->_error_message = 'Data Being Used';
+		public function destroyAction()
+		{
+			$data = array(
+					'data' => array()
+			);
+			try {
+				// Delete
+				$share = new Application_Model_Shareholdings();
+				$val = $this->_model->getValueByKey('INVESTOR_STATUS_ID', $this->_posts['INVESTOR_STATUS_ID'], 'INVESTOR_STATUS');
+				$query = $share->select()
+				->where('INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']);
+
+                if ($query->query()->rowCount() > 0) {
+                		
+                		$this->_error_message = 'Delete failed, data is being used.';
+			            $this->_success = false;
+                		
+                } else {
+                	
+                	$this->_model->delete(
+                			$this->_model->getAdapter()->quoteInto(
+                					'INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']
+                			));
+                	
+                	$this->_error_message = 'Data successfully deleted.';
+                	$this->_success = false;
+               
+				}
+			}
+			catch(Exception $e) {
+				
+				$this->_error_code = $e->getCode();
+				$this->_error_message = $e->getMessage();
 				$this->_success = false;
 			}
-				
-		}catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
-			$this->_success = false;
+			MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		}
-	
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	public function destroyAction()
-	{
-		$data = array(
-				'data' => array()
-		);
-		try {
-			// Delete
-			$share = new Application_Model_Shareholdings();
-			$val = $this->_model->getValueByKey('INVESTOR_STATUS_ID', $this->_posts['INVESTOR_STATUS_ID'], 'INVESTOR_STATUS');
-			$query = $share->select()
-			->where('INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']);
-
-            if ($query->query()->rowCount() > 0) {
-            		
-            		$this->_error_message = 'Delete failed, data is being used.';
-		            $this->_success = false;
-            		
-            } else {
-            	
-            	$this->_model->delete(
-            			$this->_model->getAdapter()->quoteInto(
-            					'INVESTOR_STATUS_ID = ?', $this->_posts['INVESTOR_STATUS_ID']
-            			));
-            	
-            	$this->_error_message = 'Data successfully deleted.';
-            	$this->_success = false;
-           
+		
+		public function  autocomAction() 
+		{
+			if ($this->_posts['query'] == '') {
+ 			
+ 			$data = array(
+ 					'data' => array(
+ 							'items' => $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_STATUS ASC'),
+ 							'totalCount' => $this->_model->count()
+ 							)
+ 					);
+ 		} else {
+				$data = array(
+						'data' => array(
+								'items' => $this->_model->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
+								'totalCount' => $this->_model->count()
+						)
+				);
 			}
+			MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		}
-		catch(Exception $e) {
-			
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
-			$this->_success = false;
-		}
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	public function  autocomAction() 
-	{
-		if ($this->_posts['query'] == '') {
-			
-			$data = array(
-					'data' => array(
-							'items' => $this->_model->getListLimit($this->_limit, $this->_start, 'INVESTOR_STATUS ASC'),
-							'totalCount' => $this->_model->count()
-							)
-					);
-		} else {
-			$data = array(
-					'data' => array(
-							'items' => $this->_model->getAllLike($this->_posts['query'], $this->_limit, $this->_start),
-							'totalCount' => $this->_model->count()
-					)
-			);
-		}
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
 }

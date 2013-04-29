@@ -301,6 +301,9 @@ if(__selected.length > 0) {
                                                         params: {
                                                             CONTACT_ID: mmc.CONTACT_ID,
                                                             MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
+
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID,
+
                                                             INVESTOR_ID:meeting__id.INVESTOR_ID,
                                                             NAME:mmc.NAME
                                                         },
@@ -356,8 +359,6 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },{
-            	title:'ITM Participants',
             },
             {
             	title:'Meeting Participants',

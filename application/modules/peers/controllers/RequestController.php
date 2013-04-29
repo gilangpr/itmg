@@ -32,27 +32,18 @@ class Peers_RequestController extends Zend_Controller_Action
 	public function readAction()
 	{
 		if(!isset($this->_posts['type'])) {
-			if(isset($this->_posts['sort'])) {
-				$sort = Zend_Json::decode($this->_posts['sort']);
-				$q = $this->_model->select()
-				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
-				->limit($this->_limit, $this->_start);
-				$list = $q->query()->fetchAll();
-			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start);
-			}
-			$data = array(
-					'data' => array(
-							'items' => $list,
-							'totalCount' => $this->_model->count()
-					)
-			);
+		$data = array(
+				'data' => array(
+						'items' => $this->_model->getListLimit($this->_limit, $this->_start),
+						'totalCount' => $this->_model->count()
+				)
+		);
 		} else {
 			$name = (isset($this->_posts['name'])) ? $this->_posts['name'] : '';
 			if(!empty($name) && $name != '') {
 				$list = $this->_model->getListByKey('PEER_NAME', $this->_posts['name']);
 			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start, 'PEER_NAME ASC');
+				$list = $this->_model->getListLimit($this->_limit, $this->_start);
 			}
 			$data = array('data'=>array(
 					'items' => $list,

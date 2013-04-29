@@ -23,10 +23,11 @@ if(selected.length > 0) {
 						params: selected[0].data,
 						success: function(data) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
+							Ext.Msg.alert('Message','Deleted');
 							closeLoadingWindow();
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
-							var store = Ext.StoreManager.lookup('Shareholdings');
+							var store = Ext.StoreManager.lookup('InvestorStatuss');
 							store.load(1);
 						},
 						failure: function(data) {
