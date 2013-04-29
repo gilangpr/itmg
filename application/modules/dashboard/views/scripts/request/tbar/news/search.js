@@ -192,11 +192,11 @@ Ext.create('Ext.Window', {
 		listeners: {
 			click: function() {
 				var form = Ext.getCmp('news-search-form').getForm();
+				var _id = 'news-search-result-' + Math.random();
 				var rTitle = Ext.getCmp('news-title').getValue();
 				var rCategory = Ext.getCmp('news-category').getValue();
 				var rCompany = Ext.getCmp('news-company').getValue();
 				var rSource = Ext.getCmp('news-source').getValue();
-				var _id = 'news-search-result-' + Math.random();
 				
 				if(form.isValid()) {
 					if(typeof(rTitle) === 'undefined') {
@@ -211,7 +211,32 @@ Ext.create('Ext.Window', {
 					if(typeof(rSource) === 'undefined') {
 						rSource = '';
 					}
-					storeRR.load({
+					
+					var _storeRS = Ext.create("Ext.data.Store", {
+					    model: "News__",
+					    storeId: "News__",
+					    proxy: {
+					        "type": "ajax",
+					        "api": {
+					            "read": sd.baseUrl + '/news/request/read'
+					        },
+					        "actionMethods": {
+					            "read": "POST"
+					        },
+					        "reader": {
+					            "idProperty": "NEWS_ID",
+					            "type": "json",
+					            "root": "data.items",
+					            "totalProperty": "data.totalCount"
+					        }
+					    },
+					    sorter: {
+					        "property": "NEWS_ID",
+					        "direction": "ASC"
+					    }
+					});
+//					showLoadingWindow();
+					_storeRS.load({
 						params: {
 							search: 1,
 							title: rTitle,
@@ -229,10 +254,10 @@ Ext.create('Ext.Window', {
 									title: 'News Search Result',
 									closable: true,
 									id: _id,
+									store: _storeRS,
 									autoScroll: true,
 									xtype: 'gridpanel',
 									layout: 'border',
-									store: storeRR,
 									"columns": [{
 	                                    "text": "Title",
 	                                    "dataIndex": "TITLE",
@@ -242,7 +267,7 @@ Ext.create('Ext.Window', {
 	                                    "dataType": "string",
 	                                    "visible": false,
 	                                    "editor": {
-	                                        "allowBlank": false
+	                                    "allowBlank": false
 	                                    }
 	                                }, {
 	                                    "text": "Category",
@@ -314,7 +339,7 @@ Ext.create('Ext.Window', {
 	                                }
 	                            ],
 	                            bbar: new Ext.PagingToolbar({
-							        store: storeRR,
+							        store: _storeRS,
 							        displayInfo: true,
 							        displayMsg: 'Displaying data {0} - {1} of {2}',
 							        emptyMsg: 'No data to display',
@@ -336,8 +361,8 @@ Ext.create('Ext.Window', {
 										  forceSelection: true,
 										  listeners: {
 										  	select: function(combo, _records) {
-										  		_storePeers.pageSize = parseInt(_records[0].get('id'), 10);
-												_storePeers.loadPage(1);
+										  		store.pageSize = parseInt(_records[0].get('id'), 10);
+												store.loadPage(1);
 										  	}
 										  }
 										})
@@ -345,6 +370,7 @@ Ext.create('Ext.Window', {
 							    })
 								});
 								c.up().setActiveTab(_id);
+								closeLoadingWindow();
 							}
 						}
 					});

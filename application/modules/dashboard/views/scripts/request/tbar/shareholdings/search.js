@@ -1,6 +1,6 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSR = Ext.create('Ext.data.Store',{
-    storeId: 'Shareholdings__',
+    storeId: 'Shareholdings',
     model: 'Shareholding',
     proxy: {
         type: 'ajax',
@@ -133,8 +133,8 @@ Ext.create('Ext.Window', {
 						}]
 					});
 					var _xxstore = Ext.create("Ext.data.Store", {
-					    model: "Shareholding",
-					    storeId: "Shareholdings___",
+					    model: "Shareholding__",
+					    storeId: "Shareholdings__",
 					    proxy: {
 					        "type": "ajax",
 					        "api": {
@@ -185,7 +185,38 @@ Ext.create('Ext.Window', {
 							dataIndex: 'AMOUNT',
 							renderer: Ext.util.Format.numberRenderer('0.,/i'),
 							align: 'right'
-						}]
+						}
+					],
+					bbar: new Ext.PagingToolbar({
+				        store: _xxstore,
+				        displayInfo: true,
+				        displayMsg: 'Displaying data {0} - {1} of {2}',
+				        emptyMsg: 'No data to display',
+				        items: [
+				            '-',
+				            'Records per page',
+				            '-',
+				            new Ext.form.ComboBox({
+							  name : 'perpage',
+							  width: 50,
+							  store: new Ext.data.ArrayStore({fields:['id'],data:[['25'],['50'],['75'],['100']]}),
+							  mode : 'local',
+							  value: '25',
+							  listWidth     : 40,
+							  triggerAction : 'all',
+							  displayField  : 'id',
+							  valueField    : 'id',
+							  editable      : false,
+							  forceSelection: true,
+							  listeners: {
+							  	select: function(combo, _records) {
+							  		store.pageSize = parseInt(_records[0].get('id'), 10);
+							  		store.loadPage(1);
+							  	}
+							  }
+							})
+				        ]
+				    })
 					});
 					c.up().setActiveTab(_id);
 					form.up().close();
