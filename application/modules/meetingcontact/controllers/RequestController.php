@@ -175,8 +175,8 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				}
 				if(!isset($this->_data['data']['items'][$_j]['PART_ID'])) {
 					$this->_data['data']['items'][$_j]['NAME'] = $_d['NAME'];
-					$this->_data['data']['items'][$_j]['EMAIL'] = $_d['EMAIL'];
-					$this->_data['data']['items'][$_j]['POSITION'] = $_d['POSITION'];
+					$this->_data['data']['items'][$_j]['EMAIL'] = $_d['EMAIL_PARTICIPANT'];
+					$this->_data['data']['items'][$_j]['POSITION'] = $_d['POSITION_PARTICIPANT'];
 				}
 			}
 		}

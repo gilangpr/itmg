@@ -114,7 +114,10 @@ class Itmparticipant_RequestController extends Zend_Controller_Action
 					'NAME_PART' => $data['data']['NAME_PART'],
 					'POSITION_PART' => $data['data']['POSITION_PART'],
 					'EMAIL_PART'=>$data['data']['EMAIL_PART'],
-					'PHONE_PART1'=>$data['data']['PHONE_PART1']
+					'PHONE_PART1'=>$data['data']['PHONE_PART1'],
+					'PHONE_PART2'=>$data['data']['PHONE_PART2'],
+					'ADDRESS_PART'=>$data['data']['ADDRESS_PART'],
+					'INITIAL_PART'=>$data['data']['INITIAL_PART']
 			),$this->_model->getAdapter()->quoteInto('PARTICIPANT_ID = ?', $data['data']['PARTICIPANT_ID']));
 			
 		}catch(Exception $e) {

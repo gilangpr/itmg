@@ -42,14 +42,14 @@ Ext.create('Ext.Window', {
             },{
 		        xtype: 'radiofield',
 				name: 'SEX_PART',
-				value: 'Male',
+				inputValue: 'Male',
 				fieldLabel: 'Sex',
 				checked: true,
 				boxLabel: 'Male'
             },{
 				xtype: 'radiofield',
 				name: 'SEX_PART',
-				value: 'Female',
+				inputValue: 'Female',
 				fieldLabel: '',
 				labelSeparator: '',
 				hideEmptyLabel: false,
