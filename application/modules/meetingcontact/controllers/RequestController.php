@@ -155,6 +155,8 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				$this->_data['data']['items'][$_i]['NAME'] = '';
 			}
 			if(!isset($this->_data['data']['items'][$_i]['CONTACT_ID'])) {
+				$this->_data['data']['items'][$_i]['CONTACT_ID'] = $d['CONTACT_ID'];
+				$this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'] = $d['MEETING_ACTIVITIE_ID'];
 				$this->_data['data']['items'][$_i]['NAME'] = $d['NAME'];
 				$this->_data['data']['items'][$_i]['EMAIL'] = $d['EMAIL'];
 				$this->_data['data']['items'][$_i]['POSITION'] = $d['POSITION'];
@@ -174,6 +176,7 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 					$_temp2 = $_d['PART_ID'];
 				}
 				if(!isset($this->_data['data']['items'][$_j]['PART_ID'])) {
+					$this->_data['data']['items'][$_j]['PART_ID'] = $_d['PART_ID'];
 					$this->_data['data']['items'][$_j]['NAME'] = $_d['NAME'];
 					$this->_data['data']['items'][$_j]['EMAIL'] = $_d['EMAIL_PARTICIPANT'];
 					$this->_data['data']['items'][$_j]['POSITION'] = $_d['POSITION_PARTICIPANT'];
@@ -218,16 +221,20 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 		$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 		$co_id = (isset($this->_posts['CONTACT_ID'])) ? $this->_posts['CONTACT_ID'] : 0;
 		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
+		$part_id = (isset($this->_posts['PART_ID'])) ? $this->_posts['PART_ID'] : 0;
 		$data = array(
 				'data' => array()
 				);
 		$modelInvestors = new Application_Model_Investors();
+		$modelParticipant = new Application_Model_Participant();
 		try {
 			 //Delete
 			$where=array();
 			$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
 			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
 			$this->_model->delete($where);
+			$modelParticipant->delete(
+					$modelParticipant->getAdapter()->quoteInto('PART_ID = ?', $this->_posts['PART_ID']));
 			$modelInvestors->update(array(
  					'MODIFIED_DATE' => date('Y-m-d H:i:s')
  				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
