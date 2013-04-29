@@ -93,23 +93,9 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 			$this->_success = false;
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-<<<<<<< HEAD
+
 
 		}
-// 	public function readAction()
-// 	{
-// 		$data = array(
-// 				'data' => array(
-// 				'items' => $this->_model->getListLimit($this->_limit, $this->_start),
-// 						'totalCount' => $this->_model->count()
-// 				)
-// 		);
-// 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-
-// 	}
-=======
-	}
->>>>>>> 9d6b7eaf523833404a324bb965641cbcd3f7dbfd
 		
 	public function readAction()
 	{	
@@ -184,10 +170,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		$this->_data['data']['totalCount'] = $this->_model->count();
 		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
-<<<<<<< HEAD
 
-=======
->>>>>>> 9d6b7eaf523833404a324bb965641cbcd3f7dbfd
 	}
 
 	public function updateAction()
