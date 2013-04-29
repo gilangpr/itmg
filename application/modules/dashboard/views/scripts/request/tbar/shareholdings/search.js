@@ -1,6 +1,6 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeSR = Ext.create('Ext.data.Store',{
-    storeId: 'Shareholdings',
+    storeId: 'Shareholdings__',
     model: 'Shareholding',
     proxy: {
         type: 'ajax',
@@ -133,8 +133,8 @@ Ext.create('Ext.Window', {
 						}]
 					});
 					var _xxstore = Ext.create("Ext.data.Store", {
-					    model: "Shareholding__",
-					    storeId: "Shareholdings__",
+					    model: "Shareholding",
+					    storeId: "Shareholdings___",
 					    proxy: {
 					        "type": "ajax",
 					        "api": {

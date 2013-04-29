@@ -67,12 +67,24 @@ class Investortype_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		$data = array(
+		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+			if(isset($this->_posts['sort'])) {
+				$sort = Zend_Json::decode($this->_posts['sort']);
+				$q = $this->_model->select()
+				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
+				->limit($this->_limit, $this->_start);
+				$list = $q->query()->fetchAll();
+			} else {
+				$list = $this->_model->getListLimit($this->_limit, $this->_start);
+			}
+			$data = array(
 				'data' => array(
-						'items' => $this->_model->getListLimit($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
+					'items' => $list,
+					'totalCount' => $this->_model->count()
 				)
-		);
+			);
+		}
+		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
