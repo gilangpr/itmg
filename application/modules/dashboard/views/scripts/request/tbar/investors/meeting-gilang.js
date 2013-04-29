@@ -302,7 +302,7 @@ if(__selected.length > 0) {
                                                             CONTACT_ID: mmc.CONTACT_ID,
                                                             MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
                                                             INVESTOR_ID:meeting__id.INVESTOR_ID,
-                                                            PART_ID:mmc.PART_ID
+                                                            NAME:mmc.NAME
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
