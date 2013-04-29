@@ -81,7 +81,8 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 			$ma_id = $this->_posts['MEETING_ACTIVITIE_ID'];
 			if($maModel->isExistByKey('MEETING_ACTIVITIE_ID', $ma_id)) {
 	 			if(!empty($this->_posts['KEY_PERSON'])){
-	 				$con->insert(array(
+	 				if (!$con->isExistByKey('NAME',$this->_posts['NAME'])) {
+	 					$con->insert(array(
 	 					'INVESTOR_ID' => $this->_posts['INVESTOR_ID'],
 	 					'NAME' => $this->_posts['NAME'],
 	 					'PHONE_1' => $this->_posts['PHONE1_PARTICIPANT'],
@@ -92,11 +93,17 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 	 					'POSITION' => $this->_posts['POSITION_PARTICIPANT'],
 	 					'CREATED_DATE' => date('Y-m-d H:i:s')
 	 					));
-	 				$con_id = $con->getPkByKey('NAME', $this->_posts['NAME']);
-	 				$this->_model->insert(array(
-						'MEETING_ACTIVITIE_ID'=>$ma_id,
-						'CONTACT_ID'=> $con_id
+		 				$con_id = $con->getPkByKey('NAME', $this->_posts['NAME']);
+		 				$this->_model->insert(array(
+							'MEETING_ACTIVITIE_ID'=>$ma_id,
+							'CONTACT_ID'=> $con_id
 	 					));
+	 				}
+	 				else{
+	 					$this->_error_message = 'Data already exist';
+						$this->_success = false;
+	 				}
+	 				
 	 			}
 	 			else{
 	 				$participants->insert(array(

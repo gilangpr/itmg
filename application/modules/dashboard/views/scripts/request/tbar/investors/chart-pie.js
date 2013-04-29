@@ -33,7 +33,7 @@
                 field: 'TITLE',
                 orientation: 'horizontal',
                 fill: '#FFF',
-                font: '12px Arial',
+                font: '14px Arial',
                 renderer: function (label){
 		            // this will change the text displayed on the pie
 		            var cmp = Ext.getCmp('chartCmp'); // id of the chart
