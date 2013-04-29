@@ -63,19 +63,7 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
-	public function readAction()
-	{
-		$ma_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
-		$data = array(
-				'data' => array(
-				'items' => $this->_model->getListMeetingcontactLimit($this->_limit, $this->_start,$ma_id),
-						'totalCount' => $this->_model->count()
-				)
-		);
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-<<<<<<< HEAD
-=======
-	}
+	
 	public function readAction()
 	{
 		$name = $this->_model->getName($this->_posts['id']);
@@ -127,9 +115,6 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 // 				/print_r($_d);
 			}
 		}
->>>>>>> edb15dd748db5c2998278a6f50adef439ed28a82
-		
-
 	}
 	
 	public function updateAction()
@@ -175,11 +160,8 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 			$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
 			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
 			$this->_model->delete($where);
-<<<<<<< HEAD
-=======
 			$modelParticipant->delete(
 					$modelParticipant->getAdapter()->quoteInto('PART_ID = ?', $idPart));
->>>>>>> edb15dd748db5c2998278a6f50adef439ed28a82
 			$modelInvestors->update(array(
  					'MODIFIED_DATE' => date('Y-m-d H:i:s')
  				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));

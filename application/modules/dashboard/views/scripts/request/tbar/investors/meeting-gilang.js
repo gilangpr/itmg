@@ -150,8 +150,6 @@ if(__selected.length > 0) {
                 		}
                 	}
                 },{
-<<<<<<< HEAD
-=======
                     xtype: 'button',
                     text: 'Add New Participants',
                     iconCls: 'icon-go',
@@ -271,7 +269,6 @@ if(__selected.length > 0) {
                         }
                     }
                 },{
->>>>>>> edb15dd748db5c2998278a6f50adef439ed28a82
                 	xtype:'button',
                 	text:'Delete Meeting Contacts',
                 	iconCls:'icon-stop',
@@ -304,12 +301,11 @@ if(__selected.length > 0) {
                                                         params: {
                                                             CONTACT_ID: mmc.CONTACT_ID,
                                                             MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
-<<<<<<< HEAD
-                                                            INVESTOR_ID:meeting__id.INVESTOR_ID
-=======
+
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID,
+
                                                             INVESTOR_ID:meeting__id.INVESTOR_ID,
                                                             NAME:mmc.NAME
->>>>>>> edb15dd748db5c2998278a6f50adef439ed28a82
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -363,13 +359,8 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },{
-<<<<<<< HEAD
-            	title:'ITM Participants',
             },
             {
-=======
->>>>>>> 9d6b7eaf523833404a324bb965641cbcd3f7dbfd
             	title:'Meeting Participants',
             	border:false,
             	region:'north',
