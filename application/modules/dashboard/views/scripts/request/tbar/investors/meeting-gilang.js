@@ -201,14 +201,14 @@ if(__selected.length > 0) {
                                         },{
                                             xtype: 'radiofield',
                                             name: 'SEX',
-                                            value: 'Male',
+                                            inputValue: 'Male',
                                             fieldLabel: 'Sex',
                                             boxLabel: 'Male',
                                             checked: true
                                         },{
                                             xtype: 'radiofield',
                                             name: 'SEX',
-                                            value: 'Female',
+                                            inputValue: 'Female',
                                             fieldLabel: '',
                                             labelSeparator: '',
                                             hideEmptyLabel: false,
