@@ -73,6 +73,61 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				)
 		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+<<<<<<< HEAD
+=======
+	}
+	public function readAction()
+	{
+		$name = $this->_model->getName($this->_posts['id']);
+		$modPart = new Application_Model_Participant();
+		$namePart = $modPart->getName($this->_posts['id']);
+		$_i = 0;
+		$_temp = '';
+		foreach ($name as $k=>$d) {
+			//print_r($d);
+			if($_temp == '') {
+				$_temp = $d['CONTACT_ID'];
+				$this->_data['data']['items'][$_i]['NAME'] = '';
+			}
+			if($_temp != $d['CONTACT_ID']) {
+				$_i++;
+				$_temp = $d['CONTACT_ID'];
+				$this->_data['data']['items'][$_i]['NAME'] = '';
+			}
+			if(!isset($this->_data['data']['items'][$_i]['CONTACT_ID'])) {
+				$this->_data['data']['items'][$_i]['CONTACT_ID'] = $d['CONTACT_ID'];
+				$this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'] = $d['MEETING_ACTIVITIE_ID'];
+				$this->_data['data']['items'][$_i]['NAME'] = $d['NAME'];
+				$this->_data['data']['items'][$_i]['EMAIL'] = $d['EMAIL'];
+				$this->_data['data']['items'][$_i]['POSITION'] = $d['POSITION'];
+				$this->_data['data']['items'][$_i]['COMPANY_NAME'] = $d['COMPANY_NAME']; 	
+								
+			}
+// 			print_r($_i);
+			//print_r(count($_i));
+			//$_j=$_i+2;
+			$_j = $_i+1;
+			$_temp2 = '';
+			foreach ($namePart as $_k=>$_d) {
+				if($_temp2 == '') {
+					$_temp2 = $_d['PART_ID'];
+				}
+				if($_temp2 != $_d['PART_ID']) {
+					$_j++;
+					$_temp2 = $_d['PART_ID'];
+					//$this->_data['data']['items'][$_j]['PART_ID'] = $_temp2;
+				}
+				if(!isset($this->_data['data']['items'][$_j]['PART_ID'])) {
+					//$this->_data['data']['items'][$_j]['PART_ID'] = $_d['PART_ID'];
+					$this->_data['data']['items'][$_j]['NAME'] = $_d['NAME'];
+					$this->_data['data']['items'][$_j]['EMAIL'] = $_d['EMAIL_PARTICIPANT'];
+					$this->_data['data']['items'][$_j]['POSITION'] = $_d['POSITION_PARTICIPANT'];
+				}
+// 				print_r($_temp2);
+// 				/print_r($_d);
+			}
+		}
+>>>>>>> edb15dd748db5c2998278a6f50adef439ed28a82
 		
 
 	}
@@ -114,11 +169,17 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				);
 		$modelInvestors = new Application_Model_Investors();
 		try {
+			$idPart = $modelParticipant->getPkByKey('NAME', $this->_posts['NAME']);
 			 //Delete
 			$where=array();
 			$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
 			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
 			$this->_model->delete($where);
+<<<<<<< HEAD
+=======
+			$modelParticipant->delete(
+					$modelParticipant->getAdapter()->quoteInto('PART_ID = ?', $idPart));
+>>>>>>> edb15dd748db5c2998278a6f50adef439ed28a82
 			$modelInvestors->update(array(
  					'MODIFIED_DATE' => date('Y-m-d H:i:s')
  				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
