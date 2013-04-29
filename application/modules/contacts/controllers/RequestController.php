@@ -38,8 +38,7 @@ class Contacts_RequestController extends Zend_Controller_Action
 			// Insert Data :
 			$investor_id = $this->_getParam('id',0);
 			if($modelInvestors->isExistByKey('INVESTOR_ID', $investor_id)) {
-				if (!$this->_model->isExistByKey('NAME',$this->_posts['NAME'])) {
-					$this->_model->insert(array(
+ 			$this->_model->insert(array(
 					'INVESTOR_ID'=>$investor_id,
 					'NAME'=>$this->_posts['NAME'],
 					'PHONE_1'=>$this->_posts['PHONE_1'],
@@ -50,15 +49,9 @@ class Contacts_RequestController extends Zend_Controller_Action
 					'POSITION'=>$this->_posts['POSITION'],
  					'CREATED_DATE' => date('Y-m-d H:i:s')
  					));
-	 				$modelInvestors->update(array(
-	 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
-	 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $investor_id));
-				}else{
-					//$this->_error_code = 201;
-					$this->_error_message = 'Sorry,Data already exist';
-					$this->_success = false;
-				}
- 				
+ 			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $investor_id));
 			}
 			else {
 				$this->_error_code = 404;

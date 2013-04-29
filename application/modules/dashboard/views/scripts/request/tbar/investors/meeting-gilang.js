@@ -201,14 +201,14 @@ if(__selected.length > 0) {
                                         },{
                                             xtype: 'radiofield',
                                             name: 'SEX',
-                                            value: 'Male',
+                                            inputValue: 'Male',
                                             fieldLabel: 'Sex',
                                             boxLabel: 'Male',
                                             checked: true
                                         },{
                                             xtype: 'radiofield',
                                             name: 'SEX',
-                                            value: 'Female',
+                                            inputValue: 'Female',
                                             fieldLabel: '',
                                             labelSeparator: '',
                                             hideEmptyLabel: false,
@@ -301,8 +301,11 @@ if(__selected.length > 0) {
                                                         params: {
                                                             CONTACT_ID: mmc.CONTACT_ID,
                                                             MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
+
                                                             INVESTOR_ID:meeting__id.INVESTOR_ID,
-                                                            PART_ID:mmc.PART_ID
+
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID,
+                                                            NAME:mmc.NAME
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -356,8 +359,6 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },{
-            	title:'ITM Participants',
             },
             {
             	title:'Meeting Participants',

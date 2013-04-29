@@ -160,9 +160,10 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				$this->_data['data']['items'][$_i]['NAME'] = $d['NAME'];
 				$this->_data['data']['items'][$_i]['EMAIL'] = $d['EMAIL'];
 				$this->_data['data']['items'][$_i]['POSITION'] = $d['POSITION'];
-				$this->_data['data']['items'][$_i]['COMPANY_NAME'] = $d['COMPANY_NAME']; 					
+				$this->_data['data']['items'][$_i]['COMPANY_NAME'] = $d['COMPANY_NAME']; 	
+								
 			}
-			
+// 			print_r($_i);
 			//print_r(count($_i));
 			//$_j=$_i+2;
 			$_j = $_i+1;
@@ -174,13 +175,16 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				if($_temp2 != $_d['PART_ID']) {
 					$_j++;
 					$_temp2 = $_d['PART_ID'];
+					//$this->_data['data']['items'][$_j]['PART_ID'] = $_temp2;
 				}
 				if(!isset($this->_data['data']['items'][$_j]['PART_ID'])) {
-					$this->_data['data']['items'][$_j]['PART_ID'] = $_d['PART_ID'];
+					//$this->_data['data']['items'][$_j]['PART_ID'] = $_d['PART_ID'];
 					$this->_data['data']['items'][$_j]['NAME'] = $_d['NAME'];
-					$this->_data['data']['items'][$_j]['EMAIL'] = $_d['EMAIL'];
-					$this->_data['data']['items'][$_j]['POSITION'] = $_d['POSITION'];
+					$this->_data['data']['items'][$_j]['EMAIL'] = $_d['EMAIL_PARTICIPANT'];
+					$this->_data['data']['items'][$_j]['POSITION'] = $_d['POSITION_PARTICIPANT'];
 				}
+// 				print_r($_temp2);
+// 				/print_r($_d);
 			}
 		}
 		
@@ -221,23 +225,31 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 		$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 		$co_id = (isset($this->_posts['CONTACT_ID'])) ? $this->_posts['CONTACT_ID'] : 0;
 		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
-		$part_id = (isset($this->_posts['PART_ID'])) ? $this->_posts['PART_ID'] : 0;
+		//$part_id = (isset($this->_posts['NAME'])) ? $this->_posts['NAME'] : 0;
 		$data = array(
 				'data' => array()
 				);
 		$modelInvestors = new Application_Model_Investors();
 		$modelParticipant = new Application_Model_Participant();
 		try {
-			 //Delete
-			$where=array();
-			$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
-			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
-			$this->_model->delete($where);
-			$modelParticipant->delete(
-					$modelParticipant->getAdapter()->quoteInto('PART_ID = ?', $this->_posts['PART_ID']));
-			$modelInvestors->update(array(
+			if ($modelParticipant->isExistByKey('NAME', $this->_posts['NAME'])) {
+				$idPart = $modelParticipant->getPkByKey('NAME', $this->_posts['NAME']);
+				$modelParticipant->delete(
+					$modelParticipant->getAdapter()->quoteInto('PART_ID = ?', $idPart));
+				
+				$modelInvestors->update(array(
  					'MODIFIED_DATE' => date('Y-m-d H:i:s')
- 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
+	 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
+			} else {
+				$where=array();
+				$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
+				$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
+				$this->_model->delete($where);			
+				
+				$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+	 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
+			}
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();

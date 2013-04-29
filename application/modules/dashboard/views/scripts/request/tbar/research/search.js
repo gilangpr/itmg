@@ -1,28 +1,3 @@
-Date.prototype.customFormat = function(formatString){
-    var YYYY,YY,MMMM,MMM,MM,M,DDDD,DDD,DD,D,hhh,hh,h,mm,m,ss,s,ampm,AMPM,dMod,th;
-    var dateObject = this;
-    YY = ((YYYY=dateObject.getFullYear())+"").slice(-2);
-    MM = (M=dateObject.getMonth()+1)<10?('0'+M):M;
-    MMM = (MMMM=["January","February","March","April","May","June","July","August","September","October","November","December"][M-1]).substring(0,3);
-    DD = (D=dateObject.getDate())<10?('0'+D):D;
-    DDD = (DDDD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dateObject.getDay()]).substring(0,3);
-    th=(D>=10&&D<=20)?'th':((dMod=D%10)==1)?'st':(dMod==2)?'nd':(dMod==3)?'rd':'th';
-    formatString = formatString.replace("#YYYY#",YYYY).replace("#YY#",YY).replace("#MMMM#",MMMM).replace("#MMM#",MMM).replace("#MM#",MM).replace("#M#",M).replace("#DDDD#",DDDD).replace("#DDD#",DDD).replace("#DD#",DD).replace("#D#",D).replace("#th#",th);
-
-    h=(hhh=dateObject.getHours());
-    if (h==0) h=24;
-    if (h>12) h-=12;
-    hh = h<10?('0'+h):h;
-    AMPM=(ampm=hhh<12?'am':'pm').toUpperCase();
-    mm=(m=dateObject.getMinutes())<10?('0'+m):m;
-    ss=(s=dateObject.getSeconds())<10?('0'+s):s;
-    return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
-}
-
-var SP_START_DATE = '1900-01-01';
-var SP_END_DATE = '2013-12-12';
-var SP_NAMES = new Array();
-
 var storeRR = loadStore('ResearchReports');
 var storeRRC = loadStore('ResearchReportCategorys');
 var storeNC = loadStore('Companys');
@@ -40,6 +15,7 @@ storeRRC.load({
 	}
 });
 
+<<<<<<< HEAD
 Ext.apply(Ext.form.field.VTypes, {
 	daterange: function(val, field) {
 		var date = field.parseDate(val);
@@ -68,6 +44,13 @@ Ext.apply(Ext.form.field.VTypes, {
 	daterangeText: 'Start Date must be less than End Date',
 });
 
+=======
+storeRC.load({
+	params: {
+		all : 1
+	}
+});
+>>>>>>> efc77ea2ba086abca498b9ffd1fe46d1d7546e2c
 Ext.create('Ext.Window', {
 	title: 'Search News',
 	width: 500,
@@ -102,6 +85,7 @@ Ext.create('Ext.Window', {
 			displayField: 'RESEARCH_REPORT_CATEGORY',
 			typeAhead: true,
 			allowBlank: true,
+<<<<<<< HEAD
 			minChars: 3,
 			emptyText: 'Select Category'
 		},{
@@ -153,6 +137,19 @@ Ext.create('Ext.Window', {
             emptyText: 'End Date',
 			labelWidth: 140,
 			width: 320,
+=======
+			minChars: 2,
+			emptyText: 'All Category'
+		},{
+			xtype: 'combobox',
+			name: 'COMPANY',
+			store: storeRC,
+			displayField: 'COMPANY',
+			typeAhead: false,
+			editable: false,
+			emptyText: 'Select Company',
+			fieldLabel: 'Company',
+>>>>>>> efc77ea2ba086abca498b9ffd1fe46d1d7546e2c
 			allowBlank: false
 		}]
 	}],
