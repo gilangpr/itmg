@@ -26,7 +26,7 @@ var SP_NAMES = new Array();
 var storeRR = loadStore('Newss');
 var storeRRC = loadStore('NewsCategorys');
 var storeNC = loadStore('Companys');
-
+var c = Ext.getCmp('<?php echo $this->container ?>');
 var storeRR_curpage = storeRR.currentPage;
 storeRR.load({
 	params: {
@@ -150,6 +150,7 @@ Ext.create('Ext.Window', {
 		},{
 			xtype: 'combobox',
 			name: 'SOURCE',
+			id: 'news-source',
 			store: storeRR,
 			displayField: 'SOURCE',
 			typeAhead: true,
@@ -194,6 +195,8 @@ Ext.create('Ext.Window', {
 				var rTitle = Ext.getCmp('news-title').getValue();
 				var rCategory = Ext.getCmp('news-category').getValue();
 				var rCompany = Ext.getCmp('news-company').getValue();
+				var rSource = Ext.getCmp('news-source').getValue();
+				var _id = 'news-search-result-' + Math.random();
 				
 				if(form.isValid()) {
 					if(typeof(rTitle) === 'undefined') {
@@ -205,12 +208,16 @@ Ext.create('Ext.Window', {
 					if(typeof(rCompany) === 'undefined') {
 						rCategory = '';
 					}
+					if(typeof(rSource) === 'undefined') {
+						rSource = '';
+					}
 					storeRR.load({
 						params: {
 							search: 1,
 							title: rTitle,
 							category: rCategory,
-							company: rCompany
+							company: rCompany,
+							source: rSource
 						},
 						callback: function(d, i, e) {
 							Ext.getCmp('news-search-window').close();
@@ -218,6 +225,126 @@ Ext.create('Ext.Window', {
 								Ext.Msg.alert('Message', 'No data found.');
 							} else {
 								Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
+								c.up().add({
+									title: 'News Search Result',
+									closable: true,
+									id: _id,
+									autoScroll: true,
+									xtype: 'gridpanel',
+									layout: 'border',
+									store: storeRR,
+									"columns": [{
+	                                    "text": "Title",
+	                                    "dataIndex": "TITLE",
+	                                    "align": "left",
+	                                    "width": 100,
+	                                    "flex": 1,
+	                                    "dataType": "string",
+	                                    "visible": false,
+	                                    "editor": {
+	                                        "allowBlank": false
+	                                    }
+	                                }, {
+	                                    "text": "Category",
+	                                    "dataIndex": "NEWS_CATEGORY",
+	                                    "align": "center",
+	                                    "width": 130,
+	                                    "flex": 0,
+	                                    "dataType": "combobox",
+	                                    "visible": false
+	                                }, {
+	                                    "text": "Company",
+	                                    "dataIndex": "COMPANY_NAME",
+	                                    "align": "center",
+	                                    "width": 130,
+	                                    "flex": 0,
+	                                    "dataType": "combobox",
+	                                    "visible": false
+	                                }, {
+	                                    "text": "Source",
+	                                    "dataIndex": "SOURCE",
+	                                    "align": "center",
+	                                    "width": 130,
+	                                    "flex": 0,
+	                                    "dataType": "string",
+	                                    "visible": false,
+	                                    "editor": {
+	                                        "allowBlank": false
+	                                    }
+	                                }, {
+	                                    "text": "File Size ( Byte )",
+	                                    "dataIndex": "FILE_SIZE",
+	                                    "align": "center",
+	                                    "width": 130,
+	                                    "flex": 0,
+	                                    "dataType": "int",
+	                                    "visible": false
+	                                }, {
+	                                    "text": "Downloaded",
+	                                    "dataIndex": "TOTAL_HIT",
+	                                    "align": "center",
+	                                    "width": 100,
+	                                    "flex": 0,
+	                                    "dataType": "int",
+	                                    "visible": false
+	                                }, {
+	                                    "text": "File Type",
+	                                    "dataIndex": "FILE_TYPE",
+	                                    "align": "center",
+	                                    "width": 130,
+	                                    "flex": 0,
+	                                    "dataType": "string",
+	                                    "visible": false
+	                                }, {
+	                                    "text": "Created Date",
+	                                    "dataIndex": "CREATED_DATE",
+	                                    "align": "center",
+	                                    "width": 150,
+	                                    "flex": 0,
+	                                    "dataType": "string",
+	                                    "visible": false
+	                                }, {
+	                                    "text": "Last Modified",
+	                                    "dataIndex": "MODIFIED_DATE",
+	                                    "align": "center",
+	                                    "width": 130,
+	                                    "flex": 0,
+	                                    "dataType": "string",
+	                                    "visible": false
+	                                }
+	                            ],
+	                            bbar: new Ext.PagingToolbar({
+							        store: storeRR,
+							        displayInfo: true,
+							        displayMsg: 'Displaying data {0} - {1} of {2}',
+							        emptyMsg: 'No data to display',
+							        items: [
+							            '-',
+							            'Records per page',
+							            '-',
+							            new Ext.form.ComboBox({
+										  name : 'perpage',
+										  width: 50,
+										  store: new Ext.data.ArrayStore({fields:['id'],data:[['25'],['50'],['75'],['100']]}),
+										  mode : 'local',
+										  value: '25',
+										  listWidth     : 40,
+										  triggerAction : 'all',
+										  displayField  : 'id',
+										  valueField    : 'id',
+										  editable      : false,
+										  forceSelection: true,
+										  listeners: {
+										  	select: function(combo, _records) {
+										  		_storePeers.pageSize = parseInt(_records[0].get('id'), 10);
+												_storePeers.loadPage(1);
+										  	}
+										  }
+										})
+							        ]
+							    })
+								});
+								c.up().setActiveTab(_id);
 							}
 						}
 					});
