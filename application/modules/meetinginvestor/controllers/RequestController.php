@@ -64,101 +64,65 @@ class Meetinginvestor_RequestController extends Zend_Controller_Action
 	}
 	public function readAction()
 	{	
-		/*
 		$in_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
-		$data = array(
-				'data' => array(
-				'items' => $this->_model->getListMeetinginvestorLimit($this->_limit, $this->_start,$in_id),
-						'totalCount' => $this->_model->count()
-				)
-		);
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-		
-		$in_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
-		$list = $this->_model->getListMeetinginvestorLimit($this->_limit, $this->_start,$in_id);
-
-		$_temp = '';
-		$_temp2 = '';
-		$_i = 0;
-		foreach($list as $k=>$d) {
-			if($_temp == '') {
-				$_temp = $d['MEETING_EVENT'];
-				//$this->_data['data']['items'][$_i]['IDS'] = '';
-			}
-			if($_temp != $d['MEETING_EVENT']) {
-				$_i++;
-				$_temp = $d['MEETING_EVENT'];
-				//$this->_data['data']['items'][$_i]['IDS'] = '';
-			}
-			if(!isset($this->_data['data']['items'][$_i]['MEETING_EVENT'])) {
-				$this->_data['data']['items'][$_i]['MEETING_EVENT'] = $d['MEETING_EVENT'];
-				$this->_data['data']['items'][$_i]['MEETING_DATE'] = $d['MEETING_DATE'];
-				$this->_data['data']['items'][$_i]['NAME'] = $d['NAME'];
-				$this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'] = $d['MEETING_ACTIVITIE_ID'];
-				$this->_data['data']['items'][$_i]['INVESTOR_ID'] = $d['INVESTOR_ID'];
-			}
-			//$this->_data['data']['items'][$_i][$d['NAME']] = $d['NAME'];
-
-			// Set Ids :
-			if($this->_data['data']['items'][$_i]['NAME'] != $d['NAME']) {
-				$this->_data['data']['items'][$_i]['NAME'] .= ','.$d['NAME'].',';
-			}
-			//$this->_data['data']['items'][$_i]['IDS'] .= $d['NAME'] . '_' . $d['MEETING_ACTIVITIE_ID'];
-			//$this->_data['data']['items'][$_i]['NAME'] .= $d['NAME'].',';
-		}*/
-		$in_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
-		$full = $this->_model->getListMeetinginvestorLimit($this->_limit, $this->_start,$in_id,'MEETING_DATE ASC');
-
+		$full = $this->_model->getListMeetinginvestorLimit($this->_limit, $this->_start, $in_id, 'MEETING_DATE ASC');
 		$_temp = '';
 		$_temp2 = '';
 		$_i = 0;
 		foreach ($full as $k=>$d) {
-            if($_temp == '') {
-                $_temp = $d['MEETING_ACTIVITIE_ID'];
-                $this->_data['data']['items'][$_i]['NAME'] = '';
-                $this->_data['data']['items'][$_i]['INITIAL_PART'] = '';
-            }
-            if($_temp != $d['MEETING_ACTIVITIE_ID']) {
-                $_i++;
-                $_temp = $d['MEETING_ACTIVITIE_ID'];
-                $this->_data['data']['items'][$_i]['NAME'] = '';
-                $this->_data['data']['items'][$_i]['INITIAL_PART'] = '';
-            }
-            if(!isset($this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'])) {
-                //$originalDate = $d['MEETING_DATE'];
-                //$newDate = date("d-m-Y", strtotime($originalDate));
-                $this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'] = $d['MEETING_ACTIVITIE_ID'];
-                $this->_data['data']['items'][$_i]['MEETING_DATE'] = $d['MEETING_DATE'];
-                $this->_data['data']['items'][$_i]['MEETING_EVENT'] = $d['MEETING_EVENT'];
-                $this->_data['data']['items'][$_i]['INVESTOR_ID'] = $d['INVESTOR_ID'];
-            }
-            $Meetingcontact = new Application_Model_Meetingcontact();
-            $In_Id = $d['INVESTOR_ID'];
-            $Meet_Id = $d['MEETING_ACTIVITIE_ID'];
-            $name = $Meetingcontact->getContactName($In_Id,$Meet_Id);
-            foreach ($name as $_k=>$_d) {
-                // Set Company Name :
-                if($this->_data['data']['items'][$_i]['NAME'] != '') {
-                    $this->_data['data']['items'][$_i]['NAME'] .= ', ';
-                }
-                $this->_data['data']['items'][$_i]['NAME'] .= $_d['NAME'];
-            }
-           
-            $meetingParticipant = new Application_Model_Meetingparticipant();
-            $initialPart = $meetingParticipant->getInitial($Meet_Id);
-            foreach ($initialPart as $_x=>$_y) {
-                // Set Company Name :
-                if($this->_data['data']['items'][$_i]['INITIAL_PART'] != '') {
-                    $this->_data['data']['items'][$_i]['INITIAL_PART'] .= ', ';
-                }
-                $this->_data['data']['items'][$_i]['INITIAL_PART'] .= $_y['INITIAL_PART'];
-            }
-            
-           
-        }
-		$this->_data['data']['totalCount'] = $this->_model->count();
+			if($_temp == '') {
+				$_temp = $d['MEETING_ACTIVITIE_ID'];
+				$this->_data['data']['items'][$_i]['NAME'] = '';
+				$this->_data['data']['items'][$_i]['INITIAL_PART'] = '';
+			}
+			if($_temp != $d['MEETING_ACTIVITIE_ID']) {
+				$_i++;
+				$_temp = $d['MEETING_ACTIVITIE_ID'];
+				$this->_data['data']['items'][$_i]['NAME'] = '';
+				$this->_data['data']['items'][$_i]['INITIAL_PART'] = '';
+			}
+			if(!isset($this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'])) {
+				//$originalDate = $d['MEETING_DATE'];
+				//$newDate = date("d-m-Y", strtotime($originalDate));
+				$this->_data['data']['items'][$_i]['MEETING_ACTIVITIE_ID'] = $d['MEETING_ACTIVITIE_ID'];
+				$this->_data['data']['items'][$_i]['MEETING_DATE'] = $d['MEETING_DATE'];
+				$this->_data['data']['items'][$_i]['MEETING_EVENT'] = $d['MEETING_EVENT'];
+				$this->_data['data']['items'][$_i]['INVESTOR_ID'] = $d['INVESTOR_ID'];
+			}
+			$Meetingcontact = new Application_Model_Meetingcontact();
+			$In_Id = $d['INVESTOR_ID'];
+			$Meet_Id = $d['MEETING_ACTIVITIE_ID'];
+			$name = $Meetingcontact->getContactName($In_Id, $Meet_Id);
+			foreach ($name as $_k=>$_d) {
+				// Set Company Name :
+				if($this->_data['data']['items'][$_i]['NAME'] != '') {
+					$this->_data['data']['items'][$_i]['NAME'] .= ', ';
+				}
+				$this->_data['data']['items'][$_i]['NAME'] .= $_d['NAME'];
+			}
+		
+			$participant = new Application_Model_Participant();
+			$partName = $participant->getName($Meet_Id);
+			//print_r($partName);
+			foreach ($partName as $n=>$m) {
+				if ($this->_data['data']['items'][$_i]['NAME'] != '') {
+					$this->_data['data']['items'][$_i]['NAME'] .= ', ';
+				}
+				$this->_data['data']['items'][$_i]['NAME'] .= $m['NAME'];
+			}
+		
+			$meetingParticipant = new Application_Model_Meetingparticipant();
+			$initialPart = $meetingParticipant->getInitial($Meet_Id);
+			foreach ($initialPart as $_x=>$_y) {
+				// Set Company Name :
+				if($this->_data['data']['items'][$_i]['INITIAL_PART'] != '') {
+					$this->_data['data']['items'][$_i]['INITIAL_PART'] .= ', ';
+				}
+				$this->_data['data']['items'][$_i]['INITIAL_PART'] .= $_y['INITIAL_PART'];
+			}			 
+		}
+		$this->_data['data']['totalCount'] = count($full);
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
-
 	}
 	
 	public function updateAction()

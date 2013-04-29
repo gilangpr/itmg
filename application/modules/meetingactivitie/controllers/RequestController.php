@@ -93,7 +93,9 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 			$this->_success = false;
 		}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-	}
+
+
+		}
 		
 	public function readAction()
 	{	
@@ -168,6 +170,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		$this->_data['data']['totalCount'] = $this->_model->count();
 		
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+
 	}
 
 	public function updateAction()

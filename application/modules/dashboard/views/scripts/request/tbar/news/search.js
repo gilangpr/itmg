@@ -137,13 +137,14 @@ Ext.create('Ext.Window', {
 			emptyText: 'Select Category'
 		},{
 			xtype: 'combobox',
+			fieldLabel: 'Company',
 			name: 'COMPANY_NAME',
+			id: 'news-company',
 			store: storeNC,
 			displayField: 'COMPANY_NAME',
 			typeAhead: true,
 			editable: true,
 			emptyText: 'Select Company',
-			fieldLabel: 'Company',
 			minChars: 3,
 			allowBlank: true
 		},{
@@ -192,6 +193,7 @@ Ext.create('Ext.Window', {
 				var form = Ext.getCmp('news-search-form').getForm();
 				var rTitle = Ext.getCmp('news-title').getValue();
 				var rCategory = Ext.getCmp('news-category').getValue();
+				var rCompany = Ext.getCmp('news-company').getValue();
 				
 				if(form.isValid()) {
 					if(typeof(rTitle) === 'undefined') {
@@ -200,11 +202,15 @@ Ext.create('Ext.Window', {
 					if(typeof(rCategory) === 'undefined') {
 						rCategory = '';
 					}
+					if(typeof(rCompany) === 'undefined') {
+						rCategory = '';
+					}
 					storeRR.load({
 						params: {
 							search: 1,
 							title: rTitle,
-							category: rCategory
+							category: rCategory,
+							company: rCompany
 						},
 						callback: function(d, i, e) {
 							Ext.getCmp('news-search-window').close();

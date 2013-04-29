@@ -13,7 +13,15 @@ class Groups_RequestController extends MyIndo_Controller_Action
 	{
 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
 			$gmModel = new Application_Model_GroupMembers();
-			$list = $this->_model->getListLimit($this->_limit, $this->_start, 'GROUP_ID ASC');
+			if(isset($this->_posts['sort'])) {
+				$sort = Zend_Json::decode($this->_posts['sort']);
+				$q = $this->_model->select()
+				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
+				->limit($this->_limit, $this->_start);
+				$list = $q->query()->fetchAll();
+			} else {
+				$list = $this->_model->getListLimit($this->_limit, $this->_start);
+			}
 			
 			foreach($list as $k=>$d) {
 				$list[$k]['TOTAL_MEMBER'] = $gmModel->countWhere('GROUP_ID','GROUP_ID', $d['GROUP_ID']);
