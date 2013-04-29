@@ -40,37 +40,6 @@ storeRRC.load({
 	}
 });
 
-//var storeNT = Ext.create('Ext.data.Store',{
-//    storeId: 'NewssTitle',
-//    model: 'News',
-//    proxy: {
-//        type: 'ajax',
-//        api: {
-//            read: '/news/request/autocom'
-//        },
-//        actionMethods: {
-//            create: 'POST'
-//        },
-//        reader: {
-//            idProperty: 'TITLE',
-//            type: 'json',
-//            root: 'data.items',
-//            totalProperty: 'data.totalCount'
-//        },
-//        writer: {
-//            type: 'json',
-//            root: 'data',
-//            writeAllFields: true
-//        }
-//    },
-//    sorter: {
-//        property: 'NEWS_ID',
-//        direction: 'ASC'
-//    },
-//    autoSync: true
-//});
-
-//Add the additional 'advanced' VTypes
 Ext.apply(Ext.form.field.VTypes, {
 	daterange: function(val, field) {
 		var date = field.parseDate(val);
