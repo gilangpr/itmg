@@ -225,24 +225,31 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 		$in_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
 		$co_id = (isset($this->_posts['CONTACT_ID'])) ? $this->_posts['CONTACT_ID'] : 0;
 		$ma_id = (isset($this->_posts['MEETING_ACTIVITIE_ID'])) ? $this->_posts['MEETING_ACTIVITIE_ID'] : 0;
-		$part_id = (isset($this->_posts['PART_ID'])) ? $this->_posts['PART_ID'] : 0;
+		//$part_id = (isset($this->_posts['NAME'])) ? $this->_posts['NAME'] : 0;
 		$data = array(
 				'data' => array()
 				);
 		$modelInvestors = new Application_Model_Investors();
 		$modelParticipant = new Application_Model_Participant();
 		try {
-			$idPart = $modelParticipant->getPkByKey('NAME', $this->_posts['NAME']);
-			 //Delete
-			$where=array();
-			$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
-			$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
-			$this->_model->delete($where);
-			$modelParticipant->delete(
+			if ($modelParticipant->isExistByKey('NAME', $this->_posts['NAME'])) {
+				$idPart = $modelParticipant->getPkByKey('NAME', $this->_posts['NAME']);
+				$modelParticipant->delete(
 					$modelParticipant->getAdapter()->quoteInto('PART_ID = ?', $idPart));
-			$modelInvestors->update(array(
+				
+				$modelInvestors->update(array(
  					'MODIFIED_DATE' => date('Y-m-d H:i:s')
- 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
+	 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
+			} else {
+				$where=array();
+				$where[]= $this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $co_id);
+				$where[]= $this->_model->getAdapter()->quoteInto('MEETING_ACTIVITIE_ID = ?', $ma_id);
+				$this->_model->delete($where);			
+				
+				$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+	 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $in_id));
+			}
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
 			$this->_error_message = $e->getMessage();
