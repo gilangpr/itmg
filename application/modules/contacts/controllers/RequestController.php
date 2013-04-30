@@ -9,6 +9,7 @@ class Contacts_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
+	protected $_data;
 	
 	public function init()
 	{
@@ -27,6 +28,13 @@ class Contacts_RequestController extends Zend_Controller_Action
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
+
+		$this->_data = array(
+			'data' => array(
+				'items' => array(),
+				'totalCount' => 0
+				)
+			);
 	}
 	public function createAction()
 	{

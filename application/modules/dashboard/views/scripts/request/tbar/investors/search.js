@@ -58,7 +58,11 @@ Ext.create('Ext.Window', {
 					
 					/* End of : Form 2 */
 					
-					var _store = Ext.data.StoreManager.lookup('Investors');
+					var _store = Ext.create("Ext.data.Store", {
+						model: "Investor",
+						storeId: "Investors." + Math.random(),
+						proxy:{"type":"ajax","api":{"read":"\/investors\/request\/read","create":"\/investors\/request\/create","update":"\/investors\/request\/update","destroy":"\/investors\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"INVESTOR_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+						sorter: {"property":"INVESTOR_ID","direction":"ASC"}});
 					
 					_store.load({
 						params: {
@@ -1200,6 +1204,8 @@ Ext.create('Ext.Window', {
 									var p = Ext.getCmp(_id + '-panel');
 									c.up().setActiveTab(_id);
 									p.setTitle(_data[_idx].data.COMPANY_NAME);
+								} else {
+
 								}
 							} else {
 								Ext.Msg.alert('Message', 'Sorry, No data found.');
