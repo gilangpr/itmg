@@ -175,7 +175,6 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 				if($_temp2 != $_d['PART_ID']) {
 					$_j++;
 					$_temp2 = $_d['PART_ID'];
-					//$this->_data['data']['items'][$_j]['PART_ID'] = $_temp2;
 				}
 				if(!isset($this->_data['data']['items'][$_j]['PART_ID'])) {
 					//$this->_data['data']['items'][$_j]['PART_ID'] = $_d['PART_ID'];
