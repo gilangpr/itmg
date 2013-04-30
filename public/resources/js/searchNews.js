@@ -66,7 +66,7 @@ function showNewsSearch() {
 					this.up().up().close();
 					storeRR.load({
 						params: {
-							search: 1,
+							search: 2,
 							title: rTitle,
 							category: rCategory
 						},
@@ -123,13 +123,24 @@ function showNewsSearch() {
 											store: storeRR,
 											columns: [{
 												text: 'Title',
+												width: 200,
 												flex: 1,
 												dataIndex: 'TITLE'
 											},{
 												text: 'Category',
-												width: 200,
+												width: 100,
 												align: 'center',
 												dataIndex: 'NEWS_CATEGORY'
+											},{
+												text: 'Company',
+												width: 100,
+												align: 'left',
+												dataIndex: 'COMPANY_NAME'
+											},{
+												text: 'Source',
+												width: 100,
+												align: 'left',
+												dataIndex: 'SOURCE'
 											},{
 												text: 'File Size (Byte)',
 												width: 150,
