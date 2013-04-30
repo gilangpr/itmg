@@ -13,16 +13,7 @@ class Users_RequestController extends MyIndo_Controller_Action
 			if(isset($this->_posts['all']) && $this->_posts['all'] == 1) {
 				$this->_list = $this->_model->getListLimit($this->_model->count(), $this->_start, 'USERNAME ASC');
 			} else {
-				if(isset($this->_posts['sort'])) {
-					$sort = Zend_Json::decode($this->_posts['sort']);
-					$q = $this->_model->select()
-					->order($sort[0]['property'] . ' '. $sort[0]['direction'])
-					->limit($this->_limit, $this->_start);
-					$list = $q->query()->fetchAll();
-				} else {
-					$list = $this->_model->getListLimit($this->_limit, $this->_start);
-				}
-				$this->_list = $list;
+				$this->_list = $this->_model->getListLimit($this->_limit, $this->_start, 'USERNAME ASC');
 			}
 			
 			//foreach($this->_list as $k=>$d) {

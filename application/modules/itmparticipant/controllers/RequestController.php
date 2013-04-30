@@ -32,24 +32,12 @@ class Itmparticipant_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
-			if(isset($this->_posts['sort'])) {
-				$sort = Zend_Json::decode($this->_posts['sort']);
-				$q = $this->_model->select()
-				->order($sort[0]['property'] . ' '. $sort[0]['direction'])
-				->limit($this->_limit, $this->_start);
-				$list = $q->query()->fetchAll();
-			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start);
-			}
-			$data = array(
+		$data = array(
 				'data' => array(
-					'items' => $list,
-					'totalCount' => $this->_model->count()
+						'items' => $this->_model->getListLimit($this->_limit, $this->_start),
+						'totalCount' => $this->_model->count()
 				)
-			);
-		}
-		
+		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
@@ -114,7 +102,10 @@ class Itmparticipant_RequestController extends Zend_Controller_Action
 					'NAME_PART' => $data['data']['NAME_PART'],
 					'POSITION_PART' => $data['data']['POSITION_PART'],
 					'EMAIL_PART'=>$data['data']['EMAIL_PART'],
-					'PHONE_PART1'=>$data['data']['PHONE_PART1']
+					'PHONE_PART1'=>$data['data']['PHONE_PART1'],
+					'PHONE_PART2'=>$data['data']['PHONE_PART2'],
+					'ADDRESS_PART'=>$data['data']['ADDRESS_PART'],
+					'INITIAL_PART'=>$data['data']['INITIAL_PART']
 			),$this->_model->getAdapter()->quoteInto('PARTICIPANT_ID = ?', $data['data']['PARTICIPANT_ID']));
 			
 		}catch(Exception $e) {

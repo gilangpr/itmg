@@ -61,6 +61,7 @@ class News_RequestController extends Zend_Controller_Action
 	
 				foreach($list as $k=>$d) {
 					$list[$k]['NEWS_CATEGORY'] = $ncatModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
+					
 					$list[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
 				}
 	
@@ -93,11 +94,13 @@ class News_RequestController extends Zend_Controller_Action
 						$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID LIKE ?', '%' . $this->_posts['category'] . '%');
 					}
 					/* Category*/
-					
+
 					/* Company */
 					if (isset($this->_posts['company'])) {
+						
 						if ($ncomModel->isExistByKey('COMPANY_NAME', $this->_posts['company'])) {
 							$comID = $ncomModel->getPkByKey('COMPANY_NAME', $this->_posts['company']);
+							//print_r($comID);	
 							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID = ?', $comID);
 						} else {
 							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%%');
@@ -118,14 +121,18 @@ class News_RequestController extends Zend_Controller_Action
 					$query = $this->_model->select()
 					->where($where[0])
 					->where($where[1])
+					->where($where[2])
+					->where($where[3])
 					->limit($this->_model->count(), $this->_start);
-						
+
+					//print_r($where[3]);
 					$list = $query->query()->fetchAll();
 					
 					foreach($list as $k=>$d) {
-						
 						$list[$k]['NEWS_CATEGORY'] = $ncatModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
-						$lisk[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
+						//$lisk[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
+						$comName = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
+						$list[$k]['COMPANY_NAME'] = $comName;
 					}
 
 				} else {

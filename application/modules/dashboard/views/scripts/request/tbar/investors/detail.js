@@ -1,7 +1,7 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var selected = c.getSelectionModel().getSelection();
 if(selected.length > 0) {
-	var id = 'investors-detail-' + selected[0].data.INVESTOR_ID;
+	var id = 'investors-detail-' + selected[0].id;
 	var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToMoveEditor: 1,
 	        autoCancel: false
@@ -647,14 +647,14 @@ if(selected.length > 0) {
                                			},{
                                             xtype: 'radiofield',
 											name: 'SEX',
-											value: 'Male',
+											inputValue: 'Male',
 											fieldLabel: 'Sex',
 											boxLabel: 'Male',
-											checked: true
+											//checked: true
                                 		},{
 										 	xtype: 'radiofield',
 										 	name: 'SEX',
-										 	value: 'Female',
+										 	inputValue: 'Female',
 										 	fieldLabel: '',
 										 	labelSeparator: '',
 										 	hideEmptyLabel: false,
@@ -816,7 +816,7 @@ if(selected.length > 0) {
 						dataIndex:'INITIAL_PART'
 					}]
 				}],
-				tbar: [{
+				tbar: [/*{
 					xtype: 'button',
 					text: 'Add New Meeting Investors',
 					iconCls: 'icon-go',
@@ -899,7 +899,7 @@ if(selected.length > 0) {
                             }).show();
 						}
 					}
-				},{
+				},*/{
 					xtype: 'button',
 					text: 'Detail Meeting',
 					iconCls: 'icon-detail',
