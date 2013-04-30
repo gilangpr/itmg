@@ -1,6 +1,6 @@
 <?php 
 
-class Investortype_RequestController extends Zend_Controller_Action
+class Investortype_RequestController extends MyIndo_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -67,13 +67,49 @@ class Investortype_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		$data = array(
-				'data' => array(
-						'items' => $this->_model->getListLimit($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
-				)
-		);
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		if($this->isPost() && $this->isAjax()) {
+			if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
+				try {
+					if(isset($this->_posts['sort'])) {
+						// Decode sort JSON :
+						$sort = Zend_Json::decode($this->_posts['sort']);
+					}
+					// Query data
+					$q = $this->_model->select();
+					
+					if(isset($this->_posts['sort'])) {
+						$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
+					}
+					
+					if(isset($this->_posts['query'])) {
+						if(!empty($this->_posts['query']) && $this->_posts['query'] != '') {
+							$q->where('INVESTOR_TYPE LIKE ?', '%' . $this->_posts['query'] . '%');
+						}
+					}
+					
+					// Count all data
+					$rTotal = $q->query()->fetchAll();
+					$totalCount = count($rTotal);
+					
+					// Fetch sorted & limit data
+					$q->limit($this->_limit, $this->_start);
+					$result = $q->query()->fetchAll();
+					
+					$this->_data['data']['items'] = $result;
+					$this->_data['data']['totalCount'] = $totalCount;
+				} catch (Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->_data['data']['items'] = $this->_model->getListLimit($this->_limit, $this->_start, 'LOCATION ASC');
+				$this->_data['data']['totalCount'] = $this->_model->count();
+			}
+		} else {
+			$this->error(901);
+		}
+		$this->json();
 	}
 	
 	public function updateAction()
