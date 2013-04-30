@@ -231,7 +231,7 @@ Ext.create('Ext.Window', {
 										iconCls: 'icon-stop',
 										listeners: {
 											click: function() {
-												var c = Ext.getCmp('<?php echo $this->container ?>');
+												var c = Ext.getCmp(_id);
 												var selected = c.getSelectionModel().getSelection();
 												if(selected.length > 0) {
 													Ext.create ('Ext.Window', {
