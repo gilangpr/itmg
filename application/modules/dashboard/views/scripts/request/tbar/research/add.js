@@ -51,13 +51,18 @@ Ext.create('Ext.Window', {
 				allowBlank: false
 			},{
 				xtype: 'combobox',
-				name: 'COMPANY',
+				name: 'COMPANY_NAME',
 				store: storeRC2,
-				displayField: 'COMPANY',
+				displayField: 'COMPANY_NAME',
 				typeAhead: false,
 				editable: false,
 				emptyText: 'Select Company',
 				fieldLabel: 'Company',
+				allowBlank: false
+			},{
+				fieldLabel: 'Analyst',
+				name: 'ANALYST',
+				emptyText: 'Analyst',
 				allowBlank: false
 			},{
 				xtype: 'filefield',
