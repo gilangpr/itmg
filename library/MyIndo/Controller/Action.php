@@ -62,7 +62,7 @@ class MyIndo_Controller_Action extends Zend_Controller_Action
 	
 	protected function error($code)
 	{
-		$this->_error_code = 901;
+		$this->_error_code = $code;
 		$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
 		$this->_success = false;
 	}

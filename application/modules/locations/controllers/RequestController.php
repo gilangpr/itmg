@@ -86,11 +86,7 @@ class Locations_RequestController extends MyIndo_Controller_Action
 	
 	public function createAction()
 	{
-		$data = array(
-				'data' => array()
-		);
-		
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
+		if($this->isPost() && $this->isAjax()) {
 			if(!$this->_model->isExistByKey('LOCATION', $this->_posts['LOCATION'])) {
 				try {
 					
@@ -106,24 +102,15 @@ class Locations_RequestController extends MyIndo_Controller_Action
 					$this->_success = false;
 				}
 			} else {
-				$this->_error_code = 201;
-				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-				$this->_success = false;
+				$this->error(201);
 			}
 		} else {
-			$this->_error_code = 901;
-			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-			$this->_success = false;
+			$this->error(901);
 		}
-		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 	public function updateAction()
 	{
-		$data = array(
-				'data' => array()
-		);
-		
 		try {
 			$posts = $this->getRequest()->getRawBody();
 			$posts = Zend_Json::decode($posts);
@@ -137,19 +124,14 @@ class Locations_RequestController extends MyIndo_Controller_Action
 			$this->_error_message = $e->getMessage();
 			$this->_success = false;
 		}
-		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 	
 	public function destroyAction()
 	{
-		$data = array(
-				'data' => array()
-		);
-		try {
+		if($this->isPost() && $this->isAjax()) {
 			$modInvestor = new Application_Model_Investors();
-			$exist = $modInvestor->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID']);
-			if ($exist == '') {
+			if(!$modInvestor->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID'])) {
 				if($this->_model->isExistByKey('LOCATION_ID', $this->_posts['LOCATION_ID'])) {
 					try {
 						$this->_model->delete($this->_model->getAdapter()->quoteInto('LOCATION_ID = ?', $this->_posts['LOCATION_ID']));
@@ -160,15 +142,11 @@ class Locations_RequestController extends MyIndo_Controller_Action
 					}
 				}
 			} else {
-				$this->_error_message = 'Delete failed, data is being used.';
-				$this->_success = false;
+				$this->error(202);
 			}
-		} catch(Exception $e) {
-			$this->_error_code = $e->getCode();
-			$this->_error_message = $e->getMessage();
-			$this->_success = false;
+		} else {
+			$this->error(901);
 		}
-		
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 }
