@@ -925,24 +925,23 @@ Ext.create('Ext.Window', {
 														text: 'Meeting Date',
 														align: 'center',
 														width: 100,
-														dataIndex: 'MEETING_DATE'
+														dataIndex: 'MEETING_DATE',
+														renderer : Ext.util.Format.dateRenderer('d-m-Y'),
 													},{
 														text: 'Meeting Event',
 														flex: 1,
 														dataIndex: 'MEETING_EVENT'
 													},{
-														text: 'Start Time',
-														align: 'center',
-														width: 150,
-														dataIndex: 'START_TIME'
+														text:'Name',
+														flex:1,
+														dataIndex:'NAME'
 													},{
-														text: 'End Time',
-														align: 'center',
-														width: 150,
-														dataIndex: 'END_TIME'
+														text:'Initials',
+														flex:1,
+														dataIndex:'INITIAL_PART'
 													}]
 												}],
-												tbar: [{
+												tbar: [/*{
 													xtype: 'button',
 													text: 'Add New Meeting Investors',
 													iconCls: 'icon-go',
@@ -1025,7 +1024,7 @@ Ext.create('Ext.Window', {
 									                        }).show();
 														}
 													}
-												},{
+												},*/{
 													xtype: 'button',
 													text: 'Detail Meeting',
 													iconCls: 'icon-detail',
