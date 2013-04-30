@@ -199,13 +199,88 @@ Ext.create('Ext.Window', {
 							} else {
 								Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
 								c.up().add({
-									title: 'News Search Result',
+									title: 'Search Result',
 									closable: true,
 									id: _id,
 									autoScroll: true,
 									xtype: 'gridpanel',
 									layout: 'border',
 									store: _storeNews,
+									tbar: [{
+										xtype: 'button',
+										text: 'Download',
+										iconCls: 'icon-download',
+										listeners: {
+											click: function() {
+												var c = Ext.getCmp('<?php echo $this->container ?>');
+												var selected = c.getSelectionModel().getSelection();
+												if(selected.length > 0) {
+													document.location = sd.baseUrl + '/news/request/download/id/' + selected[0].data.NEWS_ID;
+													var store = loadStore('Newss');
+													setTimeout(function(){
+														store.loadPage(store.currentPage);
+													},800);
+												} else {
+													Ext.Msg.alert('Message', 'You did not select any News');
+												}
+											}
+										}
+									},{
+										xtype: 'button',
+										text: 'Delete',
+										iconCls: 'icon-stop',
+										listeners: {
+											click: function() {
+												var c = Ext.getCmp('<?php echo $this->container ?>');
+												var selected = c.getSelectionModel().getSelection();
+												if(selected.length > 0) {
+													Ext.create ('Ext.Window', {
+														html: 'Are you sure want do delete selected item(s) ?',
+														bodyPadding: '20 5 5 17',
+														title: 'Confirmation',
+														resizable: false,
+														modal: true,
+														closable: false,
+														draggable: false,
+														width: 300,
+														height: 120,
+														buttons: [{
+															text: 'Yes',
+															listeners: {
+																click: function() {
+																	showLoadingWindow();
+																	this.up().up().close();
+																	Ext.Ajax.request({
+																		url: sd.baseUrl + '/news/request/destroy',
+																		params: selected[0].data,
+																		success: function(data) {
+																			var json = Ext.decode(data.responseText);
+																			closeLoadingWindow();
+																			var store = loadStore('Newss');
+																			store.loadPage(store.currentPage);
+																		},
+																		failure: function() {
+																			var json = Ext.decode(data.responseText);
+																			closeLoadingWindow();
+																		}
+																	});
+																}
+															}
+														},{
+															text: 'No',
+															listeners: {
+																click: function() {
+																	this.up().up().close();
+																}
+															}
+														}]
+													}).show();
+												} else {
+													Ext.Msg.alert('Message', 'You did not select any News');
+												}
+							        		}
+							        	}
+									}],
 									"columns": [{
 	                                    "text": "Title",
 	                                    "dataIndex": "TITLE",
@@ -313,7 +388,10 @@ Ext.create('Ext.Window', {
 											  	}
 											  }
 											})
-								        ]								   
+								        ],
+								        tbar: [{
+								        	
+								        }]
 	                                })
 								});
 								c.up().setActiveTab(_id);
