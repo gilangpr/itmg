@@ -180,41 +180,20 @@ Ext.create('Ext.Window', {
 					if(typeof(rSource) === 'undefined') {
 						rSource = '';
 					}
-					
-					var _storeRS = Ext.create("Ext.data.Store", {
-					    model: "News__",
-					    storeId: "News__",
-					    proxy: {
-					        "type": "ajax",
-					        "api": {
-					            "read": sd.baseUrl + '/news/request/read'
-					        },
-					        "actionMethods": {
-					            "read": "POST"
-					        },
-					        "reader": {
-					            "idProperty": "NEWS_ID",
-					            "type": "json",
-					            "root": "data.items",
-					            "totalProperty": "data.totalCount"
-					        }
-					    },
-					    sorter: {
-					        "property": "NEWS_ID",
-					        "direction": "ASC"
-					    }
-					});
-//					showLoadingWindow();
-					_storeRS.load({
-						params: {
-							search: 1,
-							title: rTitle,
-							category: rCategory,
-							company: rCompany,
-							source: rSource
-						},
-						callback: function(d, i, e) {
-							Ext.getCmp('news-search-window').close();
+					var _storeNews = Ext.create("Ext.data.Store", {
+						model: "News",
+						storeId: "Newss__",
+						proxy:{"type":"ajax","api":{"read":"\/news\/request\/read","create":"\/news\/request\/create","update":"\/news\/request\/update","destroy":"\/news\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
+							extraParams: {
+								search: 1,
+								title: rTitle,
+								category: rCategory,
+								company: rCompany,
+								source: rSource
+							}}});
+					showLoadingWindow();					
+					_storeNews.load({
+						callback: function(d,i,e,f) {
 							if(d.length == 0) {
 								Ext.Msg.alert('Message', 'No data found.');
 							} else {
@@ -223,10 +202,10 @@ Ext.create('Ext.Window', {
 									title: 'News Search Result',
 									closable: true,
 									id: _id,
-									store: _storeRS,
 									autoScroll: true,
 									xtype: 'gridpanel',
 									layout: 'border',
+									store: _storeNews,
 									"columns": [{
 	                                    "text": "Title",
 	                                    "dataIndex": "TITLE",
@@ -305,44 +284,44 @@ Ext.create('Ext.Window', {
 	                                    "flex": 0,
 	                                    "dataType": "string",
 	                                    "visible": false
-	                                }
-	                            ],
-	                            bbar: new Ext.PagingToolbar({
-							        store: _storeRS,
-							        displayInfo: true,
-							        displayMsg: 'Displaying data {0} - {1} of {2}',
-							        emptyMsg: 'No data to display',
-							        items: [
-							            '-',
-							            'Records per page',
-							            '-',
-							            new Ext.form.ComboBox({
-										  name : 'perpage',
-										  width: 50,
-										  store: new Ext.data.ArrayStore({fields:['id'],data:[['25'],['50'],['75'],['100']]}),
-										  mode : 'local',
-										  value: '25',
-										  listWidth     : 40,
-										  triggerAction : 'all',
-										  displayField  : 'id',
-										  valueField    : 'id',
-										  editable      : false,
-										  forceSelection: true,
-										  listeners: {
-										  	select: function(combo, _records) {
-										  		store.pageSize = parseInt(_records[0].get('id'), 10);
-												store.loadPage(1);
-										  	}
-										  }
-										})
-							        ]
-							    })
+	                                }],
+	                                bbar: new Ext.PagingToolbar({
+	                                	store: _storeNews,
+								        displayInfo: true,
+								        displayMsg: 'Displaying data {0} - {1} of {2}',
+								        emptyMsg: 'No data to display',
+								        items: [
+								            '-',
+								            'Records per page',
+								            '-',
+								            new Ext.form.ComboBox({
+											  name : 'perpage',
+											  width: 50,
+											  store: new Ext.data.ArrayStore({fields:['id'],data:[['25'],['50'],['75'],['100']]}),
+											  mode : 'local',
+											  value: '25',
+											  listWidth     : 40,
+											  triggerAction : 'all',
+											  displayField  : 'id',
+											  valueField    : 'id',
+											  editable      : false,
+											  forceSelection: true,
+											  listeners: {
+											  	select: function(combo, _records) {
+											  		_storeNews.pageSize = parseInt(_records[0].get('id'), 10);
+											  		_storeNews.loadPage(1);
+											  	}
+											  }
+											})
+								        ]								   
+	                                })
 								});
 								c.up().setActiveTab(_id);
 								closeLoadingWindow();
 							}
 						}
 					});
+					this.up().up().close();
 				}
 			}
 		}
