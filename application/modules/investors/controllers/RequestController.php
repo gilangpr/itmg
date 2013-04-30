@@ -107,10 +107,22 @@ class Investors_RequestController extends Zend_Controller_Action
 		
 		if(!isset($this->_posts['TYPE'])) {
 			if(!isset($this->_posts['sort'])) {
+				if(!isset($this->_posts['query'])) {
+					$list = $this->_model->getListInvestorsLimit($this->_limit, $this->_start);
+					$count = $this->_model->count();
+				} else {
+					$q = $this->_model->select()
+					->from('INVESTORS', array('INVESTOR_ID','COMPANY_NAME'))
+					->where('COMPANY_NAME LIKE ?', '%' . $this->_posts['query'] . '%');
+					$count = count($q->query()->fetchAll());
+
+					$q->limit($this->_limit, $this->_start);
+					$list = $q->query()->fetchAll();
+				}
 				$data = array(
 					'data' => array(
-						'items' => $this->_model->getListInvestorsLimit($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
+						'items' => $list,
+						'totalCount' => $count
 					)
 				);
 			} else {
