@@ -36,7 +36,8 @@ class MyIndo_Ext_Abstract extends Zend_Db_Table_Abstract
 	{
 		try {
 			$q = $this->select();
-			return $q->query()->rowCount();
+			$c = $q->query()->fetchAll();
+			return count($c);
 		} catch ( Exception $e ) {
 			return 0;
 		}

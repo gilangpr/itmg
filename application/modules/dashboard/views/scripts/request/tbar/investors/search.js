@@ -58,7 +58,11 @@ Ext.create('Ext.Window', {
 					
 					/* End of : Form 2 */
 					
-					var _store = Ext.data.StoreManager.lookup('Investors');
+					var _store = Ext.create("Ext.data.Store", {
+						model: "Investor",
+						storeId: "Investors." + Math.random(),
+						proxy:{"type":"ajax","api":{"read":"\/investors\/request\/read","create":"\/investors\/request\/create","update":"\/investors\/request\/update","destroy":"\/investors\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"INVESTOR_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+						sorter: {"property":"INVESTOR_ID","direction":"ASC"}});
 					
 					_store.load({
 						params: {
@@ -925,24 +929,23 @@ Ext.create('Ext.Window', {
 														text: 'Meeting Date',
 														align: 'center',
 														width: 100,
-														dataIndex: 'MEETING_DATE'
+														dataIndex: 'MEETING_DATE',
+														renderer : Ext.util.Format.dateRenderer('d-m-Y'),
 													},{
 														text: 'Meeting Event',
 														flex: 1,
 														dataIndex: 'MEETING_EVENT'
 													},{
-														text: 'Start Time',
-														align: 'center',
-														width: 150,
-														dataIndex: 'START_TIME'
+														text:'Name',
+														flex:1,
+														dataIndex:'NAME'
 													},{
-														text: 'End Time',
-														align: 'center',
-														width: 150,
-														dataIndex: 'END_TIME'
+														text:'Initials',
+														flex:1,
+														dataIndex:'INITIAL_PART'
 													}]
 												}],
-												tbar: [{
+												tbar: [/*{
 													xtype: 'button',
 													text: 'Add New Meeting Investors',
 													iconCls: 'icon-go',
@@ -1025,7 +1028,7 @@ Ext.create('Ext.Window', {
 									                        }).show();
 														}
 													}
-												},{
+												},*/{
 													xtype: 'button',
 													text: 'Detail Meeting',
 													iconCls: 'icon-detail',
@@ -1200,6 +1203,8 @@ Ext.create('Ext.Window', {
 									var p = Ext.getCmp(_id + '-panel');
 									c.up().setActiveTab(_id);
 									p.setTitle(_data[_idx].data.COMPANY_NAME);
+								} else {
+
 								}
 							} else {
 								Ext.Msg.alert('Message', 'Sorry, No data found.');
