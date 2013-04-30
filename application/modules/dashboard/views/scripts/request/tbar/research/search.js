@@ -38,7 +38,6 @@ storeRRC.load({
 		all: 1
 	}
 });
-
 Ext.apply(Ext.form.field.VTypes, {
 	daterange: function(val, field) {
 		var date = field.parseDate(val);
