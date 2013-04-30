@@ -212,7 +212,7 @@ Ext.create('Ext.Window', {
 										iconCls: 'icon-download',
 										listeners: {
 											click: function() {
-												var c = Ext.getCmp('<?php echo $this->container ?>');
+												var c = Ext.getCmp(_id);
 												var selected = c.getSelectionModel().getSelection();
 												if(selected.length > 0) {
 													document.location = sd.baseUrl + '/news/request/download/id/' + selected[0].data.NEWS_ID;
