@@ -19,8 +19,8 @@ Date.prototype.customFormat = function(formatString){
     return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 }
 
-var SP_START_DATE = '1900-01-01';
-var SP_END_DATE = '2013-12-12';
+var startdate = '1900-01-01';
+var enddate = '2013-12-12';
 var SP_NAMES = new Array();
 
 var storeRR = loadStore('ResearchReports');
@@ -163,6 +163,10 @@ Ext.create('Ext.Window', {
 				var rCategory = Ext.getCmp('research-category').getValue();
 				var rCompany = Ext.getCmp('research-company').getValue();
 				var rAnalyst = Ext.getCmp('research-analyst').getValue();
+				var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
+				startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
+				var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
+				enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
 				var _id = 'research-search-result-' + Math.random();
 				
 				if(form.isValid()) {
@@ -187,9 +191,11 @@ Ext.create('Ext.Window', {
 								title: rTitle,
 								category: rCategory,
 								company: rCompany,
-								analyst: rAnalyst
+								analyst: rAnalyst,
+								startdate: startdate,
+								enddate: enddate
 							}}});
-					showLoadingWindow();
+					//showLoadingWindow();
 					_storeResearchReports.load({
 						callback: function(d,i,e,f) {
 							if(d.length == 0) {
@@ -391,7 +397,7 @@ Ext.create('Ext.Window', {
 	                            })
 								});
 								c.up().setActiveTab(_id);
-								closeLoadingWindow();
+								//closeLoadingWindow();
 							}
 						}
 					});
