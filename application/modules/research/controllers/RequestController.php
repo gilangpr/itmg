@@ -61,7 +61,7 @@ class Research_RequestController extends Zend_Controller_Action
 				
 				foreach($list as $k=>$d) {
 					$list[$k]['RESEARCH_REPORT_CATEGORY'] = $rrcModel->getValueByKey('RESEARCH_REPORT_CATEGORY_ID', $d['RESEARCH_REPORT_CATEGORY_ID'], 'RESEARCH_REPORT_CATEGORY');
-					$list[$k]['COMPANY'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY');
+					$list[$k]['COMPANY_NAME'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
 				}
 				
 				$this->_data['data']['items'] = $list;
@@ -95,8 +95,8 @@ class Research_RequestController extends Zend_Controller_Action
 					
 					/* Company */
 					if (isset($this->_posts['company'])) {
-						if ($companyModel->isExistByKey('COMPANY', $this->_posts['company'])) {
-							$comID = $companyModel->getPkByKey('COMPANY', $this->_posts['company']);
+						if ($companyModel->isExistByKey('COMPANY_NAME', $this->_posts['company'])) {
+							$comID = $companyModel->getPkByKey('COMPANY_NAME', $this->_posts['company']);
 							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID = ?', $comID);
 						} else {
 							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%%');
