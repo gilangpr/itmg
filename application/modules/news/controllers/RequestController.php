@@ -118,14 +118,20 @@ class News_RequestController extends Zend_Controller_Action
 					}
 					/* Source */
 					
+					if (isset($this->_posts['startdate']) && isset($this->_posts['enddate'])) {
+						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE >= ?', $this->_posts['startdate']);
+						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE <= ?', $this->_posts['enddate']);
+					}
+					
 					$query = $this->_model->select()
 					->where($where[0])
 					->where($where[1])
 					->where($where[2])
 					->where($where[3])
+					->where($where[4])
+					->where($where[5])
 					->limit($this->_model->count(), $this->_start);
 
-					//print_r($where[3]);
 					$list = $query->query()->fetchAll();
 					
 					foreach($list as $k=>$d) {
