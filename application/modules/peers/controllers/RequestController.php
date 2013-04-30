@@ -198,7 +198,7 @@ class Peers_RequestController extends MyIndo_Controller_Action
 			if($this->_model->isExistByKey('PEER_ID', $this->_posts['id'])) {
 				try {
 					if(isset($this->_posts['batch']) && $this->_posts['batch'] == 1) {
-						$this->_model->update($_dt, $this->_model->getAdapter()->quoteInto('PEER_ID = ?', $this->_posts['id']));
+						$this->_model->update($data, $this->_model->getAdapter()->quoteInto('PEER_ID = ?', $this->_posts['id']));
 					} else {
 						$this->_model->update(array(
 								$this->_posts['type'] => $this->_posts[$this->_posts['type']]
