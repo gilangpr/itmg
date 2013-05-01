@@ -190,17 +190,6 @@ class Investors_RequestController extends Zend_Controller_Action
 					$q->where('EQUITY_ASSETS >= 0');
 				}
 				
-				/*
-				if(strtolower($EQUITY_ASSETS) == 'small') {
-					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
-				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
-					$q->where('EQUITY_ASSETS >= 21 AND EQUITY_ASSETS <= 40');
-				} else if(strtolower($EQUITY_ASSETS) == 'large'){
-					$q->where('EQUITY_ASSETS >= 41');
-				} else {
-					$q->where('EQUITY_ASSETS >= 0');
-				}
-				//*/
 			}
 			
 			if(isset($this->_posts['INVESTOR_TYPE'])) {
@@ -236,7 +225,7 @@ class Investors_RequestController extends Zend_Controller_Action
 			
 		}
 	
-		MyIndo_Tools_Return::JSON($data);
+		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
 	public function destroyAction(){
