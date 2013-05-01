@@ -243,29 +243,8 @@ if(!c.up().items.get(xid)) {
 					border: false,
 					id: 'investors-detail-investor-form-' + data.INVESTOR_ID,
 					bodyPadding: '5 5 5 5',
-					items: [{
-						xtype: 'numberfield',
-						name: 'EQUITY_ASSETS',
-						fieldLabel: 'Equity Assets <span style="color:red;">*</span>',
-						minValue: 0,
-						value: data.EQUITY_ASSETS,
-						allowBlank: false
-					},{
-						xtype: 'combobox',
-						name: 'INVESTOR_TYPE',
-						fieldLabel: 'Investor Type <span style="color:red;">*</span>',
-						allowBlank: false,
-						store: storeIT,
-						displayField: 'INVESTOR_TYPE',
-						value: data.INVESTOR_TYPE
-					},{
-						xtype: 'textfield',
-						name: 'STYLE',
-						fieldLabel: 'Style <span style="color:red;">*</span>',
-						value: data.STYLE,
-						allowBlank: false
-					}],
-					buttons: [{
+					tbar: [{
+						xtype: 'button',
 						text: 'Update',
 						iconCls: 'icon-accept',
 						listeners: {
@@ -294,6 +273,28 @@ if(!c.up().items.get(xid)) {
 								}
 							}
 						}
+					}],
+					items: [{
+						xtype: 'numberfield',
+						name: 'EQUITY_ASSETS',
+						fieldLabel: 'Equity Assets <span style="color:red;">*</span>',
+						minValue: 0,
+						value: data.EQUITY_ASSETS,
+						allowBlank: false
+					},{
+						xtype: 'combobox',
+						name: 'INVESTOR_TYPE',
+						fieldLabel: 'Investor Type <span style="color:red;">*</span>',
+						allowBlank: false,
+						store: storeIT,
+						displayField: 'INVESTOR_TYPE',
+						value: data.INVESTOR_TYPE
+					},{
+						xtype: 'textfield',
+						name: 'STYLE',
+						fieldLabel: 'Style <span style="color:red;">*</span>',
+						value: data.STYLE,
+						allowBlank: false
 					}]
 				}/*,{
 					title: 'Custom Attributes',
@@ -332,17 +333,48 @@ if(!c.up().items.get(xid)) {
 				}*/]
 			},{
 				title: 'Company Address',
-				border: false,
 				style: {
 					float: 'rigth',
 					width: '50%'
 				},
+				border: false,
 				items: [{
 					xtype: 'form',
 					layout: 'form',
 					id: 'investors-detail-company-address-form-' + data.INVESTOR_ID,
 					bodyPadding: '5 5 5 5',
 					border: false,
+					tbar: [{
+						xtype: 'button',
+						text: 'Update',
+						iconCls: 'icon-accept',
+						listeners: {
+							click: function() {
+								var form = Ext.getCmp('investors-detail-company-address-form-' + data.INVESTOR_ID).getForm();
+								if(form.isValid()) {
+									form.submit({
+										url: sd.baseUrl + '/investors/request/update-detail',
+										params: {
+											id: data.INVESTOR_ID,
+											batch: 1,
+											btype: 'company-address',
+											type: 'batch'
+										},
+										waitMsg: 'Updating data, please wait..',
+										success: function(d, e) {
+											var json = Ext.decode(e.response.responseText);
+											Ext.Msg.alert('Message', 'Update success.');
+											storeINVESTORS.loadPage(storeINVESTORS.currentPage);
+										},
+										failure: function(d, e) {
+											var json = Ext.decode(e.response.responseText);
+											Ext.Msg.alert('Error', json.error_message);
+										}
+									});
+								}
+							}
+						}
+					}],
 					items: [{
 						xtype: 'htmleditor',
 						fieldLabel: 'Address',
@@ -395,36 +427,6 @@ if(!c.up().items.get(xid)) {
 						allowBlank: true,
 						value: data.WEBSITE
 					}]
-				}],
-				buttons: [{
-					text: 'Update',
-					iconCls: 'icon-accept',
-					listeners: {
-						click: function() {
-							var form = Ext.getCmp('investors-detail-company-address-form-' + data.INVESTOR_ID).getForm();
-							if(form.isValid()) {
-								form.submit({
-									url: sd.baseUrl + '/investors/request/update-detail',
-									params: {
-										id: data.INVESTOR_ID,
-										batch: 1,
-										btype: 'company-address',
-										type: 'batch'
-									},
-									waitMsg: 'Updating data, please wait..',
-									success: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Message', 'Update success.');
-										storeINVESTORS.loadPage(storeINVESTORS.currentPage);
-									},
-									failure: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Error', json.error_message);
-									}
-								});
-							}
-						}
-					}
 				}]
 			}]
 		},{
@@ -432,6 +434,35 @@ if(!c.up().items.get(xid)) {
 			title: 'Company Overview',
 			border: false,
 			maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+			tbar: [{
+				xtype: 'button',
+				text: 'Update',
+				iconCls: 'icon-accept',
+				listeners: {
+					click: function() {
+						var form = Ext.getCmp('investors-detail-company-overview-form-' + data.INVESTOR_ID).getForm();
+						if(form.isValid()) {
+							form.submit({
+								url: sd.baseUrl + '/investors/request/update-detail',
+								waitMsg: 'Updateing data, please wait..',
+								params: {
+									id: data.INVESTOR_ID,
+									type: 'COMPANY_OVERVIEW'
+								},
+								success: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Message', 'Update success.');
+									storeINVESTORS.loadPage(storeINVESTORS.currentPage);
+								},
+								failure: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Error', json.error_message);
+								}
+							})
+						}
+					}
+				}
+			}],
 			items: [{
 				xtype: 'form',
 				layout: 'form',
@@ -446,34 +477,6 @@ if(!c.up().items.get(xid)) {
 					allowBlank: false,
 					msgTarget:'under',
 					maxLength:1000
-				}],
-				buttons: [{
-					text: 'Update',
-					iconCls: 'icon-accept',
-					listeners: {
-						click: function() {
-							var form = Ext.getCmp('investors-detail-company-overview-form-' + data.INVESTOR_ID).getForm();
-							if(form.isValid()) {
-								form.submit({
-									url: sd.baseUrl + '/investors/request/update-detail',
-									waitMsg: 'Updateing data, please wait..',
-									params: {
-										id: data.INVESTOR_ID,
-										type: 'COMPANY_OVERVIEW'
-									},
-									success: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Message', 'Update success.');
-										storeINVESTORS.loadPage(storeINVESTORS.currentPage);
-									},
-									failure: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Error', json.error_message);
-									}
-								})
-							}
-						}
-					}
 				}]
 			}]
 		},{
@@ -481,6 +484,35 @@ if(!c.up().items.get(xid)) {
 			title: 'Investment Strategy',
 			border: false,
 			maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+			tbar: [{
+				xtype: 'button',
+				text: 'Update',
+				iconCls: 'icon-accept',
+				listeners: {
+					click: function() {
+						var form = Ext.getCmp('investors-detail-investment-strategy-form-' + data.INVESTOR_ID).getForm();
+						if(form.isValid()) {
+							form.submit({
+								url: sd.baseUrl + '/investors/request/update-detail',
+								waitMsg: 'Updateing data, please wait..',
+								params: {
+									id: data.INVESTOR_ID,
+									type: 'INVESTMENT_STRATEGY'
+								},
+								success: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Message', 'Update success.');
+									storeINVESTORS.loadPage(storeINVESTORS.currentPage);
+								},
+								failure: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Error', json.error_message);
+								}
+							})
+						}
+					}
+				}
+			}],
 			items: [{
 				xtype: 'form',
 				layout: 'form',
@@ -495,34 +527,6 @@ if(!c.up().items.get(xid)) {
 					allowBlank: false,
 					msgTarget:'under',
 					maxLength:1000
-				}],
-				buttons: [{
-					text: 'Update',
-					iconCls: 'icon-accept',
-					listeners: {
-						click: function() {
-							var form = Ext.getCmp('investors-detail-investment-strategy-form-' + data.INVESTOR_ID).getForm();
-							if(form.isValid()) {
-								form.submit({
-									url: sd.baseUrl + '/investors/request/update-detail',
-									waitMsg: 'Updateing data, please wait..',
-									params: {
-										id: data.INVESTOR_ID,
-										type: 'INVESTMENT_STRATEGY'
-									},
-									success: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Message', 'Update success.');
-										storeINVESTORS.loadPage(storeINVESTORS.currentPage);
-									},
-									failure: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Error', json.error_message);
-									}
-								})
-							}
-						}
-					}
 				}]
 			}]
 		},{
