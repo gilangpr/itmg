@@ -91,7 +91,7 @@
 												allowBlank: false
 											},{
 												xtype: 'numberfield',
-												fieldLabel: 'Value',
+												fieldLabel: 'Value (USD Bn)',
 												name: 'VALUE',
 												allowBlank: false,
 												value: 0,
@@ -211,7 +211,7 @@
 								name:'TITLE'
 							}
 						},{
-							text: 'Value',
+							text: 'Value<br/>(USD Bn)',
 							width: 120,
 							align: 'center',
 							dataIndex: 'VALUE',
