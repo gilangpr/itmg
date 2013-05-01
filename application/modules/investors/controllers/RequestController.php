@@ -435,17 +435,17 @@ class Investors_RequestController extends Zend_Controller_Action
 										'INVESTOR_TYPE_ID' => $IT_id,
 										'LOCATION_ID' => $LO_id,
 										'COMPANY_NAME' => $val[0],
-										'STYLE'=> $val[2],
-										'EQUITY_ASSETS'=>$val[3] ,
-										'PHONE_1'=>$val[4],
-										'PHONE_2'=>$val[5],
-										'FAX'=>$val[6],
-										'EMAIL_1'=>$val[7],
-										'EMAIL_2'=>$val[8],
-										'WEBSITE'=>$val[9],
-										'ADDRESS'=>$val[10],
-										'COMPANY_OVERVIEW'=>$val[12],
-										'INVESTMENT_STRATEGY'=>$val[13],
+										'STYLE' => $val[2],
+										'EQUITY_ASSETS' => $val[3] ,
+										'PHONE_1' => $val[4],
+										'PHONE_2' => $val[5],
+										'FAX' => $val[6],
+										'EMAIL_1' => $val[7],
+										'EMAIL_2' => $val[8],
+										'WEBSITE' => $val[9],
+										'ADDRESS' => $val[10],
+										'COMPANY_OVERVIEW' => $val[12],
+										'INVESTMENT_STRATEGY' => $val[13],
 					 					'CREATED_DATE' => date('Y-m-d H:i:s')
 									));
 								$total = $total + count($jum);
@@ -499,11 +499,10 @@ class Investors_RequestController extends Zend_Controller_Action
 					$this->_error_message = $e->getMessage();
 					$this->_success = false;
 		} 
-	    /*
+		
 		if(file_exists($upload->getDestination() . '/' . $new_name)) {
 			unlink($upload->getDestination() . '/' . $new_name);
 		}
-		*/
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	
 	}
