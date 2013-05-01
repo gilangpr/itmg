@@ -245,7 +245,7 @@ if(!c.up().items.get(xid)) {
 					bodyPadding: '5 5 5 5',
 					tbar: [{
 						xtype: 'button',
-						text: 'Update',
+						text: 'Update Detail Investor',
 						iconCls: 'icon-accept',
 						listeners: {
 							click: function() {
@@ -346,7 +346,7 @@ if(!c.up().items.get(xid)) {
 					border: false,
 					tbar: [{
 						xtype: 'button',
-						text: 'Update',
+						text: 'Update Company Address',
 						iconCls: 'icon-accept',
 						listeners: {
 							click: function() {
@@ -436,7 +436,7 @@ if(!c.up().items.get(xid)) {
 			maxWidth: Ext.getBody().getViewSize().width - maxWidth,
 			tbar: [{
 				xtype: 'button',
-				text: 'Update',
+				text: 'Update Company Overview',
 				iconCls: 'icon-accept',
 				listeners: {
 					click: function() {
@@ -486,7 +486,7 @@ if(!c.up().items.get(xid)) {
 			maxWidth: Ext.getBody().getViewSize().width - maxWidth,
 			tbar: [{
 				xtype: 'button',
-				text: 'Update',
+				text: 'Update Investment Strategy',
 				iconCls: 'icon-accept',
 				listeners: {
 					click: function() {
