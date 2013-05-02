@@ -64,16 +64,12 @@ function showRrSearch() {
 						rCategory = '';
 					}
 					this.up().up().close();
-					var _storeResearchReports = Ext.create("Ext.data.Store", {
-						model: "ResearchReport",
-						storeId: "ResearchReports__",
-						proxy:{"type":"ajax","api":{"read":"\/research\/request\/read","create":"\/research\/request\/create","update":"\/research\/request\/update","destroy":"\/research\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
-							extraParams: {
-								search: 2,
-								title: rTitle,
-								category: rCategory
-							}}});
-					_storeResearchReports.load({
+					storeRR.load({
+						params: {
+							search: 1,
+							title: rTitle,
+							category: rCategory
+						},
 						callback: function(d, i, e) {
 							closeLoadingWindow();
 							if(d.length == 0) {
@@ -100,7 +96,7 @@ function showRrSearch() {
 									});
 									
 									var bbar = new Ext.PagingToolbar({
-										store: _storeResearchReports,
+										store: storeRR,
 										displayInfo: true,
 										displayMsg: 'Displaying data {0} - {1} of {2}',
 										emptyMsg: 'No data to display',
@@ -113,18 +109,18 @@ function showRrSearch() {
 									});
 									
 									comboBbar.on('select', function(combo, _records) {
-										_storeResearchReports.pageSize = parseInt(_records[0].get('id'), 10);
-										_storeResearchReports.loadPage(1);
+										storeRR.pageSize = parseInt(_records[0].get('id'), 10);
+										storeRR.loadPage(1);
 									}, this);
 									c.add({
-										title: 'Research Report Search Result',
+										title: 'Research Report',
 										id: id,
 										closable: true,
 										bbar: bbar,
 										items: [{
 											xtype: 'gridpanel',
 											border: false,
-											store: _storeResearchReports,
+											store: storeRR,
 											columns: [{
 												text: 'Title',
 												flex: 1,

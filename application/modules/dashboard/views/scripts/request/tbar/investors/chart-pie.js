@@ -9,7 +9,6 @@
 		xtype: 'chart',
 		store: storeSH,
 		width: 570,
-		id:'chartCmp',
 		height: 300,
 		animate: true,
 		legend: {
@@ -18,9 +17,6 @@
 		series: [{
 			type: 'pie',
 			field: 'VALUE',
-			yField:['TITLE','VALUE'],
-			categoryField:'VALUE',
-			'text-anchor': 'middle',
 			showInLegend: true,
 			highlight: {
 				segment: {
@@ -28,19 +24,10 @@
 				}
 			},
 			label: {
+				field: ['TITLE'],
+				contrast: true,
 				display: 'rotate',
-                  'text-anchor': 'middle',
-                field: 'TITLE',
-                orientation: 'horizontal',
-                fill: '#FFF',
-                font: '14px Arial',
-                renderer: function (label){
-		            // this will change the text displayed on the pie
-		            var cmp = Ext.getCmp('chartCmp'); // id of the chart
-		            var index = cmp.store.findExact('TITLE', label); // the field containing the current label
-		            var data = cmp.store.getAt(index).data;
-		            return data.VALUE + '%'; // the field containing the label to display on the chart
-          		}
+				font: '11px Arial'
 			},
 			tips: {
                   trackMouse: false,

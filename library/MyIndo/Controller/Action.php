@@ -54,16 +54,4 @@ class MyIndo_Controller_Action extends Zend_Controller_Action
 	{
 		return $this->getRequest()->isXmlHttpRequest();
 	}
-	
-	protected function json()
-	{
-		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
-	}
-	
-	protected function error($code)
-	{
-		$this->_error_code = $code;
-		$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-		$this->_success = false;
-	}
 }
