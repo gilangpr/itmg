@@ -709,6 +709,134 @@ if(!c.up().items.get(xid)) {
 				}
 			},{
 				xtype: 'button',
+				text: 'Edit Contact',
+				iconCls: 'icon-accept',
+				listeners: {
+					click: function() {
+						var __c = Ext.getCmp('investors-detail-key-persons-grid-' + data.INVESTOR_ID);
+						var __selected = __c.getSelectionModel().getSelection();
+						if(__selected.length > 0) {
+							var __data = __selected[0].data;
+							Ext.create('Ext.Window', {
+	                            title: 'Edit Contacts',
+	                            id: 'UCO',
+	                            draggable: false,
+	                            modal: true,
+	                            width: 400,
+	                            align: 'center',
+	                            resizable: false,
+	                            items: [{
+	                                xtype: 'panel',
+	                                border: false,
+	                                items: [{
+	                                    xtype: 'form',
+	                                    layout: 'form',
+	                                    id: 'edit-contacts-form',
+	                                    border: false,
+	                                    bodyPadding: '5 5 5 5',
+	                                    defaultType: 'textfield',
+	                                    waitMsgTarget: true,
+	                                    items: [{
+	                                        fieldLabel: 'Name <span style="color:red;">*</span>',
+	                                        allowBlank: false,
+	                                        name: 'NAME',
+	                                        value:__data.NAME
+	                            		},{
+	                                        fieldLabel: 'Phone 1 &nbsp<span style="color:red;">*</span>',
+	                                        allowBlank: false,
+	                                        name: 'PHONE_1',
+	                                        value:__data.PHONE_1
+	                              		},{
+	                                        fieldLabel: 'Phone 2',
+	                                        allowBlank: true,
+	                                        name: 'PHONE_2',
+	                                		value:__data.PHONE_2
+	                           			},{
+											fieldLabel:'Email <span style="color:red;">*</span>',
+											allowBlank:false,
+											name:'EMAIL',
+											vtype:'email',
+											value:__data.EMAIL					
+										},{
+					                        fieldLabel: 'Address',
+											name: 'ADDRESS',
+											xtype: 'htmleditor',
+											height: 150,
+											value:__data.ADDRESS	                       
+	                           			},{
+	                                        xtype: 'radiofield',
+											name: 'SEX',
+											inputValue: 'Male',
+											fieldLabel: 'Sex',
+											boxLabel: 'Male',
+											checked: true
+	                            		},{
+										 	xtype: 'radiofield',
+										 	name: 'SEX',
+										 	inputValue: 'Female',
+										 	fieldLabel: '',
+										 	labelSeparator: '',
+										 	hideEmptyLabel: false,
+										 	boxLabel: 'Female'
+		  								},{
+	                                        fieldLabel: 'Position <span style="color:red;">*</span>',
+	                                        allowBlank: false,
+	                                        name: 'POSITION',
+	                                        value:__data.POSITION
+	                            		}]
+	                       			}],
+	                                buttons: [{//===Save Contacts
+	                                    text: 'Save',
+	                                    listeners: {
+	                                        click: function() {
+	                                            var form = Ext.getCmp('edit-contacts-form').getForm();
+	                                            var store = loadStore ('Contacts');
+	                                            
+	                                            if (form.isValid()) {
+	                                                form.submit({
+	                                                    url: sd.baseUrl + '/contacts/request/updating/',
+	                                                    params:{
+	                                                    	CONTACT_ID:__data.CONTACT_ID,
+	                                                    	INVESTOR_ID:data.INVESTOR_ID
+	                                                    },
+	                                                    waitMsg: 'Saving Update Key Person, please wait..',
+	                                                    success: function(d, e) {
+	                                                        var json = Ext.decode(e.response.responseText);
+	                                                        form.reset();
+	                                                        store.load({
+	                                                            params: {
+	                                                                id: data.INVESTOR_ID
+	                                                            }
+	                                                        });
+	                                                        Ext.Msg.alert('Success', 'Data has been saved');
+	                                                        Ext.getCmp('UCO').close();
+	                                                    },
+	                                                    failure: function(d, e) {
+	                                                        //console.log(data);
+	                                                        var json = Ext.decode(e.response.responseText);
+	                                                        Ext.Msg.alert('Error', json.error_message);
+	                                                    }
+	                                                });
+	                                            }
+	                                        }
+	                                    }
+	                                },{
+	                                    text: 'Cancel',
+	                                    listeners: {
+	                                        click: function() {
+	                                            this.up().up().up().close();
+	                                        }
+	                                    }
+	                                }] 
+	                            }]
+                        }).show();
+						} else {
+							Ext.Msg.alert('Error', 'You did not select any contact.');
+						}
+					}
+				}
+			},{
+				xtype: 'button',
 				text: 'Delete Contact',
 				iconCls: 'icon-stop',
 				listeners: {

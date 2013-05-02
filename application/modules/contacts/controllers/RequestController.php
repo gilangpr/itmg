@@ -131,7 +131,7 @@ class Contacts_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	public function updateAction()
-	{
+	{	//update in Body
 		$data = array(
 				'data' => array()
 		);
@@ -161,6 +161,43 @@ class Contacts_RequestController extends Zend_Controller_Action
 	
 	MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
+
+	public function updatingAction()
+	{	//update in form
+		$data = array(
+				'data' => array()
+		);
+
+	   
+		//$data = $this->getRequest()->getRawBody();//mengambil data json
+		//$data = Zend_Json::decode($data);//merubah data json menjadi array
+		$id = $this->_posts['CONTACT_ID'];
+		$modelInvestors = new Application_Model_Investors();
+		try {
+			
+			$this->_model->update(array(
+					//'INVESTOR_ID'=>$investor_id,
+					'NAME'=>$this->_posts['NAME'],
+					'PHONE_1'=>$this->_posts['PHONE_1'],
+					'PHONE_2'=>$this->_posts['PHONE_2'],
+					'EMAIL'=>$this->_posts['EMAIL'],
+					'ADDRESS'=>$this->_posts['ADDRESS'],
+					'SEX'=>$this->_posts['SEX'],
+					'POSITION'=>$this->_posts['POSITION'],
+			),$this->_model->getAdapter()->quoteInto('CONTACT_ID = ?', $id));
+			$modelInvestors->update(array(
+ 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+ 				),$modelInvestors->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
+			
+		}catch(Exception $e) {
+			$this->_error_code = $e->getCode();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
+	
+	MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+	}
+
 	public function destroyAction()
 	{	$contact_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		$investor_id = (isset($this->_posts['INVESTOR_ID'])) ? $this->_posts['INVESTOR_ID'] : 0;
