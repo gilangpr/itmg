@@ -14,6 +14,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 	public function init()
 	{
+		// tes
 		$this->_helper->layout()->disableLayout();
 		$this->_helper->viewRenderer->setNoRender(true);
 		$this->_model = new Application_Model_Shareholdings();
