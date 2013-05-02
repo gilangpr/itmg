@@ -545,8 +545,4 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		
  		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
-<<<<<<< HEAD
- }
-=======
- 	}
->>>>>>> 0cc8da1474ad683aad5b5c9236206f31f30b7345
+}
