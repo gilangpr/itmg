@@ -49,7 +49,7 @@ class Shareholdings_ExecutiveController extends MyIndo_Controller_Action
 				}
 				
 				$this->_data['data']['items'] = $data;
-				$this->_data['data']['totalCount'] = $totalCount;
+				$this->_data['data']['totalCount'] = count($data);
 			}
 		}
 		

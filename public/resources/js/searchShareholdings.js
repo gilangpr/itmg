@@ -115,6 +115,10 @@ function showShareholdingSearch() {
 											autoScroll: true,
 											store: _storeShareholdings,
 											columns: [{
+												text: 'Date',
+												dataIndex: 'DATE',
+												flex: 1
+											},{
 												text: 'Investor Name',
 												dataIndex: 'INVESTOR_NAME',
 												flex: 1
@@ -137,6 +141,7 @@ function showShareholdingSearch() {
 												text: 'Percentage',
 												width: 120,
 												dataIndex: 'PERCENTAGE',
+												renderer: Ext.util.Format.numberRenderer('0.00,/i'),
 												align: 'center'
 											}]
 										}]
