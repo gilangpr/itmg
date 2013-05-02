@@ -211,7 +211,7 @@
 								name:'TITLE'
 							}
 						},{
-							text: 'Value (USD Bn)',
+							text: 'Value',
 							width: 120,
 							align: 'center',
 							dataIndex: 'VALUE',
