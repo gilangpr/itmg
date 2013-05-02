@@ -53,7 +53,7 @@ if(__selected.length > 0) {
         proxy:{extraParams:{id:selected[0].data.INVESTOR_ID},"type":"ajax","api":{"read":"\/contacts\/request\/read","create":"\/contacts\/request\/create","update":"\/contacts\/request\/update","destroy":"\/contacts\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"CONTACT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
         sorter: {"property":"CONTACT_ID","direction":"ASC"}});
     
-    storeCO.load();
+        storeCO.load();
 		c.up().add({
 			title: 'Meeting: ' + meeting__id.MEETING_EVENT,
 			closable: true,
@@ -753,6 +753,39 @@ if(__selected.length > 0) {
                 //store:storeMA,
                 border: false,
                 maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                tbar: [{
+                	xtype: 'button',
+                	text: 'Update',
+                    iconCls: 'icon-accept',
+                    listeners: {
+                        click: function() {
+                           
+                            var form = Ext.getCmp('meeting-detail-notes-form-' + xid).getForm();
+                            if(form.isValid()) {
+                                form.submit({
+
+                                    url: sd.baseUrl + '/meetingactivitie/request/updatenotes/id/'+meeting__id.MEETING_ACTIVITIE_ID,
+                                    waitMsg: 'Updateing data, please wait..',
+                                     //var store=loadStore('Meetingactivities'),
+                                    params: {
+                                        id: meeting__id.MEETING_ACTIVITIE_ID,
+                                        INVESTOR_ID:meeting__id.INVESTOR_ID
+                                        //type: 'NOTES'
+                                    },
+                                    success: function(d, e) {
+                                        var json = Ext.decode(e.response.responseText);
+                                        Ext.Msg.alert('Message', 'Update success.');
+                                        storeMA.loadPage(storeMA.currentPage);
+                                    },
+                                    failure: function(d, e) {
+                                        var json = Ext.decode(e.response.responseText);
+                                        Ext.Msg.alert('Error', json.error_message);
+                                    }
+                                })
+                            }
+                        }
+                    }
+                }],
                 items: [{
                     xtype: 'form',
                     layout: 'form',
@@ -766,38 +799,6 @@ if(__selected.length > 0) {
                         emptyText:'Notes is null',
                         minHeight: 160
                         //allowBlank: false
-                    }],
-                    buttons: [{
-                        text: 'Update',
-                        iconCls: 'icon-accept',
-                        listeners: {
-                            click: function() {
-                               
-                                var form = Ext.getCmp('meeting-detail-notes-form-' + xid).getForm();
-                                if(form.isValid()) {
-                                    form.submit({
-
-                                        url: sd.baseUrl + '/meetingactivitie/request/updatenotes/id/'+meeting__id.MEETING_ACTIVITIE_ID,
-                                        waitMsg: 'Updateing data, please wait..',
-                                         //var store=loadStore('Meetingactivities'),
-                                        params: {
-                                            id: meeting__id.MEETING_ACTIVITIE_ID,
-                                            INVESTOR_ID:meeting__id.INVESTOR_ID
-                                            //type: 'NOTES'
-                                        },
-                                        success: function(d, e) {
-                                            var json = Ext.decode(e.response.responseText);
-                                            Ext.Msg.alert('Message', 'Update success.');
-                                            storeMA.loadPage(storeMA.currentPage);
-                                        },
-                                        failure: function(d, e) {
-                                            var json = Ext.decode(e.response.responseText);
-                                            Ext.Msg.alert('Error', json.error_message);
-                                        }
-                                    })
-                                }
-                            }
-                        }
                     }]
                 }]
             }]

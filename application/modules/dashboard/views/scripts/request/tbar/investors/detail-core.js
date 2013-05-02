@@ -554,11 +554,7 @@ if(!c.up().items.get(xid)) {
 					store: storeCO,
 					displayInfo: true,
 					displayMsg: 'Displaying data {0} - {1} of {2}',
-					emptyMsg: 'No data to display',
-					items: [
-					    '-',
-					    'Records per page'
-					]
+					emptyMsg: 'No data to display'
 				}),
 				columns: [{
 					text: 'Name',
@@ -913,6 +909,12 @@ if(!c.up().items.get(xid)) {
 				autoScroll: true,
 				store: storeMI,
 				id: 'investors-detail-meeting-investor-grid-' + xid,
+				bbar: new Ext.PagingToolbar({
+					store: storeMI,
+					displayInfo: true,
+					displayMsg: 'Displaying data {0} - {1} of {2}',
+					emptyMsg: 'No data to display'
+				}),
 				columns: [{
 					text: 'Meeting Date',
 					align: 'center',
