@@ -312,6 +312,7 @@ Ext.create('Ext.Window', {
 								}
 								Ext.Msg.alert('Message', _store.data.items.length + ' data(s) found.');
 							} else {
+								closeLoadingWindow();
 								Ext.Msg.alert('Message', 'Sorry, no data found.');
 							}
 						}
