@@ -776,6 +776,7 @@ if(__selected.length > 0) {
                                         var json = Ext.decode(e.response.responseText);
                                         Ext.Msg.alert('Message', 'Update success.');
                                         storeMA.loadPage(storeMA.currentPage);
+                                        storeMI.loadPage(storeMI.currentPage);
                                     },
                                     failure: function(d, e) {
                                         var json = Ext.decode(e.response.responseText);

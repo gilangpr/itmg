@@ -166,7 +166,7 @@ Ext.create('Ext.Window', {
 					var _store = Ext.create("Ext.data.Store", {
 						model: "Investor",
 						storeId: "Investors." + Math.random(),
-						proxy:{"type":"ajax","api":{"read":"\/investors\/request\/read","create":"\/investors\/request\/create","update":"\/investors\/request\/update","destroy":"\/investors\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"INVESTOR_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+						proxy:{"type":"ajax","api":{"read":"\/investors\/request\/search","create":"\/investors\/request\/create","update":"\/investors\/request\/update","destroy":"\/investors\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"INVESTOR_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
 						sorter: {"property":"INVESTOR_ID","direction":"ASC"}});
 					showLoadingWindow();
 					_store.load({
@@ -313,6 +313,7 @@ Ext.create('Ext.Window', {
 								Ext.Msg.alert('Message', _store.data.items.length + ' data(s) found.');
 							} else {
 								closeLoadingWindow();
+								Ext.getCmp('search-investor-main').close();
 								Ext.Msg.alert('Message', 'Sorry, no data found.');
 							}
 						}
