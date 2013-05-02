@@ -366,7 +366,7 @@ if(__selected.length > 0) {
             	region:'north',
             	xtype:'gridpanel',
                 store:storeMP,
-                id:'meetingparticipant-list-'+id,
+                id:'meetingparticipant-list-'+xid,
             	autoScroll:true,
             	minHeight:200,
             	maxWidth: Ext.getBody().getViewSize().width - maxWidth,

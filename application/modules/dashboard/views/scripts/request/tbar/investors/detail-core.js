@@ -898,80 +898,8 @@ if(!c.up().items.get(xid)) {
                         }).show();
 					}
 				}
-			},*/{
-				xtype: 'button',
-				text: 'Detail Meeting',
-				iconCls: 'icon-detail',
-				listeners: {
-					click: function() {
-						<?php echo $this->render('/request/tbar/investors/meeting-gilang.js')?>
-					}
-				}
-			},{
-				xtype: 'button',
-				text: 'Delete Meeting Investors',
-				iconCls: 'icon-stop',
-				listeners: {
-					click: function() {
-						var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + xid);
-						var __sel = __c.getSelectionModel().getSelection();
-						if(__sel.length > 0) {
-							var __data = __sel[0].data;
-							Ext.create('Ext.Window', {
-								html: 'Are you sure want do delete selected item(s) ?',
-								bodyPadding: '20 5 5 17',
-								title: 'Confirmation',
-								resizable: false,
-								modal: true,
-								closable: false,
-								draggable: false,
-								width: 300,
-								height: 120,
-								buttons: [{
-									text: 'Yes',
-									listeners: {
-										click: function() {
-											showLoadingWindow();
-											this.up().up().close();
-											Ext.Ajax.request({
-												url: sd.baseUrl + '/meetinginvestor/request/destroy',
-												params: {
-													INVESTOR_ID: __data.INVESTOR_ID,
-            										MEETING_ACTIVITIE_ID: __data.MEETING_ACTIVITIE_ID
-												},
-												success: function(d) {
-													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-													closeLoadingWindow();
-													var store = loadStore('Meetinginvestors');
-													store.load({
-														params: {
-															id: data.INVESTOR_ID
-														}
-													});
-												},
-												failure: function(d) {
-													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-													closeLoadingWindow();
-													Ext.Msg.alert('Error', d.error_message);
-												}
-											});
-										}
-									}
-								},{
-									text: 'No',
-									listeners: {
-										click: function() {
-											this.up().up().close();
-										}
-									}
-								}]
-							}).show();
-						} else {
-							Ext.Msg.alert('Error', 'You did not select any Meeting Investors.');
-						}
-					}
-				}
-			},{//create meeting
+			},*/
+			{//create meeting
 				xtype:'button',
 				iconCls:'icon-go',
 				text:'Create Meeting',
@@ -1064,6 +992,79 @@ if(!c.up().items.get(xid)) {
 				}
 
 				//end create
+			},{
+				xtype: 'button',
+				text: 'Detail Meeting',
+				iconCls: 'icon-detail',
+				listeners: {
+					click: function() {
+						<?php echo $this->render('/request/tbar/investors/meeting-gilang.js')?>
+					}
+				}
+			},{
+				xtype: 'button',
+				text: 'Delete Meeting Investors',
+				iconCls: 'icon-stop',
+				listeners: {
+					click: function() {
+						var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + xid);
+						var __sel = __c.getSelectionModel().getSelection();
+						if(__sel.length > 0) {
+							var __data = __sel[0].data;
+							Ext.create('Ext.Window', {
+								html: 'Are you sure want do delete selected item(s) ?',
+								bodyPadding: '20 5 5 17',
+								title: 'Confirmation',
+								resizable: false,
+								modal: true,
+								closable: false,
+								draggable: false,
+								width: 300,
+								height: 120,
+								buttons: [{
+									text: 'Yes',
+									listeners: {
+										click: function() {
+											showLoadingWindow();
+											this.up().up().close();
+											Ext.Ajax.request({
+												url: sd.baseUrl + '/meetinginvestor/request/destroy',
+												params: {
+													INVESTOR_ID: __data.INVESTOR_ID,
+            										MEETING_ACTIVITIE_ID: __data.MEETING_ACTIVITIE_ID
+												},
+												success: function(d) {
+													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+													closeLoadingWindow();
+													var store = loadStore('Meetinginvestors');
+													store.load({
+														params: {
+															id: data.INVESTOR_ID
+														}
+													});
+												},
+												failure: function(d) {
+													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+													closeLoadingWindow();
+													Ext.Msg.alert('Error', d.error_message);
+												}
+											});
+										}
+									}
+								},{
+									text: 'No',
+									listeners: {
+										click: function() {
+											this.up().up().close();
+										}
+									}
+								}]
+							}).show();
+						} else {
+							Ext.Msg.alert('Error', 'You did not select any Meeting Investors.');
+						}
+					}
+				}
 			}]
 		}]
 	}));
