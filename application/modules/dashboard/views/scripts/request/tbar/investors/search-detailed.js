@@ -857,13 +857,15 @@ c.up().add({
 					flex: 1,
 					dataIndex: 'MEETING_EVENT'
 				},{
-					text:'Name',
-					flex:1,
-					dataIndex:'NAME'
+					text: 'Start Time',
+					align: 'center',
+					width: 150,
+					dataIndex: 'START_TIME'
 				},{
-					text:'Initials',
-					flex:1,
-					dataIndex:'INITIAL_PART'
+					text: 'End Time',
+					align: 'center',
+					width: 150,
+					dataIndex: 'END_TIME'
 				}]
 			}],
 			tbar: [{

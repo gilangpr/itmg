@@ -43,7 +43,6 @@ class News_RequestController extends Zend_Controller_Action
 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
 			$ncatModel = new Application_Model_NewsCategory();
 			$ncomModel = new Application_Model_Company();
-			
 			if(!isset($this->_posts['search'])) {
 	
 				/* Not search query */
@@ -118,66 +117,23 @@ class News_RequestController extends Zend_Controller_Action
 					}
 					/* Source */
 					
-					if (isset($this->_posts['startdate']) && isset($this->_posts['enddate'])) {
-						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE >= ?', $this->_posts['startdate']);
-						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE <= ?', $this->_posts['enddate']);
-					}
-					
 					$query = $this->_model->select()
 					->where($where[0])
 					->where($where[1])
 					->where($where[2])
 					->where($where[3])
-					->where($where[4])
-					->where($where[5])
 					->limit($this->_model->count(), $this->_start);
 
-					$list = $query->query()->fetchAll();
-					
-					foreach($list as $k=>$d) {
-						$list[$k]['NEWS_CATEGORY'] = $ncatModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
-						//$lisk[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
-						$comName = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
-						$list[$k]['COMPANY_NAME'] = $comName;
-					}
-
-				} else if ($this->_posts['search'] == 2) {
-					$where = array();
-					
-					/* Title */
-					if(isset($this->_posts['title'])) {
-						$where[] = $this->_model->getAdapter()->quoteInto('TITLE LIKE ?', '%' . $this->_posts['title'] . '%');
-					} else {
-						$where[] = $this->_model->getAdapter()->quoteInto('TITLE LIKE ?', '%%');
-					}
-					
-					/* Category */
-					if(isset($this->_posts['category'])) {
-						if($ncatModel->isExistByKey('NEWS_CATEGORY', $this->_posts['category'])) {
-							$catID = $ncatModel->getPkByKey('NEWS_CATEGORY', $this->_posts['category']);
-							$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID = ?', $catID);
-						} else {
-							$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID LIKE ?', '%%');
-						}
-					} else {
-						$where[] = $this->_model->getAdapter()->quoteInto('NEWS_CATEGORY_ID LIKE ?', '%' . $this->_posts['category'] . '%');
-					}
-					/* Category*/
-					
-					$query = $this->_model->select()
-					->where($where[0])
-					->where($where[1])
-					->limit($this->_model->count(), $this->_start);
-					
 					//print_r($where[3]);
 					$list = $query->query()->fetchAll();
-						
+					
 					foreach($list as $k=>$d) {
 						$list[$k]['NEWS_CATEGORY'] = $ncatModel->getValueByKey('NEWS_CATEGORY_ID', $d['NEWS_CATEGORY_ID'], 'NEWS_CATEGORY');
 						//$lisk[$k]['COMPANY_NAME'] = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
 						$comName = $ncomModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
 						$list[$k]['COMPANY_NAME'] = $comName;
 					}
+
 				} else {
 					$list = array();
 				}
