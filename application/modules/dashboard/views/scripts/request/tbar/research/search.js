@@ -18,9 +18,8 @@ Date.prototype.customFormat = function(formatString){
     ss=(s=dateObject.getSeconds())<10?('0'+s):s;
     return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 }
-
-var startdate = '1900-01-01';
-var enddate = '2013-12-12';
+var SP_START_DATE = '1900-01-01';
+var SP_END_DATE = '2013-12-12';
 var SP_NAMES = new Array();
 
 var storeRR = loadStore('ResearchReports');
@@ -163,10 +162,6 @@ Ext.create('Ext.Window', {
 				var rCategory = Ext.getCmp('research-category').getValue();
 				var rCompany = Ext.getCmp('research-company').getValue();
 				var rAnalyst = Ext.getCmp('research-analyst').getValue();
-				var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
-				startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
-				var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
-				enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
 				var _id = 'research-search-result-' + Math.random();
 				
 				if(form.isValid()) {
@@ -191,11 +186,9 @@ Ext.create('Ext.Window', {
 								title: rTitle,
 								category: rCategory,
 								company: rCompany,
-								analyst: rAnalyst,
-								startdate: startdate,
-								enddate: enddate
+								analyst: rAnalyst
 							}}});
-					//showLoadingWindow();
+					showLoadingWindow();
 					_storeResearchReports.load({
 						callback: function(d,i,e,f) {
 							if(d.length == 0) {
@@ -203,88 +196,13 @@ Ext.create('Ext.Window', {
 							} else {
 								Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
 								c.up().add({
-									title: 'Search Result',
+									title: 'Research Search Result',
 									closable: true,
 									id: _id,
 									autoScroll: true,
 									xtype: 'gridpanel',
 									layout: 'border',
 									store: _storeResearchReports,
-									tbar: [{
-							        	xtype: 'button',
-							        	text: 'Download',
-							        	iconCls: 'icon-download',
-							        	listeners : {
-							        		click: function() {
-							     				var c = Ext.getCmp(_id);
-												var selected = c.getSelectionModel().getSelection();
-												if(selected.length > 0) {
-													document.location = sd.baseUrl + '/research/request/download/id/' + selected[0].data.RESEARCH_REPORT_ID;
-													var store = loadStore('ResearchReports');
-													setTimeout(function(){
-														store.loadPage(store.currentPage);
-													},800);
-												} else {
-													Ext.Msg.alert('Message', 'You did not select any Research');
-												}
-							        		}
-							        	}
-							        },{
-							        	xtype: 'button',
-							        	text: 'Delete',
-							        	iconCls: 'icon-stop',
-							        	listeners: {
-							        		click: function() {
-							        			var c = Ext.getCmp(_id);
-												var selected = c.getSelectionModel().getSelection();
-												if(selected.length > 0) {
-													Ext.create ('Ext.Window', {
-														html: 'Are you sure want do delete selected item(s) ?',
-														bodyPadding: '20 5 5 17',
-														title: 'Confirmation',
-														resizable: false,
-														modal: true,
-														closable: false,
-														draggable: false,
-														width: 300,
-														height: 120,
-														buttons: [{
-															text: 'Yes',
-															listeners: {
-																click: function() {
-																	showLoadingWindow();
-																	this.up().up().close();
-																	Ext.Ajax.request({
-																		url: sd.baseUrl + '/research/request/destroy',
-																		params: selected[0].data,
-																		success: function(data) {
-																			var json = Ext.decode(data.responseText);
-																			closeLoadingWindow();
-																			var store = loadStore('ResearchReports');
-																			store.loadPage(store.currentPage);
-																		},
-																		failure: function() {
-																			var json = Ext.decode(data.responseText);
-																			closeLoadingWindow();
-																		}
-																	});
-																}
-															}
-														},{
-															text: 'No',
-															listeners: {
-																click: function() {
-																	this.up().up().close();
-																}
-															}
-														}]
-													}).show();
-												} else {
-													Ext.Msg.alert('Message', 'You did not select any Research');
-												}
-							        		}
-							        	}
-							        }],
 									"columns": [{
 	                                    "text": "Title",
 	                                    "dataIndex": "TITLE",
@@ -397,7 +315,7 @@ Ext.create('Ext.Window', {
 	                            })
 								});
 								c.up().setActiveTab(_id);
-								//closeLoadingWindow();
+								closeLoadingWindow();
 							}
 						}
 					});

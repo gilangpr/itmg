@@ -198,6 +198,17 @@ class Investors_RequestController extends MyIndo_Controller_Action
 					$q->where('EQUITY_ASSETS >= 0');
 				}
 				
+				/*
+				if(strtolower($EQUITY_ASSETS) == 'small') {
+					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
+				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
+					$q->where('EQUITY_ASSETS >= 21 AND EQUITY_ASSETS <= 40');
+				} else if(strtolower($EQUITY_ASSETS) == 'large'){
+					$q->where('EQUITY_ASSETS >= 41');
+				} else {
+					$q->where('EQUITY_ASSETS >= 0');
+				}
+				//*/
 			}
 			
 			if(isset($this->_posts['INVESTOR_TYPE'])) {
@@ -233,7 +244,7 @@ class Investors_RequestController extends MyIndo_Controller_Action
 			
 		}
 	
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		MyIndo_Tools_Return::JSON($data);
 	}
 	
 	public function destroyAction(){
@@ -501,7 +512,7 @@ class Investors_RequestController extends MyIndo_Controller_Action
 	
 		$upload->setDestination(APPLICATION_PATH ."/../public/upload/investors/");
 		//$upload->addValidator('Extension',false,'xls,xlsx');
-		$upload->addValidator('Extension',false, array('xls','xlsx','case' => true));
+		$upload->addValidator('Extension',false, array('xls','xlsx','case'=>true));
 			if ($upload->isValid()) {
 		
 				$upload->receive();
@@ -578,25 +589,47 @@ class Investors_RequestController extends MyIndo_Controller_Action
 										'INVESTOR_TYPE_ID' => $IT_id,
 										'LOCATION_ID' => $LO_id,
 										'COMPANY_NAME' => $val[0],
-										'STYLE' => $val[2],
-										'EQUITY_ASSETS' => $val[3] ,
-										'PHONE_1' => $val[4],
-										'PHONE_2' => $val[5],
-										'FAX' => $val[6],
-										'EMAIL_1' => $val[7],
-										'EMAIL_2' => $val[8],
-										'WEBSITE' => $val[9],
-										'ADDRESS' => $val[10],
-										'COMPANY_OVERVIEW' => $val[12],
-										'INVESTMENT_STRATEGY' => $val[13],
+										'STYLE'=> $val[2],
+										'EQUITY_ASSETS'=>$val[3] ,
+										'PHONE_1'=>$val[4],
+										'PHONE_2'=>$val[5],
+										'FAX'=>$val[6],
+										'EMAIL_1'=>$val[7],
+										'EMAIL_2'=>$val[8],
+										'WEBSITE'=>$val[9],
+										'ADDRESS'=>$val[10],
+										'COMPANY_OVERVIEW'=>$val[12],
+										'INVESTMENT_STRATEGY'=>$val[13],
 					 					'CREATED_DATE' => date('Y-m-d H:i:s')
 									));
 								$total = $total + count($jum);
-								
-							} else {
+								/*
+								$data = array(
+									'data' => array(
+										'items' => $total,
+										'totalCount' => $total
+										)
+									);
+								*/
+							}
+							
+							else{
+								/*
+								if($total == 0){
+									//$total=1;
+									$this->_success = false;
+									$this->_error_message = '0 Data Insert';	
+								}
+								else{
+									$jumlah=$total+1;
+									$this->_success = false;
+									$this->_error_message = $jumlah.' Data Insert';	
+								}
+								*/
 								$this->_success = false;
 								$this->_error_message = 'Any data Already Exist';	
 							}
+							//$jumlah = $total+1;
 						}
 						
 					}
@@ -620,10 +653,11 @@ class Investors_RequestController extends MyIndo_Controller_Action
 					$this->_error_message = $e->getMessage();
 					$this->_success = false;
 		} 
-		
+	    /*
 		if(file_exists($upload->getDestination() . '/' . $new_name)) {
 			unlink($upload->getDestination() . '/' . $new_name);
 		}
+		*/
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	
 	}

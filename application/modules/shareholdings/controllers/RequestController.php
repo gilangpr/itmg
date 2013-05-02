@@ -80,19 +80,19 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 			$shareholder_id = $this->_model->getValueByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME'], 'SHAREHOLDING_ID');
 			$table = new Application_Model_ShareholdingAmounts();
 			$Amount = $table->getValueByKey('SHAREHOLDING_ID', $shareholder_id, 'AMOUNT');
-			if ($Amount == 0) {	
-				$table->update(array(
+			//print_r($Amount);print_r($shareholder_id);die;
+			if ($Amount != 0) {	
+				$table->insert(array(
+						'SHAREHOLDING_ID' => $shareholder_id,
 						'AMOUNT' => $this->_posts['AMOUNT'],
 						'CREATED_DATE' => date('Y-m-d H:i:s'),
 						'DATE' => $this->_posts['DATE']
-						),$table->getAdapter()->quoteInto('SHAREHOLDING_ID', $shareholder_id));
+				));
 			} else {
-			$table->insert(array(
-					'SHAREHOLDING_ID' => $shareholder_id,
-					'AMOUNT' => $this->_posts['AMOUNT'],
-					'CREATED_DATE' => date('Y-m-d H:i:s'),
-					'DATE' => $this->_posts['DATE']
-					));
+				$table->update(array(
+						'AMOUNT' => $this->_posts['AMOUNT'],
+						'DATE' => $this->_posts['DATE']
+				),$table->getAdapter()->quoteInto('SHAREHOLDING_ID = ?', $shareholder_id));
 			}
 		}catch(Exception $e) {
 			$this->_error_code = $e->getCode();
@@ -237,10 +237,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		            $c[$t]['AMOUNT'] = $jml;
 		            $c[$t]['PERCENTAGE'] = 100;
 		            $t = count($c);
-
-// 					$data['data']['items'] = $c;
-// 					$data['data']['Total'] = count($c);
-// 					$data['data']['totalCount'] = $this->_model->count();
 		            $data = array(
 		            		'data' => array(
 		            				'items' => $c,
@@ -251,7 +247,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				}catch(Exception $e) {
 					echo $e->getMessage();
 				}
-		 //}
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		 }
 	}
@@ -517,14 +512,17 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		         ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
  			}
  		}
- 		$list = $list->query()->fetchAll();
- 		$data = array(
- 				'data' => array(
- 						'items' => $list,
- 						'totalCount' => count($list)
- 						)
- 				);
- 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+ 		         $list = $list->query()->fetchAll();
+
+ 		         
+ 		         $data = array(
+ 		         		'data' => array(
+ 		         				'items' => $list,
+ 		         				'totalCount' => count($list)
+ 		         		)
+ 		         );
+ 		         
+ 		         MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
  	
  	public function autocomAction() 
@@ -548,4 +546,4 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		
  		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
- }
+ 	}

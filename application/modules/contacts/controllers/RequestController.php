@@ -76,56 +76,26 @@ class Contacts_RequestController extends Zend_Controller_Action
 	}
 	public function readAction()
 	{
+		$data = array(
+			'data' => array(
+				'items' => array(),
+				'totalCount' => 0
+			)
+		);
 		$modelInvestors = new Application_Model_Investors();
 		$investor_id = (isset($this->_posts['id'])) ? $this->_posts['id'] : 0;
 		if($investor_id > 0) {
-			if($modelInvestors->isExistByKey('INVESTOR_ID', $investor_id)) {
-				$list = $this->_model->select()->where('INVESTOR_ID = ?', $investor_id);
-				$list = $list->query()->fetchAll();
-				$totalCount = count($list);
-			}
-		} else {
-			if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
-				try {
-					if(isset($this->_posts['sort'])) {
-						// Decode sort JSON :
-						$sort = Zend_Json::decode($this->_posts['sort']);
-					}
-					// Query data
-					$q = $this->_model->select();
-			
-					if(isset($this->_posts['sort'])) {
-						$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
-					}
-			
-					if(isset($this->_posts['query'])) {
-						if(!empty($this->_posts['query']) && $this->_posts['query'] != '') {
-							$q->where('NAME LIKE ?', '%' . $this->_posts['query'] . '%');
-						}
-					}
-			
-					// Count all data
-					$rTotal = $q->query()->fetchAll();
-					$totalCount = count($rTotal);
-			
-					// Fetch sorted & limit data
-					$q->limit($this->_limit, $this->_start);
-					$list = $q->query()->fetchAll();
-					
-				} catch (Exception $e) {
-					$this->_error_code = $e->getCode();
-					$this->_error_message = $e->getMessage();
-					$this->_success = false;
-				}
-			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start);
-				$totalCount = $this->_model->count();
-			}
+		if($modelInvestors->isExistByKey('INVESTOR_ID', $investor_id)) {
+			$list = $this->_model->select()->where('INVESTOR_ID = ?', $investor_id);
+			$list = $list->query()->fetchAll();
+		}} else {
+			$list = $this->_model->select();
+			$list = $list->query()->fetchAll();
 		}
 		$data = array(
 				'data' => array(
 						'items' => $list,
-						'totalCount' => $totalCount
+						'totalCount' => count($list)
 				)
 		);
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
