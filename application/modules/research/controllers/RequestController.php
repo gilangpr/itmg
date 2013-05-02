@@ -105,6 +105,12 @@ class Research_RequestController extends Zend_Controller_Action
 					} else {
 						$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%' . $this->_posts['company'] . '%');
 					}
+					/* Analyst */
+					if (isset($this->_posts['analyst'])) {
+						$where[] = $this->_model->getAdapter()->quoteInto('ANALYST LIKE ?', '%' . $this->_posts['analyst'] . '%');
+					} else {
+						$where[] = $this->_model->getAdapter()->quoteInto('ANALYST LIKE ?', '%%');
+					}
 					
 					if (isset($this->_posts['startdate']) && isset($this->_posts['enddate'])) {
 						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE >= ?', $this->_posts['startdate']);
