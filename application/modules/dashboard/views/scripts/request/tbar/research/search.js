@@ -152,36 +152,25 @@ Ext.create('Ext.Window', {
 			labelWidth: 140,
 			width: 320,
 			minChars: 2,
+			allowBlank: false
 		}]
 	}],
 	buttons: [{
 		text: 'Search',
 		listeners: {
 			click: function() {
-				var form = Ext.getCmp('research-search-form').getForm();
-				var rTitle = Ext.getCmp('research-title').getValue();
-				var rCategory = Ext.getCmp('research-category').getValue();
-				var rCompany = Ext.getCmp('research-company').getValue();
-				var rAnalyst = Ext.getCmp('research-analyst').getValue();
-				var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
-				startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
-				var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
-				enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
+				var form = Ext.getCmp('research-search-form').getForm();				
 				var _id = 'research-search-result-' + Math.random();
 				
 				if(form.isValid()) {
-					if(typeof(rTitle) === 'undefined') {
-						rTitle = '';
-					}
-					if(typeof(rCategory) === 'undefined') {
-						rCategory = '';
-					}
-					if(typeof(rCompany) === 'undefined') {
-						rCompany = '';
-					}
-					if(typeof(rAnalyst) === 'undefined') {
-						rAnalyst = '';
-					}
+					var rTitle = Ext.getCmp('research-title').getValue();
+					var rCategory = Ext.getCmp('research-category').getValue();
+					var rCompany = Ext.getCmp('research-company').getValue();
+					var rAnalyst = Ext.getCmp('research-analyst').getValue();
+					var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
+					startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
+					var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
+					enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
 					var _storeResearchReports = Ext.create("Ext.data.Store", {
 						model: "ResearchReport",
 						storeId: "ResearchReports__",
