@@ -177,7 +177,7 @@ function showNewsSearch() {
 													document.location = sd.baseUrl + '/news/request/download/id/' + i.data.NEWS_ID;
 													var store = loadStore('Newss');
 													setTimeout(function(){
-														store.loadPage(store.currentPage);
+														_storeNews.loadPage(_storeNews.currentPage);
 													},800);
 												}
 											}

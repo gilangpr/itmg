@@ -222,7 +222,7 @@ Ext.create('Ext.Window', {
 													document.location = sd.baseUrl + '/research/request/download/id/' + selected[0].data.RESEARCH_REPORT_ID;
 													var store = loadStore('ResearchReports');
 													setTimeout(function(){
-														store.loadPage(store.currentPage);
+														_storeResearchReports.loadPage(_storeResearchReports.currentPage);
 													},800);
 												} else {
 													Ext.Msg.alert('Message', 'You did not select any Research');

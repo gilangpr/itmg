@@ -166,7 +166,7 @@ function showRrSearch() {
 													document.location = sd.baseUrl + '/research/request/download/id/' + i.data.RESEARCH_REPORT_ID;
 													var store = loadStore('ResearchReports');
 													setTimeout(function(){
-														store.loadPage(store.currentPage);
+														_storeResearchReports.loadPage(_storeResearchReports.currentPage);
 													},800);
 												}
 											}
