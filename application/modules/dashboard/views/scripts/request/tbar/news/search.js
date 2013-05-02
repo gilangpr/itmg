@@ -1,4 +1,4 @@
-Date.prototype.customFormat = function(formatString){
+	Date.prototype.customFormat = function(formatString){
     var YYYY,YY,MMMM,MMM,MM,M,DDDD,DDD,DD,D,hhh,hh,h,mm,m,ss,s,ampm,AMPM,dMod,th;
     var dateObject = this;
     YY = ((YYYY=dateObject.getFullYear())+"").slice(-2);
