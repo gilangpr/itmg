@@ -8,7 +8,7 @@
     maxHeight: grid_height,
     autoScroll: true,
     store: storeRR,
-    id: 'rr-grid',
+    id: 'rr-grid-' + data.PEER_ID,
     bbar: new Ext.PagingToolbar({
         store: storeRR,
         displayInfo: true,

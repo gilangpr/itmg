@@ -369,7 +369,85 @@ class Investors_RequestController extends MyIndo_Controller_Action
 				$fileExt = $tmp[count($tmp)-1];
 				$newName = $fileName . '.' . $fileExt;
 				
-				echo $newName;
+				rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $newName);
+				
+				try {
+					$inputFileName = $upload->getDestination() . '/' . $newName;
+					$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+					$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+					$objReader->setReadDataOnly(true);
+					$objPHPExcel = $objReader->load($inputFileName);
+					$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
+					$objWriter->setPreCalculateFormulas(false);
+					$total = 0;
+					foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+						$highestRow         =  $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+						$highestColumn      =  $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+						$nrColumns = ord($highestColumn) - 64;
+						$highestColumn++;
+						for ($row = 2; $row < $highestRow + 1; $row++) {
+							$val = array();
+							for ($col = 'A'; $col < $highestColumn; $col++) {
+								$val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
+							};
+							
+							/*
+							 * 0 - Company Name
+							 * 1 - Investor Type
+							 * 2 - Style
+							 * 3 - Equity Assets
+							 * 4 - Phone 1
+							 * 5 - Phone 2
+							 * 6 - Fax
+							 * 7 - Email 1
+							 * 8 - Email 2
+							 * 9 - Website
+							 * 10 - Address
+							 * 11 - Country
+							 * 12 - Company Overview
+							 * 13 - Investment Strategy
+							 */
+							
+							if(!empty($val[0]) && $val[0] != '') {
+								if(!$ITModel->isExistByKey('INVESTOR_TYPE', $val[1])) {
+									$investorType = $ITModel->insert(array(
+											'INVESTOR_TYPE' => $val[1],
+											'CREATED_DATE' => $this->_date
+											));
+								} else {
+									$investorType = $ITModel->getPkByKey('LOCATION', $val[1]);
+								}
+								$style = (!empty($val[2]) && $val[2] != '' ) ? $val[2] : '-';
+								$equityAssets = (is_numeric($val[3])) ? $val[3] : 0;
+								$phone1 = (!empty($val[4]) && $val[4] != '' ) ? $val[4] : '-';
+								$phone2 = (!empty($val[5]) && $val[5] != '' ) ? $val[5] : '-';
+								$fax = (!empty($val[6]) && $val[6] != '' ) ? $val[6] : '-';
+								$email1 = (!empty($val[7]) && $val[7] != '' ) ? $val[7] : '-';
+								$email2 = (!empty($val[8]) && $val[8] != '' ) ? $val[8] : '-';
+								$website = (!empty($val[9]) && $val[9] != '' ) ? $val[9] : '-';
+								$address = (!empty($val[10]) && $val[10] != '' ) ? $val[10] : '-';
+								if(!$LOModel->isExistByKey('LOCATION', $val[11])) {
+									$country = $LOModel->insert(array(
+											'LOCATION' => $val[11],
+											'CREATED_DATE' => $this->_date
+											));
+								} else {
+									$country = $LOModel->getPkByKey('LOCATION', $val[11]);
+								}
+								$companyOverview = (!empty($val[12]) && $val[12] != '' ) ? utf8_encode($val[12]) : '-';
+								$investmentStrategy = (!empty($val[13]) && $val[13] != '' ) ? utf8_encode($val[13]) : '-';
+								
+							}
+						}
+					}
+					if(file_exists($upload->getDestination() . '/' . $newName)) {
+						unlink($upload->getDestination() . '/' . $newName);
+					}
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
 			} else {
 				$this->error(902);
 			}
