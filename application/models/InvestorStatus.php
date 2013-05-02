@@ -53,10 +53,10 @@ class Application_Model_InvestorStatus extends MyIndo_Ext_Abstract
 	
 	public function  getIdstatus($valStatus) {
 		
-		$select = $status->select();
-		$select->from('INVESTOR_STATUS',array());
-		$select->columns('INVESTOR_STATUS');
-	    $select->where('INVESTOR_STATUS = ?', $valStatus);
+		$select = $this->select()
+		->from('INVESTOR_STATUS',array())
+		->columns('INVESTOR_STATUS')
+	    ->where('INVESTOR_STATUS = ?', $valStatus);
 		return  $select->query()->fetch();
 	}
 }
