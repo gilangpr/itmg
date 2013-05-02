@@ -118,16 +118,18 @@ function showShareholdingSearch() {
 												text: 'Investor Name',
 												dataIndex: 'INVESTOR_NAME',
 												flex: 1
-											},{
-												text: 'Investor Status',
-												width: 190,
-												dataIndex: 'INVESTOR_STATUS'
-											},{
+											},
+//											{
+//												text: 'Investor Status',
+//												width: 190,
+//												dataIndex: 'INVESTOR_STATUS'
+//											},
+											{
 												text: 'Account Holder',
 												width: 290,
 												dataIndex: 'ACCOUNT_HOLDER'
 											},{
-												text: 'Total',
+												text: 'No.Of Share',
 												width: 120,
 												dataIndex: 'AMOUNT',
 												renderer: Ext.util.Format.numberRenderer('0.,/i')

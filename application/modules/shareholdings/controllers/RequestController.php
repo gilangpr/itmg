@@ -507,8 +507,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  				->from('SHAREHOLDING_AMOUNTS', array('*'))
  				->where('DATE >= ?',  $start_date[0])
  				->where('DATE <= ?',  $end_date[0])
- 				
- 		         ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
+ 		        ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
  			}
  		}
  		         $list = $list->query()->fetchAll();
