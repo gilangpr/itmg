@@ -1,10 +1,10 @@
-var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + xid);
-var __selected = __c.getSelectionModel().getSelection();
-if(__selected.length > 0) {
-	var __id = 'investor-details-meetings-tabs-' + __selected[0].data.MEETING_ACTIVITIE_ID;
-    var meeting__id = __selected[0].data;
-	if(!c.up().items.get(__id)) {
-		var maxWidth = 221;
+var c = Ext.getCmp('<?php echo $this->container ?>');
+var selected = c.getSelectionModel().getSelection();
+if(selected.length > 0) {
+    var id = 'investor-details-meetings-tabs-' + selected[0].data.MEETING_ACTIVITIE_ID;
+    var meeting__id = selected[0].data;
+    if(!c.up().items.get(id)) {
+        var maxWidth = 221;
 
         /*
          *Call Meeting Participant
@@ -54,101 +54,101 @@ if(__selected.length > 0) {
         sorter: {"property":"CONTACT_ID","direction":"ASC"}});
     
     storeCO.load();
-		c.up().add({
-			title: 'Meeting: ' + meeting__id.MEETING_EVENT,
-			closable: true,
-			id: __id,
-			xtype: 'panel',
+        c.up().add({
+            title: 'Meeting: ' + meeting__id.MEETING_EVENT,
+            closable: true,
+            id: id,
+            xtype: 'panel',
             layout: 'border',
             autoScroll: true,
             border: false,
             items:[{
-            	title: 'Meeting Contacts',
+                title: 'Meeting Contacts',
                 border: false,
                 region:'north',
                 xtype: 'gridpanel',
-                id:'meeting-contact-list-' + xid,
+                id:'meeting-contact-list-' + id,
                 store:storeCON,
                 //store:storeCO,
                 autoScroll:true,
                 minHeight: 200,
                 maxWidth: Ext.getBody().getViewSize().width - maxWidth,
                 tbar:[{
-                	xtype:'button',
-                	text:'Add New Meeting Contacts',
-                	iconCls:'icon-accept',
-                	listeners:{
-                		click:function(){
-                			var _sCO = Ext.create("Ext.data.Store", {
-                				model: "Contact",
-                				storeId: "Contacts",
-                				proxy:{extraParams:{id: meeting__id.INVESTOR_ID},"type":"ajax","api":{"read":"\/contacts\/request\/read","create":"\/contacts\/request\/create","update":"\/contacts\/request\/update","destroy":"\/contacts\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"CONTACT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
-                				sorter: {"property":"CONTACT_ID","direction":"ASC"}});
-                			
-                			_sCO.load({
-                				params: {
-                					id: meeting__id.INVESTOR_ID
-                				}
-                			});
-                			
-                			Ext.create('Ext.Window', {
-                				title: 'Add Meeting Contact',
-                				width: 300,
-                				modal: true,
-                				resizable: false,
-                				draggable: false,
-                				items: [{
-                					xtype: 'form',
-                					layout: 'form',
-                					id: 'investors-detail-meeting-contacts-add-' + meeting__id.MEETING_ACTIVITIE_ID,
-                					border: false,
-                					bodyPadding: '5 5 5 5',
-                					items: [{
-                						xtype: 'combobox',
-                						store: _sCO,
-                						fieldLabel: 'Contact Name',
-                						name: 'CONTACT_ID',
-                						displayField: 'NAME',
+                    xtype:'button',
+                    text:'Add New Meeting Contacts',
+                    iconCls:'icon-accept',
+                    listeners:{
+                        click:function(){
+                            var _sCO = Ext.create("Ext.data.Store", {
+                                model: "Contact",
+                                storeId: "Contacts",
+                                proxy:{extraParams:{id: meeting__id.INVESTOR_ID},"type":"ajax","api":{"read":"\/contacts\/request\/read","create":"\/contacts\/request\/create","update":"\/contacts\/request\/update","destroy":"\/contacts\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"CONTACT_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+                                sorter: {"property":"CONTACT_ID","direction":"ASC"}});
+                            
+                            _sCO.load({
+                                params: {
+                                    id: meeting__id.INVESTOR_ID
+                                }
+                            });
+                            
+                            Ext.create('Ext.Window', {
+                                title: 'Add Meeting Contact',
+                                width: 300,
+                                modal: true,
+                                resizable: false,
+                                draggable: false,
+                                items: [{
+                                    xtype: 'form',
+                                    layout: 'form',
+                                    id: 'investors-detail-meeting-contacts-add-' + meeting__id.MEETING_ACTIVITIE_ID,
+                                    border: false,
+                                    bodyPadding: '5 5 5 5',
+                                    items: [{
+                                        xtype: 'combobox',
+                                        store: _sCO,
+                                        fieldLabel: 'Contact Name',
+                                        name: 'CONTACT_ID',
+                                        displayField: 'NAME',
                                         valueField:'CONTACT_ID',
                                         emptyText :'Select a Contacts',
-                						allowBlank: false
-                					}]
-                				}],
-                				buttons: [{
-                					text: 'Save',
-                					iconCls: 'icon-accept',
-                					listeners: {
-                						click: function() {
-                							var form = Ext.getCmp('investors-detail-meeting-contacts-add-' + meeting__id.MEETING_ACTIVITIE_ID);
-                							if(form.getForm().isValid()) {
-                								form.getForm().submit({
-                									url: sd.baseUrl + '/meetingcontact/request/create/id/'+meeting__id.MEETING_ACTIVITIE_ID,
-                									params:{
+                                        allowBlank: false
+                                    }]
+                                }],
+                                buttons: [{
+                                    text: 'Save',
+                                    iconCls: 'icon-accept',
+                                    listeners: {
+                                        click: function() {
+                                            var form = Ext.getCmp('investors-detail-meeting-contacts-add-' + meeting__id.MEETING_ACTIVITIE_ID);
+                                            if(form.getForm().isValid()) {
+                                                form.getForm().submit({
+                                                    url: sd.baseUrl + '/meetingcontact/request/create/id/'+meeting__id.MEETING_ACTIVITIE_ID,
+                                                    params:{
                                                         INVESTOR_ID:meeting__id.INVESTOR_ID
                                                     },
-                									success: function(d, e) {
-                										var json = Ext.decode(e.response.responseText);
+                                                    success: function(d, e) {
+                                                        var json = Ext.decode(e.response.responseText);
                                                         var store = loadStore('Meetingcontacts');
                                                             store.load({
                                                                 params: {
                                                                 id: meeting__id.MEETING_ACTIVITIE_ID
                                                                 }
                                                             }); // Refresh grid data,
-                										Ext.Msg.alert('Message', 'Data successfully saved.');
-                										form.up().close();
-                									},
-                									failure: function(d, e) {
-                										var json = Ext.decode(e.response.responseText);
-                										Ext.Msg.alert('Error', 'Sorry,Data already exist!!!');
-                									}
-                								});
-                							}
-                						}
-                					}
-                				}]
-                			}).show();;
-                		}
-                	}
+                                                        Ext.Msg.alert('Message', 'Data successfully saved.');
+                                                        form.up().close();
+                                                    },
+                                                    failure: function(d, e) {
+                                                        var json = Ext.decode(e.response.responseText);
+                                                        Ext.Msg.alert('Error', 'Sorry,Data already exist!!!');
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }]
+                            }).show();;
+                        }
+                    }
                 },{
                     xtype: 'button',
                     text: 'Add New Participants',
@@ -269,12 +269,12 @@ if(__selected.length > 0) {
                         }
                     }
                 },{
-                	xtype:'button',
-                	text:'Delete Meeting Contacts',
-                	iconCls:'icon-stop',
-                	listeners:{
-                		click:function(){
-                			var mmc = Ext.getCmp('meeting-contact-list-' + xid);
+                    xtype:'button',
+                    text:'Delete Meeting Contacts',
+                    iconCls:'icon-stop',
+                    listeners:{
+                        click:function(){
+                            var mmc = Ext.getCmp('meeting-contact-list-' + id);
                             var mmc_selected = mmc.getSelectionModel().getSelection();
                     
                                 if(mmc_selected.length > 0) {
@@ -301,11 +301,8 @@ if(__selected.length > 0) {
                                                         params: {
                                                             CONTACT_ID: mmc.CONTACT_ID,
                                                             MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
-
                                                             INVESTOR_ID:meeting__id.INVESTOR_ID,
-
-                                                            INVESTOR_ID:meeting__id.INVESTOR_ID,
-                                                            NAME:mmc.NAME
+                                                            PART_ID:mmc.PART_ID
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -336,21 +333,21 @@ if(__selected.length > 0) {
                                 } else {
                                 Ext.Msg.alert('Message', 'You did not select any Contacts');
                                 }
-                		}
-                	}
+                        }
+                    }
                 }],
                 columns:[{
-                	text:'Company name',
+                    text:'Company name',
                     dataIndex:'COMPANY_NAME',
                     width:200,
                     flex: 1
                 },{
-                	text:'Name',
+                    text:'Name',
                     dataIndex:'NAME',
                     width:200,
                     flex: 1
                 },{
-                	text:'Email',
+                    text:'Email',
                     dataIndex:'EMAIL',
                     width:200,
                     flex: 1
@@ -359,17 +356,19 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
+            },{
+                title:'ITM Participants',
             },
             {
-            	title:'Meeting Participants',
-            	border:false,
-            	region:'north',
-            	xtype:'gridpanel',
+                title:'Meeting Participants',
+                border:false,
+                region:'north',
+                xtype:'gridpanel',
                 store:storeMP,
-                id:'meetingparticipant-list-'+xid,
-            	autoScroll:true,
-            	minHeight:200,
-            	maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                id:'meetingparticipant-list-'+id,
+                autoScroll:true,
+                minHeight:200,
+                maxWidth: Ext.getBody().getViewSize().width - maxWidth,
                 columns:[{
                     text:'Name Participants',
                     dataIndex:'NAME_PART',
@@ -386,12 +385,12 @@ if(__selected.length > 0) {
                     width:100,
                     align: 'center'
                 }],
-            	tbar:[{
-            		xtype:'button',
-            		text:'Add New ITM Participants',
-            		iconCls:'icon-accept',
-            		listeners:{
-            			click:function(){
+                tbar:[{
+                    xtype:'button',
+                    text:'Add New ITM Participants',
+                    iconCls:'icon-accept',
+                    listeners:{
+                        click:function(){
                             Ext.create('Ext.Window', {
                                     title: 'Add New ITM Participants Meeting',
                                     id: 'MP',
@@ -470,15 +469,15 @@ if(__selected.length > 0) {
                                             }] 
                                         }]
                                 }).show();
-            			}
-            		}
-            	},{
-            		xtype:'button',
-            		text:'Delete ITM Participants',
-            		iconCls:'icon-stop',
-            		listeners:{
-            			click:function(){
-                            var mmp = Ext.getCmp('meetingparticipant-list-' + xid);
+                        }
+                    }
+                },{
+                    xtype:'button',
+                    text:'Delete ITM Participants',
+                    iconCls:'icon-stop',
+                    listeners:{
+                        click:function(){
+                            var mmp = Ext.getCmp('meetingparticipant-list-' + id);
                             var mmp_selected = mmp.getSelectionModel().getSelection();
                     
                                 if(mmp_selected.length > 0) {
@@ -536,27 +535,27 @@ if(__selected.length > 0) {
                                 } else {
                                 Ext.Msg.alert('Message', 'You did not select any Participants');
                                 }
-            			}
-            		}
-            	}]
-            	
+                        }
+                    }
+                }]
+                
             },{
-            	title:'Meeting Documents',
-            	collapsible:true,
-            	border:false,
-            	region:'north',
-            	xtype:'gridpanel',
-                id: 'meetingdocumentation-list-' + xid,
+                title:'Meeting Documents',
+                collapsible:true,
+                border:false,
+                region:'north',
+                xtype:'gridpanel',
+                id: 'meetingdocumentation-list-' + id,
                 store:storeMD,
-            	autoScroll:true,
-            	minHeight:200,
-            	maxWidth: Ext.getBody().getViewSize().width - maxWidth,
-            	tbar:[{
-            		xtype:'button',
-            		text:'Upload Documents',
-            		iconCls:'icon-attachment',
-            		listeners:{
-            			click:function(){
+                autoScroll:true,
+                minHeight:200,
+                maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                tbar:[{
+                    xtype:'button',
+                    text:'Upload Documents',
+                    iconCls:'icon-attachment',
+                    listeners:{
+                        click:function(){
                             Ext.create('Ext.Window', {
                                     title: 'Add New Documents',
                                     id: 'MD',
@@ -644,15 +643,15 @@ if(__selected.length > 0) {
                                                 }
                                          }]
                                     }).show();                                              
-            			}
-            		}
-            	},{
-            		xtype:'button',
-            		text:'Delete Documents',
-            		iconCls:'icon-stop',
-            		listeners:{
-            			click:function(){
-                            var mmd = Ext.getCmp('meetingdocumentation-list-' + xid);
+                        }
+                    }
+                },{
+                    xtype:'button',
+                    text:'Delete Documents',
+                    iconCls:'icon-stop',
+                    listeners:{
+                        click:function(){
+                            var mmd = Ext.getCmp('meetingdocumentation-list-' + id);
                             var mmd_selected = mmd.getSelectionModel().getSelection();
                     
                                 if(mmd_selected.length > 0) {
@@ -706,14 +705,14 @@ if(__selected.length > 0) {
                                 } else {
                                 Ext.Msg.alert('Message', 'You did not select any Documents');
                                 }
-            			}
-            		}
-            	},{
-            		xtype:'button',
-            		text:'Downloads Documents',
-            		iconCls:'icon-download',
-            		listeners:{
-            			click:function(){
+                        }
+                    }
+                },{
+                    xtype:'button',
+                    text:'Downloads Documents',
+                    iconCls:'icon-download',
+                    listeners:{
+                        click:function(){
                             var  md= Ext.getCmp('meetingdocumentation-list-'+id);
                             var md_selected = md.getSelectionModel().getSelection();
                             if(md_selected.length > 0) {
@@ -730,19 +729,19 @@ if(__selected.length > 0) {
                             } else {
                                 Ext.Msg.alert('Message', 'You did not select any File Documents');
                             }
-            			}
-            		}
-            	}],
-            	columns:[{
-            		text:'Documents Title',
+                        }
+                    }
+                }],
+                columns:[{
+                    text:'Documents Title',
                     dataIndex:'DOCUMENTATION_TITLE',
                     width:200,
                     flex: 1
-            	},{
+                },{
                     text:'File Name',
                     dataIndex:'FILE_NAME',
-            		width:300
-            	},{
+                    width:300
+                },{
                     text:'Upload Date',
                     dataIndex:'CREATED_DATE',
                     width:200
@@ -758,7 +757,7 @@ if(__selected.length > 0) {
                     layout: 'form',
                     border: false,
                     bodyPadding: '5 5 5 5',
-                    id: 'meeting-detail-notes-form-' + xid,
+                    id: 'meeting-detail-notes-form-' + id,
                     items: [{
                         xtype: 'textarea',
                         name: 'NOTES',
@@ -773,7 +772,7 @@ if(__selected.length > 0) {
                         listeners: {
                             click: function() {
                                
-                                var form = Ext.getCmp('meeting-detail-notes-form-' + xid).getForm();
+                                var form = Ext.getCmp('meeting-detail-notes-form-' + id).getForm();
                                 if(form.isValid()) {
                                     form.submit({
 
@@ -801,10 +800,10 @@ if(__selected.length > 0) {
                     }]
                 }]
             }]
-		});
-		
-	}
-	c.up().setActiveTab(__id);
+        });
+        
+    }
+    c.up().setActiveTab(id);
 } else {
-	Ext.Msg.alert('Message', 'You did not select any Meetings.');
+    Ext.Msg.alert('Message', 'You did not select any Meetings.');
 }

@@ -243,30 +243,9 @@ if(!c.up().items.get(xid)) {
 					border: false,
 					id: 'investors-detail-investor-form-' + data.INVESTOR_ID,
 					bodyPadding: '5 5 5 5',
-					items: [{
-						xtype: 'numberfield',
-						name: 'EQUITY_ASSETS',
-						fieldLabel: 'Equity Assets <span style="color:red;">*</span>',
-						minValue: 0,
-						value: data.EQUITY_ASSETS,
-						allowBlank: false
-					},{
-						xtype: 'combobox',
-						name: 'INVESTOR_TYPE',
-						fieldLabel: 'Investor Type <span style="color:red;">*</span>',
-						allowBlank: false,
-						store: storeIT,
-						displayField: 'INVESTOR_TYPE',
-						value: data.INVESTOR_TYPE
-					},{
-						xtype: 'textfield',
-						name: 'STYLE',
-						fieldLabel: 'Style <span style="color:red;">*</span>',
-						value: data.STYLE,
-						allowBlank: false
-					}],
-					buttons: [{
-						text: 'Update',
+					tbar: [{
+						xtype: 'button',
+						text: 'Update Detail Investor',
 						iconCls: 'icon-accept',
 						listeners: {
 							click: function() {
@@ -294,6 +273,28 @@ if(!c.up().items.get(xid)) {
 								}
 							}
 						}
+					}],
+					items: [{
+						xtype: 'numberfield',
+						name: 'EQUITY_ASSETS',
+						fieldLabel: 'Equity Assets <span style="color:red;">*</span>',
+						minValue: 0,
+						value: data.EQUITY_ASSETS,
+						allowBlank: false
+					},{
+						xtype: 'combobox',
+						name: 'INVESTOR_TYPE',
+						fieldLabel: 'Investor Type <span style="color:red;">*</span>',
+						allowBlank: false,
+						store: storeIT,
+						displayField: 'INVESTOR_TYPE',
+						value: data.INVESTOR_TYPE
+					},{
+						xtype: 'textfield',
+						name: 'STYLE',
+						fieldLabel: 'Style <span style="color:red;">*</span>',
+						value: data.STYLE,
+						allowBlank: false
 					}]
 				}/*,{
 					title: 'Custom Attributes',
@@ -332,17 +333,48 @@ if(!c.up().items.get(xid)) {
 				}*/]
 			},{
 				title: 'Company Address',
-				border: false,
 				style: {
 					float: 'rigth',
 					width: '50%'
 				},
+				border: false,
 				items: [{
 					xtype: 'form',
 					layout: 'form',
 					id: 'investors-detail-company-address-form-' + data.INVESTOR_ID,
 					bodyPadding: '5 5 5 5',
 					border: false,
+					tbar: [{
+						xtype: 'button',
+						text: 'Update Company Address',
+						iconCls: 'icon-accept',
+						listeners: {
+							click: function() {
+								var form = Ext.getCmp('investors-detail-company-address-form-' + data.INVESTOR_ID).getForm();
+								if(form.isValid()) {
+									form.submit({
+										url: sd.baseUrl + '/investors/request/update-detail',
+										params: {
+											id: data.INVESTOR_ID,
+											batch: 1,
+											btype: 'company-address',
+											type: 'batch'
+										},
+										waitMsg: 'Updating data, please wait..',
+										success: function(d, e) {
+											var json = Ext.decode(e.response.responseText);
+											Ext.Msg.alert('Message', 'Update success.');
+											storeINVESTORS.loadPage(storeINVESTORS.currentPage);
+										},
+										failure: function(d, e) {
+											var json = Ext.decode(e.response.responseText);
+											Ext.Msg.alert('Error', json.error_message);
+										}
+									});
+								}
+							}
+						}
+					}],
 					items: [{
 						xtype: 'htmleditor',
 						fieldLabel: 'Address',
@@ -395,36 +427,6 @@ if(!c.up().items.get(xid)) {
 						allowBlank: true,
 						value: data.WEBSITE
 					}]
-				}],
-				buttons: [{
-					text: 'Update',
-					iconCls: 'icon-accept',
-					listeners: {
-						click: function() {
-							var form = Ext.getCmp('investors-detail-company-address-form-' + data.INVESTOR_ID).getForm();
-							if(form.isValid()) {
-								form.submit({
-									url: sd.baseUrl + '/investors/request/update-detail',
-									params: {
-										id: data.INVESTOR_ID,
-										batch: 1,
-										btype: 'company-address',
-										type: 'batch'
-									},
-									waitMsg: 'Updating data, please wait..',
-									success: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Message', 'Update success.');
-										storeINVESTORS.loadPage(storeINVESTORS.currentPage);
-									},
-									failure: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Error', json.error_message);
-									}
-								});
-							}
-						}
-					}
 				}]
 			}]
 		},{
@@ -432,6 +434,35 @@ if(!c.up().items.get(xid)) {
 			title: 'Company Overview',
 			border: false,
 			maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+			tbar: [{
+				xtype: 'button',
+				text: 'Update Company Overview',
+				iconCls: 'icon-accept',
+				listeners: {
+					click: function() {
+						var form = Ext.getCmp('investors-detail-company-overview-form-' + data.INVESTOR_ID).getForm();
+						if(form.isValid()) {
+							form.submit({
+								url: sd.baseUrl + '/investors/request/update-detail',
+								waitMsg: 'Updateing data, please wait..',
+								params: {
+									id: data.INVESTOR_ID,
+									type: 'COMPANY_OVERVIEW'
+								},
+								success: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Message', 'Update success.');
+									storeINVESTORS.loadPage(storeINVESTORS.currentPage);
+								},
+								failure: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Error', json.error_message);
+								}
+							})
+						}
+					}
+				}
+			}],
 			items: [{
 				xtype: 'form',
 				layout: 'form',
@@ -445,35 +476,7 @@ if(!c.up().items.get(xid)) {
 					minHeight: 160,
 					allowBlank: false,
 					msgTarget:'under',
-					maxLength:1000
-				}],
-				buttons: [{
-					text: 'Update',
-					iconCls: 'icon-accept',
-					listeners: {
-						click: function() {
-							var form = Ext.getCmp('investors-detail-company-overview-form-' + data.INVESTOR_ID).getForm();
-							if(form.isValid()) {
-								form.submit({
-									url: sd.baseUrl + '/investors/request/update-detail',
-									waitMsg: 'Updateing data, please wait..',
-									params: {
-										id: data.INVESTOR_ID,
-										type: 'COMPANY_OVERVIEW'
-									},
-									success: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Message', 'Update success.');
-										storeINVESTORS.loadPage(storeINVESTORS.currentPage);
-									},
-									failure: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Error', json.error_message);
-									}
-								})
-							}
-						}
-					}
+					maxLength:2000
 				}]
 			}]
 		},{
@@ -481,6 +484,35 @@ if(!c.up().items.get(xid)) {
 			title: 'Investment Strategy',
 			border: false,
 			maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+			tbar: [{
+				xtype: 'button',
+				text: 'Update Investment Strategy',
+				iconCls: 'icon-accept',
+				listeners: {
+					click: function() {
+						var form = Ext.getCmp('investors-detail-investment-strategy-form-' + data.INVESTOR_ID).getForm();
+						if(form.isValid()) {
+							form.submit({
+								url: sd.baseUrl + '/investors/request/update-detail',
+								waitMsg: 'Updateing data, please wait..',
+								params: {
+									id: data.INVESTOR_ID,
+									type: 'INVESTMENT_STRATEGY'
+								},
+								success: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Message', 'Update success.');
+									storeINVESTORS.loadPage(storeINVESTORS.currentPage);
+								},
+								failure: function(d, e) {
+									var json = Ext.decode(e.response.responseText);
+									Ext.Msg.alert('Error', json.error_message);
+								}
+							})
+						}
+					}
+				}
+			}],
 			items: [{
 				xtype: 'form',
 				layout: 'form',
@@ -494,35 +526,7 @@ if(!c.up().items.get(xid)) {
 					minHeight: 160,
 					allowBlank: false,
 					msgTarget:'under',
-					maxLength:1000
-				}],
-				buttons: [{
-					text: 'Update',
-					iconCls: 'icon-accept',
-					listeners: {
-						click: function() {
-							var form = Ext.getCmp('investors-detail-investment-strategy-form-' + data.INVESTOR_ID).getForm();
-							if(form.isValid()) {
-								form.submit({
-									url: sd.baseUrl + '/investors/request/update-detail',
-									waitMsg: 'Updateing data, please wait..',
-									params: {
-										id: data.INVESTOR_ID,
-										type: 'INVESTMENT_STRATEGY'
-									},
-									success: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Message', 'Update success.');
-										storeINVESTORS.loadPage(storeINVESTORS.currentPage);
-									},
-									failure: function(d, e) {
-										var json = Ext.decode(e.response.responseText);
-										Ext.Msg.alert('Error', json.error_message);
-									}
-								})
-							}
-						}
-					}
+					maxLength:2000
 				}]
 			}]
 		},{
@@ -894,80 +898,8 @@ if(!c.up().items.get(xid)) {
                         }).show();
 					}
 				}
-			},*/{
-				xtype: 'button',
-				text: 'Detail Meeting',
-				iconCls: 'icon-detail',
-				listeners: {
-					click: function() {
-						<?php echo $this->render('/request/tbar/investors/meeting-gilang.js')?>
-					}
-				}
-			},{
-				xtype: 'button',
-				text: 'Delete Meeting Investors',
-				iconCls: 'icon-stop',
-				listeners: {
-					click: function() {
-						var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + xid);
-						var __sel = __c.getSelectionModel().getSelection();
-						if(__sel.length > 0) {
-							var __data = __sel[0].data;
-							Ext.create('Ext.Window', {
-								html: 'Are you sure want do delete selected item(s) ?',
-								bodyPadding: '20 5 5 17',
-								title: 'Confirmation',
-								resizable: false,
-								modal: true,
-								closable: false,
-								draggable: false,
-								width: 300,
-								height: 120,
-								buttons: [{
-									text: 'Yes',
-									listeners: {
-										click: function() {
-											showLoadingWindow();
-											this.up().up().close();
-											Ext.Ajax.request({
-												url: sd.baseUrl + '/meetinginvestor/request/destroy',
-												params: {
-													INVESTOR_ID: __data.INVESTOR_ID,
-            										MEETING_ACTIVITIE_ID: __data.MEETING_ACTIVITIE_ID
-												},
-												success: function(d) {
-													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-													closeLoadingWindow();
-													var store = loadStore('Meetinginvestors');
-													store.load({
-														params: {
-															id: data.INVESTOR_ID
-														}
-													});
-												},
-												failure: function(d) {
-													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-													closeLoadingWindow();
-													Ext.Msg.alert('Error', d.error_message);
-												}
-											});
-										}
-									}
-								},{
-									text: 'No',
-									listeners: {
-										click: function() {
-											this.up().up().close();
-										}
-									}
-								}]
-							}).show();
-						} else {
-							Ext.Msg.alert('Error', 'You did not select any Meeting Investors.');
-						}
-					}
-				}
-			},{//create meeting
+			},*/
+			{//create meeting
 				xtype:'button',
 				iconCls:'icon-go',
 				text:'Create Meeting',
@@ -1060,6 +992,79 @@ if(!c.up().items.get(xid)) {
 				}
 
 				//end create
+			},{
+				xtype: 'button',
+				text: 'Detail Meeting',
+				iconCls: 'icon-detail',
+				listeners: {
+					click: function() {
+						<?php echo $this->render('/request/tbar/investors/meeting-gilang.js')?>
+					}
+				}
+			},{
+				xtype: 'button',
+				text: 'Delete Meeting Investors',
+				iconCls: 'icon-stop',
+				listeners: {
+					click: function() {
+						var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + xid);
+						var __sel = __c.getSelectionModel().getSelection();
+						if(__sel.length > 0) {
+							var __data = __sel[0].data;
+							Ext.create('Ext.Window', {
+								html: 'Are you sure want do delete selected item(s) ?',
+								bodyPadding: '20 5 5 17',
+								title: 'Confirmation',
+								resizable: false,
+								modal: true,
+								closable: false,
+								draggable: false,
+								width: 300,
+								height: 120,
+								buttons: [{
+									text: 'Yes',
+									listeners: {
+										click: function() {
+											showLoadingWindow();
+											this.up().up().close();
+											Ext.Ajax.request({
+												url: sd.baseUrl + '/meetinginvestor/request/destroy',
+												params: {
+													INVESTOR_ID: __data.INVESTOR_ID,
+            										MEETING_ACTIVITIE_ID: __data.MEETING_ACTIVITIE_ID
+												},
+												success: function(d) {
+													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+													closeLoadingWindow();
+													var store = loadStore('Meetinginvestors');
+													store.load({
+														params: {
+															id: data.INVESTOR_ID
+														}
+													});
+												},
+												failure: function(d) {
+													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+													closeLoadingWindow();
+													Ext.Msg.alert('Error', d.error_message);
+												}
+											});
+										}
+									}
+								},{
+									text: 'No',
+									listeners: {
+										click: function() {
+											this.up().up().close();
+										}
+									}
+								}]
+							}).show();
+						} else {
+							Ext.Msg.alert('Error', 'You did not select any Meeting Investors.');
+						}
+					}
+				}
 			}]
 		}]
 	}));

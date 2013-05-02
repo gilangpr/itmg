@@ -184,7 +184,7 @@ class Financialperform_RequestController extends Zend_Controller_Action
 		
 		try {
 			$peer_id = $this->_getParam('id', 0);
-			if($modelPeer->isExistByKey(PEER_ID, $peer_id)) {
+			if($this->_model->isExistByKey(PEER_ID, $peer_id)) {
 				$this->_model->update(array(
 						'REVENUE' => $this->_posts['REVENUE'],
 						'GROSS_PROFIT' => $this->_posts['GROSS_PROFIT'],
