@@ -156,7 +156,7 @@
     	iconCls: 'icon-stop',
     	listeners: {
     		click: function() {
-    			var _objGrid = Ext.getCmp('peers-detail-coal-sales-' + data.PEER_ID);
+    			var _objGrid = Ext.getCmp('peers-detail-coal-sales-distribution-' + data.PEER_ID);
                 var _objGridSelected = _objGrid.getSelectionModel().getSelection();
                 if(_objGridSelected.length > 0) {
                     var _objData = _objGridSelected[0].data;
@@ -165,7 +165,7 @@
                             Ext.Ajax.request({
                                 url: sd.baseUrl + storeCSD.proxy.api.destroy,
                                 params: {
-                                    id: _objData.COAL_SALES_ID
+                                    id: _objData.COAL_SALES_DISTRIBUTION_ID
                                 },
                                 success: function(_a, _b) {
                                     Ext.Msg.alert('Message','Data successfully deleted.');
