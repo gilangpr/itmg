@@ -36,19 +36,35 @@ class Meetingparticipant_RequestController extends Zend_Controller_Action
 		);
 		$meetingModel = new Application_Model_Meetingactivitie();
 		$inModel = new Application_Model_Investors();
+		$ItmPartModel = new Application_Model_Itmparticipants();
 		try {
 			// Insert Data :
 			$meetingAcid = $this->_getParam('id',0);
 			if($meetingModel->isExistByKey('MEETING_ACTIVITIE_ID', $meetingAcid)) {
- 			$this->_model->insert(array(
-					'MEETING_ACTIVITIE_ID'=>$meetingAcid,
-					'PARTICIPANT_ID'=>$this->_posts['PARTICIPANT_ID']
- 					));
- 			$inModel->update(array(
- 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
- 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
-			}
-			else {
+				if($ItmPartModel->isExistByKey('PARTICIPANT_ID', $this->_posts['PARTICIPANT_ID'])) {
+					$q = $this->_model->select()
+					->where('PARTICIPANT_ID = ?', $this->_posts['PARTICIPANT_ID'])
+					->where('MEETING_ACTIVITIE_ID = ?', $meetingAcid);
+					$c = $q->query()->fetchAll();
+					if(count($c) == 0) {
+			 			$this->_model->insert(array(
+								'MEETING_ACTIVITIE_ID'=>$meetingAcid,
+								'PARTICIPANT_ID'=>$this->_posts['PARTICIPANT_ID']
+			 					));
+			 			$inModel->update(array(
+			 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+			 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
+					} else {
+						$this->_error_code = 202;
+						$this->_error_message = 'Data already exist.';
+						$this->_success = false;
+					}
+				} else {
+					$this->_error_code = 402;
+					$this->_error_message = 'Illegal Name, Please select from list.';
+					$this->_success = false;
+				}
+			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'MEETING_ACTIVITIE_ID NOT FOUND';
 				$this->_success = false;

@@ -37,20 +37,36 @@ class Meetingcontact_RequestController extends Zend_Controller_Action
 		//Call Model Investor
 		$maModel = new Application_Model_Meetingactivitie();
 		$inModel = new Application_Model_Investors();
+		$coModel = new Application_Model_Contacts();
 		try {
 			// Insert Data :
 			//get id params
 			$ma_id = $this->_getParam('id',0);
 			if($maModel->isExistByKey('MEETING_ACTIVITIE_ID', $ma_id)) {
- 			$this->_model->insert(array(
-					'MEETING_ACTIVITIE_ID'=>$ma_id,
-					'CONTACT_ID'=>$this->_posts['CONTACT_ID']
- 					));
- 			$inModel->update(array(
- 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
- 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
-			}
-			else {
+				if($coModel->isExistByKey('CONTACT_ID', $this->_posts['CONTACT_ID'])) {
+					$q = $this->_model->select()
+					->where('CONTACT_ID = ?', $this->_posts['CONTACT_ID'])
+					->where('MEETING_ACTIVITIE_ID = ?', $ma_id);
+					$c = $q->query()->fetchAll();
+					if(count($c) == 0) {
+		 				$this->_model->insert(array(
+							'MEETING_ACTIVITIE_ID'=>$ma_id,
+							'CONTACT_ID'=>$this->_posts['CONTACT_ID']
+		 					));
+		 				$inModel->update(array(
+		 					'MODIFIED_DATE' => date('Y-m-d H:i:s')
+		 				),$inModel->getAdapter()->quoteInto('INVESTOR_ID = ?', $this->_posts['INVESTOR_ID']));
+		 			} else {
+		 				$this->_error_code = 201;
+		 				$this->_error_message = 'Data already exist.';
+		 				$this->_success = false;
+		 			}
+		 		} else {
+		 			$this->_error_code = 402;
+		 			$this->_error_message = 'Illegal Name, Please select from list.';
+		 			$this->_success = false;
+		 		}
+			} else {
 				$this->_error_code = 404;
 				$this->_error_message = 'MEETING_ACTIVITIE_ID NOT FOUND';
 				$this->_success = false;

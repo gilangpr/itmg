@@ -1,6 +1,6 @@
 <?php 
 
-class Meetingactivitie_RequestController extends Zend_Controller_Action
+class Meetingactivitie_RequestController extends MyIndo_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -102,9 +102,114 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 
 
-		}
-		
+	}
+	
 	public function readAction()
+	{
+		if($this->isPost() && $this->isAjax()) {
+			if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
+				if(isset($this->_posts['sort'])) {
+					// Decode sort JSON :
+					$sort = Zend_Json::decode($this->_posts['sort']);
+				}
+				// Query data
+				$q = $this->_model->select();
+				if(isset($this->_posts['sort'])) {
+					if($sort[0]['property'] == 'MEETING_EVENT' || $sort[0]['property'] == 'MEETING_DATE') {
+						$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
+					}
+				}
+				if(isset($this->_posts['query'])) {
+					if(!empty($this->_posts['query']) && $this->_posts['query'] != '') {
+						$q->where('MEETING_EVENT LIKE ?', '%' . $this->_posts['query'] . '%');
+					}
+				}
+				// Count all data
+				$rTotal = $q->query()->fetchAll();
+				$totalCount = count($rTotal);
+				
+				// Fetch sorted & limit data
+				$q->limit($this->_limit, $this->_start);
+				$list = $q->query()->fetchAll();
+			} else {
+				$list = $this->_model->getListLimit($this->_limit, $this->_start, 'MEETING_DATE DESC');
+				$totalCount = $this->_model->count();
+			}
+
+			
+			$modelInvestors = new Application_Model_Investors();
+			$modelContacts = new Application_Model_Contacts();
+			$modelParticipants = new Application_Model_Participant();
+			$modelItmPart = new Application_Model_Itmparticipants();
+			$modelActInv = new Application_Model_Meetinginvestor();
+			$modelCntInv = new Application_Model_Meetingcontact();
+			$modelItmInv = new Application_Model_Meetingparticipant();
+			foreach($list as $k=>$d) {
+				/* Get List Company */
+				$qActInv = $modelActInv->select()->where('MEETING_ACTIVITIE_ID = ?', $d['MEETING_ACTIVITIE_ID']);
+				$resActInv = $qActInv->query()->fetchAll();
+				foreach($resActInv as $_k=>$_d) {
+					$investors = $modelInvestors->getDetailByKey('INVESTOR_ID', $_d['INVESTOR_ID']);
+					if($_k > 0) {
+						$list[$k]['COMPANY_NAME'] .= ', ' . $investors['COMPANY_NAME'];
+					} else {
+						$list[$k]['COMPANY_NAME'] = $investors['COMPANY_NAME'];
+					}
+				}
+				/* End of : Get List Company */
+				
+				/* Get List Contact */
+				$qCntInv = $modelCntInv->select()->where('MEETING_ACTIVITIE_ID = ?', $d['MEETING_ACTIVITIE_ID']);
+				$resCntInv = $qCntInv->query()->fetchAll();
+				foreach($resCntInv as $_k=>$_d) {
+					$contacts = $modelContacts->getDetailByKey('CONTACT_ID', $_d['CONTACT_ID']);
+					if($_k > 0) {
+						$list[$k]['NAME'] .= ', ' . $contacts['NAME'];
+					} else {
+						$list[$k]['NAME'] = $contacts['NAME'];
+					}
+				}
+				/* End of : Get List Contact */
+
+				/* Get List Participant */
+				$qPart = $modelParticipants->select()->where('MEETING_ACTIVITIE_ID = ?', $d['MEETING_ACTIVITIE_ID']);
+				$resPart = $qPart->query()->fetchAll();
+				foreach($resPart as $_k=>$_d) {
+					if($_k > 0) {
+						$list[$k]['NAME'] .= ', ' . $_d['NAME'];
+					} else {
+						if(isset($list[$k]['NAME'])) {
+							$list[$k]['NAME'] .= ', ' . $_d['NAME'];
+						} else {
+							$list[$k]['NAME'] = $_d['NAME'];
+						}
+					}
+				}
+				/* End of : Get List Participant */
+
+				/* Get List ITM Participant */
+				$qItmPart = $modelItmInv->select()->where('MEETING_ACTIVITIE_ID = ?', $d['MEETING_ACTIVITIE_ID']);
+				$resItmPart = $qItmPart->query()->fetchAll();
+				foreach($resItmPart as $_k=>$_d) {
+					$itmParticipants = $modelItmPart->getDetailByKey('PARTICIPANT_ID', $_d['PARTICIPANT_ID']);
+					if($_k > 0) {
+						$list[$k]['INITIAL_PART'] .= ', ' . $itmParticipants['INITIAL_PART'];
+					} else {
+						$list[$k]['INITIAL_PART'] = $itmParticipants['INITIAL_PART'];
+					}
+				}
+				/* End of : ITM Participant */
+			}
+
+			$this->_data['data']['items'] = $list;
+			$this->_data['data']['totalCount'] = $totalCount;
+		} else {
+			$this->error(901);
+		}
+		$this->json();
+	}
+
+	public function readOldAction()
 	{	
 		if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
 			if(isset($this->_posts['sort'])) {

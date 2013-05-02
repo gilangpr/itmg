@@ -9,7 +9,15 @@ if(__selected.length > 0) {
         /*
          *Call Meeting Participant
          */
-        var storeMP = loadStore('Meetingparticipants');
+        var storeMP = Ext.create("Ext.data.Store", {
+            model: "Meetingparticipant",
+            storeId: "Meetingparticipants_x",
+            proxy:{
+                extraParams:{
+                    id:meeting__id.MEETING_ACTIVITIE_ID   
+                },
+                "type":"ajax","api":{"read":"\/meetingparticipant\/request\/read","create":"\/meetingparticipant\/request\/create","update":"\/meetingparticipant\/request\/update","destroy":"\/meetingparticipant\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"MEETING_PARTICIPANT","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+            sorter: {"property":"MEETING_PARTICIPANT","direction":"ASC"}});
         storeMP.autoSync = true;
         storeMP.load({
             params:{
@@ -22,7 +30,15 @@ if(__selected.length > 0) {
           /*
          *Call Meeting Contacts
          */
-        var storeCON = loadStore('Meetingcontacts');
+        var storeCON = Ext.create("Ext.data.Store", {
+            model: "Meetingcontact",
+            storeId: "Meetingcontacts",
+            proxy:{
+                extraParams:{
+                    id: meeting__id.MEETING_ACTIVITIE_ID
+                },
+                "type":"ajax","api":{"read":"\/meetingcontact\/request\/read","create":"\/meetingcontact\/request\/create","update":"\/meetingcontact\/request\/update","destroy":"\/meetingcontact\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"MEETING_CONTACT","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+            sorter: {"property":"MEETING_CONTACT","direction":"ASC"}});
         storeCON.autoSync = true;
         storeCON.load({
             params:{
@@ -33,7 +49,13 @@ if(__selected.length > 0) {
          *End call Meeting Contacts
          */
 
-         var storeMD = loadStore('Meetingdocumentations');
+         var storeMD = Ext.create("Ext.data.Store", {
+            model: "Meetingdocumentation",
+            storeId: "Meetingdocumentations",
+            proxy:{extraParams: {
+                id:meeting__id.MEETING_ACTIVITIE_ID
+            },"type":"ajax","api":{"read":"\/meetingdocumentation\/request\/read","create":"\/meetingdocumentation\/request\/create","update":"\/meetingdocumention\/request\/update","destroy":"\/meetingdocumentation\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"MEETING_DOCUMENTATION_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+            sorter: {"property":"MEETING_DOCUMENTATION_ID","direction":"ASC"}});
             storeMD.autoSync = true;
             storeMD.load({
                 params:{
@@ -73,7 +95,13 @@ if(__selected.length > 0) {
                 autoScroll:true,
                 minHeight: 200,
                 maxWidth: Ext.getBody().getViewSize().width - maxWidth,
-                tbar:[{
+                bbar: new Ext.PagingToolbar({
+                    store: storeCON,
+                    displayInfo: true,
+                    displayMsg: 'Displaying data {0} - {1} of {2}',
+                    emptyMsg: 'No data to display'
+                }),
+                tbar:[{ 
                 	xtype:'button',
                 	text:'Add New Meeting Contacts',
                 	iconCls:'icon-accept',
@@ -93,7 +121,7 @@ if(__selected.length > 0) {
                 			
                 			Ext.create('Ext.Window', {
                 				title: 'Add Meeting Contact',
-                				width: 300,
+                				width: 400,
                 				modal: true,
                 				resizable: false,
                 				draggable: false,
@@ -128,25 +156,20 @@ if(__selected.length > 0) {
                                                     },
                 									success: function(d, e) {
                 										var json = Ext.decode(e.response.responseText);
-                                                        var store = loadStore('Meetingcontacts');
-                                                            store.load({
-                                                                params: {
-                                                                id: meeting__id.MEETING_ACTIVITIE_ID
-                                                                }
-                                                            }); // Refresh grid data,
+                                                        storeCON.load();
                 										Ext.Msg.alert('Message', 'Data successfully saved.');
                 										form.up().close();
                 									},
                 									failure: function(d, e) {
                 										var json = Ext.decode(e.response.responseText);
-                										Ext.Msg.alert('Error', 'Sorry,Data already exist!!!');
+                										Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
                 									}
                 								});
                 							}
                 						}
                 					}
                 				}]
-                			}).show();;
+                			}).show();
                 		}
                 	}
                 },{
@@ -250,9 +273,9 @@ if(__selected.length > 0) {
                                                         },
                                                         failure: function(d, e) {
                                                             var json = Ext.decode(e.response.responseText);
-                                                            Ext.Msg.alert('Error', 'Sorry,Data already exist!!!');
+                                                            Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
                                                         }
-                                                        });
+                                                    });
                                                 }
                                             }
                                         }
@@ -311,11 +334,7 @@ if(__selected.length > 0) {
                                                             var json = Ext.decode(dat.responseText);
                                                             closeLoadingWindow();
                                                             var store = loadStore('Meetingcontacts');
-                                                            store.load({
-                                                                params: {
-                                                                id: meeting__id.MEETING_ACTIVITIE_ID
-                                                            }
-                                                             });
+                                                            storeCON.load();
                                                         },
                                                         failure: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -370,6 +389,12 @@ if(__selected.length > 0) {
             	autoScroll:true,
             	minHeight:200,
             	maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                bbar: new Ext.PagingToolbar({
+                    store: storeMP,
+                    displayInfo: true,
+                    displayMsg: 'Displaying data {0} - {1} of {2}',
+                    emptyMsg: 'No data to display'
+                }),
                 columns:[{
                     text:'Name Participants',
                     dataIndex:'NAME_PART',
@@ -442,19 +467,14 @@ if(__selected.length > 0) {
                                                                     //console.log(data);
                                                                     var json = Ext.decode(d.responseText);
                                                                     form.reset();
-                                                                    var store = loadStore('Meetingparticipants');
-                                                                    store.load({
-                                                                        params: {
-                                                                            id: meeting__id.MEETING_ACTIVITIE_ID
-                                                                        }
-                                                                    }); // Refresh grid data
+                                                                    storeMP.load();
                                                                     Ext.Msg.alert('Success', 'Data has been saved');
                                                                     Ext.getCmp('MP').close();
                                                                 },
-                                                                failure: function(d) {
+                                                                failure: function(d,e) {
                                                                     //console.log(data);
-                                                                    var json = Ext.decode(d.responseText);
-                                                                    Ext.Msg.alert('Error','Sorry, data already exist!!!');
+                                                                    var json = Ext.decode(e.response.responseText);
+                                                                    Ext.Msg.alert('Error','[' + json.error_code + '] : ' + json.error_message);
                                                                 }
                                                             });
                                                         }
@@ -510,12 +530,7 @@ if(__selected.length > 0) {
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
                                                             closeLoadingWindow();
-                                                            var storeP = loadStore('Meetingparticipants');
-                                                            storeP.load({
-                                                                params: {
-                                                                id: meeting__id.MEETING_ACTIVITIE_ID
-                                                            }
-                                                             });
+                                                            storeMP.load();
                                                         },
                                                         failure: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -534,7 +549,7 @@ if(__selected.length > 0) {
                                                 }]
                                     }).show();
                                 } else {
-                                Ext.Msg.alert('Message', 'You did not select any Participants');
+                                    Ext.Msg.alert('Message', 'You did not select any Participants');
                                 }
             			}
             		}
@@ -551,6 +566,12 @@ if(__selected.length > 0) {
             	autoScroll:true,
             	minHeight:200,
             	maxWidth: Ext.getBody().getViewSize().width - maxWidth,
+                bbar: new Ext.PagingToolbar({
+                    store: storeMD,
+                    displayInfo: true,
+                    displayMsg: 'Displaying data {0} - {1} of {2}',
+                    emptyMsg: 'No data to display'
+                }),
             	tbar:[{
             		xtype:'button',
             		text:'Upload Documents',
@@ -604,21 +625,17 @@ if(__selected.length > 0) {
                                                                 },
                                                                 waitMsg: 'Uploading document, please wait..',
                                                                 success: function(de, ef) {
-                                                                var json = Ext.decode(ef.response.responseText);
-                                                                Ext.Msg.show({
-                                                                    title: 'Message',
-                                                                    msg: 'File sucessfully uploaded',
-                                                                    minWidth: 200,
-                                                                    modal: true,
-                                                                    icon: Ext.Msg.INFO,
-                                                                    buttons: Ext.Msg.OK
-                                                                });
-                                                                form.reset();
-                                                                store.load({
-                                                                        params: {
-                                                                            id: meeting__id.MEETING_ACTIVITIE_ID
-                                                                        }
+                                                                    var json = Ext.decode(ef.response.responseText);
+                                                                    Ext.Msg.show({
+                                                                        title: 'Message',
+                                                                        msg: 'File sucessfully uploaded',
+                                                                        minWidth: 200,
+                                                                        modal: true,
+                                                                        icon: Ext.Msg.INFO,
+                                                                        buttons: Ext.Msg.OK
                                                                     });
+                                                                    form.reset();
+                                                                    storeMD.load();
                                                                 },
                                                                 failure: function(de, ef) {
                                                                 var json = Ext.decode(ef.response.responseText);
