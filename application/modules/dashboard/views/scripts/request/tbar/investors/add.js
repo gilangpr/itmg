@@ -1,42 +1,6 @@
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var id = 'investors-add-investor-form';
-/*
-*Star
-*
-if (Ext.ux.form == undefined) {
-    Ext.ns('Ext.ux.form');
-}
 
-Ext.ux.form.HtmlEditorCounterPlugin = function (config) {
-    Ext.apply(this, config);
-};
-
-Ext.extend (Ext.ux.form.HtmlEditorCounterPlugin, Ext.util.Observable, {
-    prefix: '',
-    itemTypeSingular: ' character',
-    itemTypePlural: ' characters',
-    itemTypeNone: ' characters',
-    onRender: function (o) {
-        this.counter = Ext.DomHelper.append(document.body,{
-          tag : 'div',
-          style: 'padding-top:2px'
-        })
-        this.editor.wrap.up('div.x-form-element').appendChild(this.counter);
-        this.set_counter ((this.editor.initialConfig.value || '').length);
-    },
-    init:   function (editor) {
-        this.editor = editor;
-        this.editor.on ('render', this.onRender, this);
-        this.editor.on ('sync', function (ct, html) { this.set_counter (html.length); }, this);
-    },
-    set_counter: function (s) {
-        this.counter.innerHTML = this.prefix + s + ((s) ? ((s > 1) ? this.itemTypePlural: this.itemTypeSingular) : this.itemTypeNone);
-    }
-});
-/*
-*End
-*/
-//var myplugin = new Ext.ux.form.HtmlEditorCounterPlugin ({prefix: 'Current size is '});
 if(!c.up().items.get(id)) {
 	
 	Ext.define('InvestorType', {//model
@@ -73,6 +37,8 @@ if(!c.up().items.get(id)) {
 								Ext.Msg.alert('Error', json.error_message);
 							}
 						})
+					} else {
+						Ext.Msg.alert('Error', 'Please complete mandatory field first.');
 					}
 				}
 			}
@@ -82,9 +48,7 @@ if(!c.up().items.get(id)) {
 			iconCls: 'icon-stop',
 			listeners: {
 				click: function() {
-					if(confirm('Are you sure want to cancel ?')) {
-						this.up().up().close();
-					}
+					this.up().up().close();
 				}
 			}
 		}],
@@ -119,7 +83,8 @@ if(!c.up().items.get(id)) {
 					typeAhead: true,
 					allowBlank: false,
 					minChars: 2,
-					emptyText: 'Select Investor Type'
+					emptyText: 'Select Investor Type',
+					pageSize: 10
 				},{
 					fieldLabel: 'Style <span style="color:red;">*</span>',
 					name: 'STYLE',
@@ -140,7 +105,13 @@ if(!c.up().items.get(id)) {
 					typeAhead: true,
 					allowBlank: false,
 					minChars: 2,
-					emptyText: 'Select Location'
+					emptyText: 'Select Location',
+					pageSize: 10,
+					listeners: {
+						blur: function() {
+							
+						}
+					}
 				},{
 					fieldLabel: 'Phone Number 1 <span style="color:red;">*</span>',
 					name: 'PHONE_1',
