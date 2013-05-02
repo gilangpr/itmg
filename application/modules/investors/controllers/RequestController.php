@@ -493,7 +493,9 @@ class Investors_RequestController extends MyIndo_Controller_Action
 				$this->error(902);
 			}
 		}catch(Exception $e) {
-			$this->error(901);
+			$this->_error_code = $e->getMessage();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
 		}
 		$this->json();
 	}

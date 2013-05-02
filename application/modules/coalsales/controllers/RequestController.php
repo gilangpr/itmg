@@ -68,13 +68,13 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		try {
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
-			if ($modelCS->isExistByKey('PEER_ID', $peer_id)) {
+			if ($modelPeers->isExistByKey('PEER_ID', $peer_id)) {
 				$this->_model->insert(array(
 					'PEER_ID' => $peer_id,
-					'TITLE' => $this->_post['TITLE'],
-					'TYPE' => $this->_post['TYPE'],
-					'COUNTRY' => $this->_post['COUNTRY'],
-					'VOLUME' => $this->_post['VOLUME'],
+					'TITLE' => $this->_posts['TITLE'],
+					'TYPE' => $this->_posts['TYPE'],
+					'COUNTRY' => $this->_posts['COUNTRY'],
+					'VOLUME' => $this->_posts['VOLUME'],
 					'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
 				/* Check Title */
