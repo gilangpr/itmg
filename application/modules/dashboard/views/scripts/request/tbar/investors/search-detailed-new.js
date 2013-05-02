@@ -1,7 +1,8 @@
+var _idx = 0;
 var c = Ext.getCmp('<?php echo $this->container ?>');
 var xid = 'investors-detail-' + Math.random();
-var data = _store.data.items;
-
+var data = _store.data.items[_idx].data;
+var selected = _store.data.items;
 var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 		clicksToMoveEditor: 1,
         autoCancel: false
@@ -212,13 +213,188 @@ storeCA.load();
 if(!c.up().items.get(xid)) {
 	var maxWidth = 221;
 	c.up().add(Ext.create('Ext.panel.Panel', {
-		title: 'Detail : ' + data.COMPANY_NAME,
+		title: 'Investors Detailed Search Result : ' + data.COMPANY_NAME,
 		layout: 'border',
 		id: xid,
 		closable: true,
 		autoScroll: true,
 		waitMsgTarget: true,
+		listeners: {
+			render: function() {
+				if(selected.length > 1) {
+					Ext.getCmp(xid + '-btn-right').enable();
+				}
+			}
+		},
 		tbar:[{
+			xtype: 'button',
+			text: 'Prev',
+			iconCls: 'icon-left',
+			id: xid + '-btn-left',
+			disabled: true,
+			listeners: {
+				click: function() {
+					var btn = Ext.getCmp(xid + '-btn-right');
+					_idx--;
+					btn.enable();
+					if(_idx == 0) {
+						this.disable();
+					}
+					data = selected[_idx].data;
+					Ext.getCmp(xid).setTitle('Investors Detailed Search Result : ' + selected[_idx].data.COMPANY_NAME);
+					
+					/* Detail Investor */
+					Ext.getCmp(xid + '-equity-asset').setValue(data.EQUITY_ASSETS);
+					Ext.getCmp(xid + '-investor-type').setValue(data.INVESTOR_TYPE);
+					Ext.getCmp(xid + '-style').setValue(data.STYLE);
+					/* End of : Detail Investor */
+					
+					/* Company Address */
+					
+					Ext.getCmp(xid + '-address').setValue(data.ADDRESS);
+					Ext.getCmp(xid + '-location').setValue(data.LOCATION);
+					Ext.getCmp(xid + '-phone1').setValue(data.PHONE_1);
+					Ext.getCmp(xid + '-phone2').setValue(data.PHONE_2);
+					Ext.getCmp(xid + '-email1').setValue(data.EMAIL_1);
+					Ext.getCmp(xid + '-email2').setValue(data.EMAIL_2);
+					Ext.getCmp(xid + '-fax').setValue(data.FAX);
+					Ext.getCmp(xid + '-website').setValue(data.WEBSITE);
+					
+					/* End of : Company Address */
+					
+					/* Company Overview */
+					
+					Ext.getCmp(xid + '-company-overview').setValue(data.COMPANY_OVERVIEW);
+					
+					/* End of : Company Overview */
+					
+					/* Investment Strategy */
+					
+					Ext.getCmp(xid + '-investment-strategy').setValue(data.INVESTMENT_STRATEGY);
+					
+					/* End of : Investment Strategy */
+					
+					storeMA.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeMI.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeCO.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeSH.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storePD.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeCA.load({
+						params: {
+							id: data.INVESTOR_ID
+						},
+						callback: function() {
+							closeLoadingWindow();
+						}
+					});
+				}
+			}
+		},{
+			xtype: 'button',
+			text: 'Next',
+			iconCls: 'icon-right',
+			iconAlign: 'right',
+			id: xid + '-btn-right',
+			disabled: true,
+			listeners: {
+				click: function() {
+					showLoadingWindow();
+					var btn = Ext.getCmp(xid + '-btn-left');
+					_idx++;
+					btn.enable();
+					if(_idx == _store.data.items.length - 1) {
+						this.disable();
+					}
+					data = selected[_idx].data;
+					Ext.getCmp(xid).setTitle('Investors Detailed Search Result : ' + selected[_idx].data.COMPANY_NAME);
+					
+					/* Detail Investor */
+					Ext.getCmp(xid + '-equity-asset').setValue(data.EQUITY_ASSETS);
+					Ext.getCmp(xid + '-investor-type').setValue(data.INVESTOR_TYPE);
+					Ext.getCmp(xid + '-style').setValue(data.STYLE);
+					/* End of : Detail Investor */
+					
+					/* Company Address */
+					
+					Ext.getCmp(xid + '-address').setValue(data.ADDRESS);
+					Ext.getCmp(xid + '-location').setValue(data.LOCATION);
+					Ext.getCmp(xid + '-phone1').setValue(data.PHONE_1);
+					Ext.getCmp(xid + '-phone2').setValue(data.PHONE_2);
+					Ext.getCmp(xid + '-email1').setValue(data.EMAIL_1);
+					Ext.getCmp(xid + '-email2').setValue(data.EMAIL_2);
+					Ext.getCmp(xid + '-fax').setValue(data.FAX);
+					Ext.getCmp(xid + '-website').setValue(data.WEBSITE);
+					
+					/* End of : Company Address */
+					
+					/* Company Overview */
+					
+					Ext.getCmp(xid + '-company-overview').setValue(data.COMPANY_OVERVIEW);
+					
+					/* End of : Company Overview */
+					
+					/* Investment Strategy */
+					
+					Ext.getCmp(xid + '-investment-strategy').setValue(data.INVESTMENT_STRATEGY);
+					
+					/* End of : Investment Strategy */
+					
+					storeMA.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeMI.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeCO.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeSH.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storePD.load({
+						params: {
+							id: data.INVESTOR_ID
+						}
+					});
+					storeCA.load({
+						params: {
+							id: data.INVESTOR_ID
+						},
+						callback: function() {
+							closeLoadingWindow();
+						}
+					});
+				}
+			}
+		},{
 			xtype: 'button',
 			text: 'Print Page',
 			iconCls: 'icon-print',
@@ -283,6 +459,7 @@ if(!c.up().items.get(xid)) {
 						name: 'EQUITY_ASSETS',
 						fieldLabel: 'Equity Assets <span style="color:red;">*</span>',
 						minValue: 0,
+						id: xid + '-equity-asset',
 						value: data.EQUITY_ASSETS,
 						allowBlank: false
 					},{
@@ -291,50 +468,18 @@ if(!c.up().items.get(xid)) {
 						fieldLabel: 'Investor Type <span style="color:red;">*</span>',
 						allowBlank: false,
 						store: storeIT,
+						id: xid + '-investor-type',
 						displayField: 'INVESTOR_TYPE',
 						value: data.INVESTOR_TYPE
 					},{
 						xtype: 'textfield',
 						name: 'STYLE',
+						id: xid + '-style',
 						fieldLabel: 'Style <span style="color:red;">*</span>',
 						value: data.STYLE,
 						allowBlank: false
 					}]
-				}/*,{
-					title: 'Custom Attributes',
-					xtype: 'gridpanel',
-					minHeight: 180,
-					maxHeight: 180,
-					id: 'investors-detail-custom-attributes-grid-' + data.INVESTOR_ID,
-					autoScroll: true,
-					columns: [{
-						text: 'Title',
-						flex: 1
-					},{
-						text: 'Value',
-						width: 150,
-						align: 'center'
-					}],
-					tbar: [{
-						xtype: 'button',
-						text: 'Add New Attribute',
-						iconCls: 'icon-go',
-						listeners: {
-							click: function() {
-								
-							}
-						}
-					},{
-						xtype: 'button',
-						text: 'Delete Attribute',
-						iconCls: 'icon-stop',
-						listeners: {
-							click: function() {
-								
-							}
-						}
-					}]
-				}*/]
+				}]
 			},{
 				title: 'Company Address',
 				style: {
@@ -383,6 +528,7 @@ if(!c.up().items.get(xid)) {
 						xtype: 'htmleditor',
 						fieldLabel: 'Address',
 						name: 'ADDRESS',
+						id: xid + '-address',
 						allowBlank: false,
 						height: 150,
 						value: data.ADDRESS
@@ -390,6 +536,7 @@ if(!c.up().items.get(xid)) {
 						xtype: 'combobox',
 						fieldLabel: 'Location <span style="color:red;">*</span>',
 						name: 'LOCATION',
+						id: xid + '-location',
 						displayField: 'LOCATION',
 						allowBlank: false,
 						store: storeLOCATIONS,
@@ -397,36 +544,42 @@ if(!c.up().items.get(xid)) {
 					},{
 						xtype: 'textfield',
 						name: 'PHONE_1',
+						id: xid + '-phone1',
 						fieldLabel: 'Phone 1 <span style="color:red;">*</span>',
 						allowBlank: false,
 						value: data.PHONE_1
 					},{
 						xtype: 'textfield',
 						name: 'PHONE_2',
+						id: xid + '-phone2',
 						fieldLabel: 'Phone 2',
 						allowBlank: true,
 						value: data.PHONE_2
 					},{
 						xtype: 'textfield',
 						name: 'EMAIL_1',
+						id: xid + '-email1',
 						fieldLabel: 'Email 1 <span style="color:red;">*</span>',
 						allowBlank: false,
 						value: data.EMAIL_1
 					},{
 						xtype: 'textfield',
 						name: 'EMAIL_2',
+						id: xid + '-email2',
 						fieldLabel: 'Email 2',
 						allowBlank: true,
 						value: data.EMAIL_2
 					},{
 						xtype: 'textfield',
 						name: 'FAX',
+						id: xid + '-fax',
 						fieldLabel: 'Fax',
 						allowBlank: true,
 						value: data.FAX
 					},{
 						xtype: 'textfield',
 						name: 'WEBSITE',
+						id: xid + '-website',
 						fieldLabel: 'Website',
 						allowBlank: true,
 						value: data.WEBSITE
@@ -476,6 +629,7 @@ if(!c.up().items.get(xid)) {
 				items: [{
 					xtype: 'textarea',
 					name: 'COMPANY_OVERVIEW',
+					id: xid + '-company-overview',
 					value: data.COMPANY_OVERVIEW,
 					minHeight: 160,
 					allowBlank: false,
@@ -526,6 +680,7 @@ if(!c.up().items.get(xid)) {
 				items: [{
 					xtype: 'textarea',
 					name: 'INVESTMENT_STRATEGY',
+					id: xid + '-investment-strategy',
 					value: data.INVESTMENT_STRATEGY,
 					minHeight: 160,
 					allowBlank: false,

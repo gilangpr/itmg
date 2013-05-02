@@ -1,6 +1,6 @@
 <?php
 
-class Peers_RequestController extends Zend_Controller_Action
+class Peers_RequestController extends MyIndo_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -29,28 +29,64 @@ class Peers_RequestController extends Zend_Controller_Action
 		$this->_success = true;
 	}
 	
-	public function readAction()
+public function readAction()
 	{
-		if(!isset($this->_posts['type'])) {
-		$data = array(
-				'data' => array(
-						'items' => $this->_model->getListLimit($this->_limit, $this->_start),
-						'totalCount' => $this->_model->count()
-				)
-		);
-		} else {
-			$name = (isset($this->_posts['name'])) ? $this->_posts['name'] : '';
-			if(!empty($name) && $name != '') {
-				$list = $this->_model->getListByKey('PEER_NAME', $this->_posts['name']);
+		if($this->isPost() && $this->isAjax()) {
+			if(isset($this->_posts['type'])) {
+				$name = (isset($this->_posts['name'])) ? $this->_posts['name'] : '';
+				if(!empty($name) && $name != '') {
+					$list = $this->_model->getListByKey('PEER_NAME', $this->_posts['name']);
+				} else {
+					$list = $this->_model->getListLimit($this->_limit, $this->_start);
+				}
+				$this->_data = array('data'=>array(
+						'items' => $list,
+						'totalCount' => count($list)
+						));
 			} else {
-				$list = $this->_model->getListLimit($this->_limit, $this->_start);
+				if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
+					try {
+						if(isset($this->_posts['sort'])) {
+							// Decode sort JSON :
+							$sort = Zend_Json::decode($this->_posts['sort']);
+						}
+						// Query data
+						$q = $this->_model->select();
+			
+						if(isset($this->_posts['sort'])) {
+							$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
+						}
+			
+						if(isset($this->_posts['query'])) {
+							if(!empty($this->_posts['query']) && $this->_posts['query'] != '') {
+								$q->where('PEER_NAME LIKE ?', '%' . $this->_posts['query'] . '%');
+							}
+						}
+			
+						// Count all data
+						$rTotal = $q->query()->fetchAll();
+						$totalCount = count($rTotal);
+			
+						// Fetch sorted & limit data
+						$q->limit($this->_limit, $this->_start);
+						$result = $q->query()->fetchAll();
+			
+						$this->_data['data']['items'] = $result;
+						$this->_data['data']['totalCount'] = $totalCount;
+					} catch (Exception $e) {
+						$this->_error_code = $e->getCode();
+						$this->_error_message = $e->getMessage();
+						$this->_success = false;
+					}
+				} else {
+					$this->_data['data']['items'] = $this->_model->getListLimit($this->_limit, $this->_start);
+					$this->_data['data']['totalCount'] = $this->_model->count();
+				}
 			}
-			$data = array('data'=>array(
-					'items' => $list,
-					'totalCount' => count($list)
-					));
+		} else {
+			$this->error(901);
 		}
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 	
 	public function createAction()

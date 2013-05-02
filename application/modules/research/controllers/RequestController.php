@@ -53,7 +53,17 @@ class Research_RequestController extends Zend_Controller_Action
 				}
 				
 				if(!isset($this->_posts['query']) || $this->_posts['query'] == '' || empty($this->_posts['query'])) {
-					$list = $this->_model->getListLimit($this->_limit, $this->_start, 'TITLE ASC');
+					if(!isset($this->_posts['sort'])) {
+						$list = $this->_model->getListLimit($this->_limit, $this->_start, 'TITLE ASC');
+					} else {
+						$sort = Zend_Json::decode($this->_posts['sort']);
+						$q = $this->_model->select();
+						if($sort[0]['property'] != 'RESEARCH_REPORT_CATEGORY' && $sort[0]['property'] != 'COMPANY_NAME') {
+							$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
+						}
+						$q->limit($this->_limit, $this->_start);
+						$list = $q->query()->fetchAll();
+					}
 				} else {
 					$where = $this->_model->getAdapter()->quoteInto('TITLE LIKE ?', '%' . $this->_posts['query'] . '%');
 					$list = $this->_model->getListLimit($this->_limit, $this->_start, 'TITLE ASC', $where);
