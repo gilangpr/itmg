@@ -64,12 +64,16 @@ function showNewsSearch() {
 						rCategory = '';
 					}
 					this.up().up().close();
-					storeRR.load({
-						params: {
-							search: 1,
-							title: rTitle,
-							category: rCategory
-						},
+					var _storeNews = Ext.create("Ext.data.Store", {
+						model: "News",
+						storeId: "Newss__",
+						proxy:{"type":"ajax","api":{"read":"\/news\/request\/read","create":"\/news\/request\/create","update":"\/news\/request\/update","destroy":"\/news\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
+							extraParams: {
+								search: 2,
+								title: rTitle,
+								category: rCategory
+							}}});
+					_storeNews.load({
 						callback: function(d, i, e) {
 							closeLoadingWindow();
 							if(d.length == 0) {
@@ -96,7 +100,7 @@ function showNewsSearch() {
 									});
 									
 									var bbar = new Ext.PagingToolbar({
-										store: storeRR,
+										store: _storeNews,
 										displayInfo: true,
 										displayMsg: 'Displaying data {0} - {1} of {2}',
 										emptyMsg: 'No data to display',
@@ -109,27 +113,38 @@ function showNewsSearch() {
 									});
 									
 									comboBbar.on('select', function(combo, _records) {
-										storeRR.pageSize = parseInt(_records[0].get('id'), 10);
-										storeRR.loadPage(1);
+										_storeNews.pageSize = parseInt(_records[0].get('id'), 10);
+										_storeNews.loadPage(1);
 									}, this);
 									c.add({
-										title: 'News',
+										title: 'News Search Result',
 										id: id,
 										closable: true,
 										bbar: bbar,
 										items: [{
 											xtype: 'gridpanel',
 											border: false,
-											store: storeRR,
+											store: _storeNews,
 											columns: [{
 												text: 'Title',
+												width: 200,
 												flex: 1,
 												dataIndex: 'TITLE'
 											},{
 												text: 'Category',
-												width: 200,
+												width: 100,
 												align: 'center',
 												dataIndex: 'NEWS_CATEGORY'
+											},{
+												text: 'Company',
+												width: 100,
+												align: 'left',
+												dataIndex: 'COMPANY_NAME'
+											},{
+												text: 'Source',
+												width: 100,
+												align: 'left',
+												dataIndex: 'SOURCE'
 											},{
 												text: 'File Size (Byte)',
 												width: 150,
