@@ -560,6 +560,7 @@ function showInvestorSearch2() {
 													items: [{
 														xtype: 'chart',
 														store: storeSH,
+														id:'chartCmp',
 														width: 570,
 														height: 300,
 														animate: true,
@@ -576,11 +577,33 @@ function showInvestorSearch2() {
 																}
 															},
 															label: {
-																field: 'TITLE',
-																contrast: true,
-																display: 'none',
-																font: '12px Arial'
-															}
+																display: 'rotate',
+												                  'text-anchor': 'middle',
+												                field: 'TITLE',
+												                orientation: 'horizontal',
+												                fill: '#FFF',
+												                font: '14px Arial',
+												                renderer: function (label){
+														            // this will change the text displayed on the pie
+														            var cmp = Ext.getCmp('chartCmp'); // id of the chart
+														            var index = cmp.store.findExact('TITLE', label); // the field containing the current label
+														            var data = cmp.store.getAt(index).data;
+														            return data.VALUE + '%'; // the field containing the label to display on the chart
+												          		}
+															},
+															tips: {
+												                  trackMouse: false,
+												                  width: 140,
+												                  height: 35,
+												                  renderer: function(storeItem, item) {
+												                    //calculate percentage.
+												                    var total = 0;
+												                    storeSH.each(function(rec) {
+												                        total += rec.get('VALUE');
+												                    });
+												                    this.setTitle(storeItem.get('TITLE') + ': ' + Math.round(storeItem.get('VALUE') / total * 100) + '%');
+												                  }
+												            }
 														}]
 													}]
 												},{
@@ -697,18 +720,19 @@ function showInvestorSearch2() {
 														dataIndex: 'MEETING_DATE'
 													},{
 														text: 'Meeting Event',
-														flex: 1,
+														width:150,
 														dataIndex: 'MEETING_EVENT'
 													},{
-														text: 'Start Time',
+														text: 'Name',
 														align: 'center',
 														width: 150,
-														dataIndex: 'START_TIME'
+														flex: 1,
+														dataIndex: 'NAME'
 													},{
-														text: 'End Time',
+														text: 'Initial',
 														align: 'center',
 														width: 150,
-														dataIndex: 'END_TIME'
+														dataIndex: 'INITIAL_PART'
 													}]
 												}],
 												tbar: [{
@@ -792,11 +816,6 @@ function showInvestorSearch2() {
 															                minHeight: 200,
 															                maxWidth: Ext.getBody().getViewSize().width,
 															                columns:[{
-															                	text:'Company name',
-															                    dataIndex:'COMPANY_NAME',
-															                    width:200,
-															                    flex: 1
-															                },{
 															                	text:'Name',
 															                    dataIndex:'NAME',
 															                    width:200,
@@ -878,6 +897,7 @@ function showInvestorSearch2() {
 															            	},{
 															                    text:'File Name',
 															                    dataIndex:'FILE_NAME',
+															                    flex:1,
 															            		width:300
 															            	},{
 															                    text:'Upload Date',
@@ -1300,6 +1320,7 @@ function showInvestorSearch2() {
 																			xtype: 'chart',
 																			store: storeSH,
 																			width: 570,
+																			id:'chartCmp',
 																			height: 300,
 																			animate: true,
 																			legend: {
@@ -1315,11 +1336,33 @@ function showInvestorSearch2() {
 																					}
 																				},
 																				label: {
-																					field: 'TITLE',
-																					contrast: true,
-																					display: 'none',
-																					font: '12px Arial'
-																				}
+																					display: 'rotate',
+																	                  'text-anchor': 'middle',
+																	                field: 'TITLE',
+																	                orientation: 'horizontal',
+																	                fill: '#FFF',
+																	                font: '14px Arial',
+																	                renderer: function (label){
+																			            // this will change the text displayed on the pie
+																			            var cmp = Ext.getCmp('chartCmp'); // id of the chart
+																			            var index = cmp.store.findExact('TITLE', label); // the field containing the current label
+																			            var data = cmp.store.getAt(index).data;
+																			            return data.VALUE + '%'; // the field containing the label to display on the chart
+																	          		}
+																				},
+																				tips: {
+																                  trackMouse: false,
+																                  width: 140,
+																                  height: 35,
+																                  renderer: function(storeItem, item) {
+																                    //calculate percentage.
+																                    var total = 0;
+																                    storeSH.each(function(rec) {
+																                        total += rec.get('VALUE');
+																                    });
+																                    this.setTitle(storeItem.get('TITLE') + ': ' + Math.round(storeItem.get('VALUE') / total * 100) + '%');
+																                  }
+														            			}
 																			}]
 																		}]
 																	},{
@@ -1433,21 +1476,23 @@ function showInvestorSearch2() {
 																			text: 'Meeting Date',
 																			align: 'center',
 																			width: 100,
-																			dataIndex: 'MEETING_DATE'
+																			dataIndex: 'MEETING_DATE',
+																			renderer : Ext.util.Format.dateRenderer('d-m-Y'),
 																		},{
 																			text: 'Meeting Event',
-																			flex: 1,
+																			width:150,
 																			dataIndex: 'MEETING_EVENT'
 																		},{
-																			text: 'Start Time',
+																			text: 'Name',
 																			align: 'center',
+																			flex: 1,
 																			width: 150,
-																			dataIndex: 'START_TIME'
+																			dataIndex: 'NAME'
 																		},{
-																			text: 'End Time',
+																			text: 'Initial',
 																			align: 'center',
 																			width: 150,
-																			dataIndex: 'END_TIME'
+																			dataIndex: 'INITIAL_PART'
 																		}]
 																	}],
 																	tbar: [{
@@ -1531,11 +1576,6 @@ function showInvestorSearch2() {
 																				                minHeight: 200,
 																				                maxWidth: Ext.getBody().getViewSize().width,
 																				                columns:[{
-																				                	text:'Company name',
-																				                    dataIndex:'COMPANY_NAME',
-																				                    width:200,
-																				                    flex: 1
-																				                },{
 																				                	text:'Name',
 																				                    dataIndex:'NAME',
 																				                    width:200,
@@ -1571,7 +1611,7 @@ function showInvestorSearch2() {
 																				                    flex: 1
 																				                },{
 																				                	text: 'Position',
-																				                	dataIndex: 'POSITION_PART',
+																				                	dataIndex:'POSITION_PART',
 																				                	width: 200,
 																				                	align: 'center'
 																				                }]
@@ -1617,6 +1657,7 @@ function showInvestorSearch2() {
 																				            	},{
 																				                    text:'File Name',
 																				                    dataIndex:'FILE_NAME',
+																				                    flex:1,
 																				            		width:300
 																				            	},{
 																				                    text:'Upload Date',
