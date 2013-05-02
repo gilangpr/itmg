@@ -182,7 +182,8 @@ Ext.create('Ext.Window', {
 							if(_store.data.items.length > 0) {
 								closeLoadingWindow();
 								if(FORMAT == 'Detail') {
-									
+									Ext.getCmp('search-investor-main').close();
+									<?php echo $this->render('/request/tbar/investors/search-detailed-new.js'); ?>
 								} else {
 									var c = Ext.getCmp('<?php echo $this->container ?>');
 									var id = 'investors-search-result-' + Math.random();
