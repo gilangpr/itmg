@@ -339,12 +339,12 @@ if(__selected.length > 0) {
                 		}
                 	}
                 }],
-                columns:[{
+                columns:[/*{
                 	text:'Company name',
                     dataIndex:'COMPANY_NAME',
                     width:200,
                     flex: 1
-                },{
+                },*/{
                 	text:'Name',
                     dataIndex:'NAME',
                     width:200,

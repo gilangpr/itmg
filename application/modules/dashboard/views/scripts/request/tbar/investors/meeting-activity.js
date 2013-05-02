@@ -7,7 +7,7 @@
                                 Ext.create('Ext.Window', {
                                     title: 'Add New Meeting Activities',
                                     draggable: false,
-				    id: 'MA',
+				                    id: 'MA',
                                     modal: true,
                                     width: 400,
                                     align: 'center',
@@ -28,13 +28,13 @@
                                                 allowBlank: false,
                                                 name: 'MEETING_EVENT'
                                             },{
-						xtype:'datefield',
+						                        xtype:'datefield',
                                                 fieldLabel: 'Meeting Date',
                                                 allowBlank: false,
                                                 name: 'MEETING_DATE',
-						format:'Y-m-d'
+						                        format:'Y-m-d'
                                             },{
-						xtype:'timefield',
+						                        xtype:'timefield',
                                                 fieldLabel: 'Start Time',
                                                 allowBlank: false,
                                                 name: 'START_TIME'

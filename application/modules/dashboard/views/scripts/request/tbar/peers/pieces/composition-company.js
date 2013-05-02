@@ -123,7 +123,7 @@
                             listeners: {
                                 click: function() {
                                     var form = Ext.getCmp('add-new-composition-form').getForm();
-                                    var store = loadStore('CompositionCompanys');
+                                    //var store = loadStore('CompositionCompanys');
 
                                     if (form.isValid()) {
                                         form.submit({
@@ -131,7 +131,7 @@
                                             success: function(_a, _b) {
                                                 var json = Ext.decode(_a.response.responseText);
                                                 form.reset();
-                                                store.load(); // Refresh grid data
+                                                storeCSY.load(); // Refresh grid data
                                                 Ext.Msg.alert('Success', 'Data has been saved');
                                                 Ext.getCmp('CSY').close();
                                             },
