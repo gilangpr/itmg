@@ -43,8 +43,9 @@ if(!c.up().items.get(id)){
                         minHeight: 220,
                         allowBlank: false
                     }],
-                    buttons: [{
-                        text: 'Update',
+                    tbar: [{
+                    	xtype: 'button',
+                    	text: 'Update',
                         iconCls: 'icon-accept',
                         listeners: {
                             click: function() {
@@ -93,8 +94,9 @@ if(!c.up().items.get(id)){
                         minHeight: 220,
                         allowBlank: false
                     }],
-                    buttons: [{
-                        text: 'Update',
+                    tbar: [{
+                    	xtype: 'button',
+                    	text: 'Update',
                         iconCls: 'icon-accept',
                         listeners: {
                             click: function() {

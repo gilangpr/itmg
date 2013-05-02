@@ -154,7 +154,17 @@ class Researchcategory_RequestController extends Zend_Controller_Action
 			if($this->_model->isExistByKey($this->_pk, $this->_posts[$this->_pk])) {
 				
 				try {
-					$this->_model->delete($this->_model->getAdapter()->quoteInto($this->_pk . ' = ?', $this->_posts[$this->_pk]));
+					$researchModel = new Application_Model_ResearchReports();
+					$q = $researchModel->select()
+					->where('RESEARCH_REPORT_CATEGORY_ID = ?', $this->_posts[$this->_pk]);
+					$count = $q->query()->fetchAll();
+					if(count($count) == 0) {
+						$this->_model->delete($this->_model->getAdapter()->quoteInto($this->_pk . ' = ?', $this->_posts[$this->_pk]));
+					} else {
+						$this->_error_code = 202;
+						$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
+						$this->_success = false;
+					}
 				}catch(Exception $e) {
 					$this->_error_code = $e->getCode();
 					$this->_error_message = $e->getMessage();
