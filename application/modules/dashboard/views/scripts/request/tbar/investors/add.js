@@ -38,7 +38,7 @@ if(!c.up().items.get(id)) {
 							}
 						})
 					} else {
-						Ext.Msg.alert('Error', 'Please complete form first.');
+						Ext.Msg.alert('Error', 'Please complete mandatory field first.');
 					}
 				}
 			}
@@ -48,9 +48,7 @@ if(!c.up().items.get(id)) {
 			iconCls: 'icon-stop',
 			listeners: {
 				click: function() {
-					if(confirm('Are you sure want to cancel ?')) {
-						this.up().up().close();
-					}
+					this.up().up().close();
 				}
 			}
 		}],
@@ -85,7 +83,8 @@ if(!c.up().items.get(id)) {
 					typeAhead: true,
 					allowBlank: false,
 					minChars: 2,
-					emptyText: 'Select Investor Type'
+					emptyText: 'Select Investor Type',
+					pageSize: 10
 				},{
 					fieldLabel: 'Style <span style="color:red;">*</span>',
 					name: 'STYLE',
@@ -106,7 +105,13 @@ if(!c.up().items.get(id)) {
 					typeAhead: true,
 					allowBlank: false,
 					minChars: 2,
-					emptyText: 'Select Location'
+					emptyText: 'Select Location',
+					pageSize: 10,
+					listeners: {
+						blur: function() {
+							
+						}
+					}
 				},{
 					fieldLabel: 'Phone Number 1 <span style="color:red;">*</span>',
 					name: 'PHONE_1',

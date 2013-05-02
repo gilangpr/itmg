@@ -57,6 +57,8 @@ Ext.create('Ext.Window', {
 							Ext.Msg.alert('Message','Success adding new shareholder');
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
+							var store = Ext.StoreManager.lookup('InvestorStatuss');
+							store.load(1);
 						},
 						failure: function(data,res) {
 							var json = Ext.decode(res.response.responseText);

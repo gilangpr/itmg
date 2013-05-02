@@ -62,6 +62,7 @@ class Research_RequestController extends Zend_Controller_Action
 				foreach($list as $k=>$d) {
 					$list[$k]['RESEARCH_REPORT_CATEGORY'] = $rrcModel->getValueByKey('RESEARCH_REPORT_CATEGORY_ID', $d['RESEARCH_REPORT_CATEGORY_ID'], 'RESEARCH_REPORT_CATEGORY');
 					$list[$k]['COMPANY_NAME'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
+
 				}
 				
 				$this->_data['data']['items'] = $list;
@@ -95,8 +96,8 @@ class Research_RequestController extends Zend_Controller_Action
 					
 					/* Company */
 					if (isset($this->_posts['company'])) {
-						if ($companyModel->isExistByKey('COMPANY', $this->_posts['company'])) {
-							$comID = $companyModel->getPkByKey('COMPANY', $this->_posts['company']);
+						if ($companyModel->isExistByKey('COMPANY_NAME', $this->_posts['company'])) {
+							$comID = $companyModel->getPkByKey('COMPANY_NAME', $this->_posts['company']);
 							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID = ?', $comID);
 						} else {
 							$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%%');
@@ -105,17 +106,17 @@ class Research_RequestController extends Zend_Controller_Action
 						$where[] = $this->_model->getAdapter()->quoteInto('COMPANY_ID LIKE ?', '%' . $this->_posts['company'] . '%');
 					}
 					
-					/* Analyst */
-					if(isset($this->_posts['analyst'])) {
-						$where[] = $this->_model->getAdapter()->quoteInto('ANALYST LIKE ?', '%' . $this->_posts['analyst'] . '%');
-					} else {
-						$where[] = $this->_model->getAdapter()->quoteInto('ANALYST LIKE ?', '%%');
+					if (isset($this->_posts['startdate']) && isset($this->_posts['enddate'])) {
+						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE >= ?', $this->_posts['startdate']);
+						$where[] = $this->_model->getAdapter()->quoteInto('CREATED_DATE <= ?', $this->_posts['enddate']);
 					}
-					/* Analyst */
 					
 					$query = $this->_model->select()
 					->where($where[0])
 					->where($where[1])
+					->where($where[2])
+					->where($where[3])
+					->where($where[4])
 					->limit($this->_model->count(), $this->_start);
 					
 					$list = $query->query()->fetchAll();
@@ -125,6 +126,39 @@ class Research_RequestController extends Zend_Controller_Action
 						$list[$k]['COMPANY_NAME'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
 					}
 					
+				} else if ($this->_posts['search'] == 2) {
+					$where = array();
+						
+					/* Title */
+					if(isset($this->_posts['title'])) {
+						$where[] = $this->_model->getAdapter()->quoteInto('TITLE LIKE ?', '%' . $this->_posts['title'] . '%');
+					} else {
+						$where[] = $this->_model->getAdapter()->quoteInto('TITLE LIKE ?', '%%');
+					}
+						
+					/* Category */
+					if(isset($this->_posts['category'])) {
+						if($rrcModel->isExistByKey('RESEARCH_REPORT_CATEGORY', $this->_posts['category'])) {
+							$catID = $rrcModel->getPkByKey('RESEARCH_REPORT_CATEGORY', $this->_posts['category']);
+							$where[] = $this->_model->getAdapter()->quoteInto('RESEARCH_REPORT_CATEGORY_ID = ?', $catID);
+						} else {
+							$where[] = $this->_model->getAdapter()->quoteInto('RESEARCH_REPORT_CATEGORY_ID LIKE ?', '%%');
+						}
+					} else {
+						$where[] = $this->_model->getAdapter()->quoteInto('RESEARCH_REPORT_CATEGORY_ID LIKE ?', '%' . $this->_posts['category'] . '%');
+					}
+					
+					$query = $this->_model->select()
+					->where($where[0])
+					->where($where[1])
+					->limit($this->_model->count(), $this->_start);
+						
+					$list = $query->query()->fetchAll();
+						
+					foreach($list as $k=>$d) {
+						$list[$k]['RESEARCH_REPORT_CATEGORY'] = $rrcModel->getValueByKey('RESEARCH_REPORT_CATEGORY_ID', $d['RESEARCH_REPORT_CATEGORY_ID'], 'RESEARCH_REPORT_CATEGORY');
+						$list[$k]['COMPANY_NAME'] = $companyModel->getValueByKey('COMPANY_ID', $d['COMPANY_ID'], 'COMPANY_NAME');
+					}
 				} else {
 					$list = array();
 				}
@@ -216,7 +250,6 @@ class Research_RequestController extends Zend_Controller_Action
 				$adp = new Zend_File_Transfer_Adapter_Http();
 				$mimeModel = new Application_Model_Mime();
 				$rrcModel = new Application_Model_ResearchReportCategory();
-				$rcomModel = new Application_Model_Company();
 				
 				$adp->setDestination(APPLICATION_PATH . '/../public/upload/researchs/');
 				$adp->addValidator('Extension',false,'doc,docx,xls,xlsx,pdf,txt');
@@ -242,15 +275,9 @@ class Research_RequestController extends Zend_Controller_Action
 						$rrcID = $rrcModel->getPkByKey('RESEARCH_REPORT_CATEGORY', $this->_posts['CATEGORY']);
 						/* End of : Get Research Report Category ID */
 						
-						/* Get Company ID */
-						$comID = $rcomModel->getPkByKey('COMPANY_NAME', $this->_posts['COMPANY']);
-						/* End of : Get Company ID */
-						
 						$this->_model->insert(array(
 								'RESEARCH_REPORT_CATEGORY_ID' => $rrcID,
-								'COMPANY_ID' => $comID,
 								'TITLE' => $this->_posts['TITLE'],
-								'ANALYST' => $this->_posts['ANALYST'],
 								'DESCRIPTION' => '',
 								'FILE_NAME' => $new_name,
 								'FILE_SIZE' => (int)$fileInfo['FILE_PATH']['size'],

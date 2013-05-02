@@ -1,4 +1,4 @@
-var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + id);
+var __c = Ext.getCmp('investors-detail-meeting-investor-grid-' + xid);
 var __selected = __c.getSelectionModel().getSelection();
 if(__selected.length > 0) {
 	var __id = 'investor-details-meetings-tabs-' + __selected[0].data.MEETING_ACTIVITIE_ID;
@@ -67,7 +67,7 @@ if(__selected.length > 0) {
                 border: false,
                 region:'north',
                 xtype: 'gridpanel',
-                id:'meeting-contact-list-' + id,
+                id:'meeting-contact-list-' + xid,
                 store:storeCON,
                 //store:storeCO,
                 autoScroll:true,
@@ -274,7 +274,7 @@ if(__selected.length > 0) {
                 	iconCls:'icon-stop',
                 	listeners:{
                 		click:function(){
-                			var mmc = Ext.getCmp('meeting-contact-list-' + id);
+                			var mmc = Ext.getCmp('meeting-contact-list-' + xid);
                             var mmc_selected = mmc.getSelectionModel().getSelection();
                     
                                 if(mmc_selected.length > 0) {
@@ -301,8 +301,11 @@ if(__selected.length > 0) {
                                                         params: {
                                                             CONTACT_ID: mmc.CONTACT_ID,
                                                             MEETING_ACTIVITIE_ID: mmc.MEETING_ACTIVITIE_ID,
+
                                                             INVESTOR_ID:meeting__id.INVESTOR_ID,
-                                                            PART_ID:mmc.PART_ID
+
+                                                            INVESTOR_ID:meeting__id.INVESTOR_ID,
+                                                            NAME:mmc.NAME
                                                         },
                                                         success: function(dat) {
                                                             var json = Ext.decode(dat.responseText);
@@ -356,8 +359,6 @@ if(__selected.length > 0) {
                     dataIndex:'POSITION',
                     width:200
                 }]
-            },{
-            	title:'ITM Participants',
             },
             {
             	title:'Meeting Participants',
@@ -477,7 +478,7 @@ if(__selected.length > 0) {
             		iconCls:'icon-stop',
             		listeners:{
             			click:function(){
-                            var mmp = Ext.getCmp('meetingparticipant-list-' + id);
+                            var mmp = Ext.getCmp('meetingparticipant-list-' + xid);
                             var mmp_selected = mmp.getSelectionModel().getSelection();
                     
                                 if(mmp_selected.length > 0) {
@@ -545,7 +546,7 @@ if(__selected.length > 0) {
             	border:false,
             	region:'north',
             	xtype:'gridpanel',
-                id: 'meetingdocumentation-list-' + id,
+                id: 'meetingdocumentation-list-' + xid,
                 store:storeMD,
             	autoScroll:true,
             	minHeight:200,
@@ -651,7 +652,7 @@ if(__selected.length > 0) {
             		iconCls:'icon-stop',
             		listeners:{
             			click:function(){
-                            var mmd = Ext.getCmp('meetingdocumentation-list-' + id);
+                            var mmd = Ext.getCmp('meetingdocumentation-list-' + xid);
                             var mmd_selected = mmd.getSelectionModel().getSelection();
                     
                                 if(mmd_selected.length > 0) {
@@ -757,7 +758,7 @@ if(__selected.length > 0) {
                     layout: 'form',
                     border: false,
                     bodyPadding: '5 5 5 5',
-                    id: 'meeting-detail-notes-form-' + id,
+                    id: 'meeting-detail-notes-form-' + xid,
                     items: [{
                         xtype: 'textarea',
                         name: 'NOTES',
@@ -772,7 +773,7 @@ if(__selected.length > 0) {
                         listeners: {
                             click: function() {
                                
-                                var form = Ext.getCmp('meeting-detail-notes-form-' + id).getForm();
+                                var form = Ext.getCmp('meeting-detail-notes-form-' + xid).getForm();
                                 if(form.isValid()) {
                                     form.submit({
 

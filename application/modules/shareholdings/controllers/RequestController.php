@@ -38,21 +38,28 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 				'data' => array()
 				);
 		//CHECK INVESTOR NAME EXIST OR NOT
+		
 		if($this->_model->isExistByKey('INVESTOR_NAME', $this->_posts['INVESTOR_NAME'])) {
 			
 			$this->_success = false;
 			$this->_error_message = 'Investor Name already exist.';
 		} else {
 			try {
+				$shareAmount = new Application_Model_ShareholdingAmounts();
 				$status = new Application_Model_InvestorStatus();
 				$SID = $status->getPkByKey('INVESTOR_STATUS', $this->_posts['INVESTOR_STATUS']); 					// Do insert query :
-				$this->_model->insert(array(
+				$id = $this->_model->insert(array(
  					'INVESTOR_NAME'=> $this->_posts['INVESTOR_NAME'],
  					'INVESTOR_STATUS_ID'=> $SID,
  					'ACCOUNT_HOLDER'=> $this->_posts['ACCOUNT_HOLDER'],
  					'CREATED_DATE' => date('Y-m-d H:i:s')
  				));
-				
+				$shareAmount->insert(array(
+						'SHAREHOLDING_ID'=> $id,
+						'AMOUNT'=> 0,
+						'CREATED_DATE' => date('Y-m-d H:i:s'),
+						'DATE' => date('Y-m-d')
+						));
  			}catch(Exception $e) {
  				$this->_error_code = $e->getCode();
  				$this->_error_message = $e->getMessage();
@@ -128,6 +135,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$modelSA = new Application_Model_ShareholdingAmounts();
 		$sort = Zend_Json::decode($this->_posts['sort']);
 	    $list = $this->_model->getListInvestorsLimit($this->_limit, $this->_start, 'INVESTOR_NAME ASC');
+	    print_r($list);die;
         $lastId = $this->_model->getLastId();
 	    /* start sum amount */
         $data = $modelSA->getTotal();
@@ -181,7 +189,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 					->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('AMOUNT'))
 					->group('SHAREHOLDING_ID')
 					->limit($this->_limit, $this->_start);
-                    
+
 					if($sort[0]['property'] == 'INVESTOR_STATUS') {
 						$q->order('INVESTOR_STATUS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
 					} else if($sort[0]['property'] == 'AMOUNT') {
@@ -505,16 +513,14 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		         ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
  			}
  		}
-        $list = $list->query()->fetchAll();
- 
-		$data = array(
-        	'data' => array(
-         		'items' => $list,
-         		'totalCount' => count($list)
-         	)
-        );
-         
-        MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+ 		$list = $list->query()->fetchAll();
+ 		$data = array(
+ 				'data' => array(
+ 						'items' => $list,
+ 						'totalCount' => count($list)
+ 						)
+ 				);
+ 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
  	
  	public function autocomAction() 
@@ -538,4 +544,4 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		
  		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
- 	}
+ }

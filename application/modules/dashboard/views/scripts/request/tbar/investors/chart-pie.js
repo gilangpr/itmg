@@ -13,14 +13,14 @@
 		height: 300,
 		animate: true,
 		legend: {
-			position: 'right',
-			text:'bla bla bla',
+			position: 'right'
 		},
 		series: [{
 			type: 'pie',
 			field: 'VALUE',
 			yField:['TITLE','VALUE'],
 			categoryField:'VALUE',
+			'text-anchor': 'middle',
 			showInLegend: true,
 			highlight: {
 				segment: {

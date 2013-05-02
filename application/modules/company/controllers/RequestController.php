@@ -1,6 +1,6 @@
 <?php 
 
-class Company_RequestController extends Zend_Controller_Action
+class Company_RequestController extends MyIndo_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -45,38 +45,71 @@ class Company_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
-			try {
-				if(isset($this->_posts['all']) && $this->_posts['all'] == 1) {
-					$this->_limit = $this->_model->count();
+		if($this->isPost() && $this->isAjax()) {
+			if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
+				try {
+					if(isset($this->_posts['sort'])) {
+						// Decode sort JSON :
+						$sort = Zend_Json::decode($this->_posts['sort']);
+					}
+					// Query data
+					$q = $this->_model->select();
+		
+					if(isset($this->_posts['sort'])) {
+						$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
+					}
+		
+					if(isset($this->_posts['query'])) {
+						if(!empty($this->_posts['query']) && $this->_posts['query'] != '') {
+							$q->where('COMPANY_NAME LIKE ?', '%' . $this->_posts['query'] . '%');
+						}
+					}
+		
+					// Count all data
+					$rTotal = $q->query()->fetchAll();
+					$totalCount = count($rTotal);
+		
+					// Fetch sorted & limit data
+					$q->limit($this->_limit, $this->_start);
+					$result = $q->query()->fetchAll();
+		
+					$this->_data['data']['items'] = $result;
+					$this->_data['data']['totalCount'] = $totalCount;
+				} catch (Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
 				}
-				if(!isset($this->_posts['query']) || $this->_posts['query'] == '' || empty($this->_posts['query'])) {
-					$list = $this->_model->getListLimit($this->_limit, $this->_start, $this->_name . ' ASC');
-				} else {
-					$where = $this->_model->getAdapter()->quoteInto($this->_name . ' LIKE ?', '%' . $this->_posts['query'] . '%');
-					$list = $this->_model->getListLimit($this->_limit, $this->_start, $this->_name . ' ASC', $where);
+			} else {
+				try {
+					if(isset($this->_posts['all']) && $this->_posts['all'] == 1) {
+						$this->_limit = $this->_model->count();
+					}
+					if(!isset($this->_posts['query']) || $this->_posts['query'] == '' || empty($this->_posts['query'])) {
+						$list = $this->_model->getListLimit($this->_limit, $this->_start, $this->_name . ' ASC');
+					} else {
+						$where = $this->_model->getAdapter()->quoteInto($this->_name . ' LIKE ?', '%' . $this->_posts['query'] . '%');
+						$list = $this->_model->getListLimit($this->_limit, $this->_start, $this->_name . ' ASC', $where);
+					}
+					
+					$this->_data['data']['items'] = $list;
+					$this->_data['data']['totalCount'] = $this->_model->count();
+					
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
 				}
-				
-				$this->_data['data']['items'] = $list;
-				$this->_data['data']['totalCount'] = $this->_model->count();
-				
-			}catch(Exception $e) {
-				$this->_error_code = $e->getCode();
-				$this->_error_message = $e->getMessage();
-				$this->_success = false;
 			}
 		} else {
-			$this->_error_code = 901;
-			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-			$this->_success = false;
+			$this->error(901);
 		}
-		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 	
 	public function updateAction()
 	{
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
-				
+		if($this->isPost() && $this->isAjax()) {
 			try {
 				$data = $this->getRequest()->getRawBody();
 				$data = Zend_Json::decode($data);
@@ -87,34 +120,26 @@ class Company_RequestController extends Zend_Controller_Action
 						),$this->_model->getAdapter()->quoteInto($this->_pk . ' = ?', $data['data'][$this->_pk]));
 						$this->_data['data']['items'] = $this->_model->getDetailByKey($this->_pk, $data['data'][$this->_pk]);
 					} else {
-						$this->_error_code = 101;
-						$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-						$this->_success = false;
+						$this->error(101);
 					}
 				} else {
-					$this->_error_code = 901;
-					$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-					$this->_success = false;
+					$this->error(901);
 				}
 			}catch (Exception $e) {
 				$this->_error_code = $e->getCode();
 				$this->_error_message = $e->getMessage();
 				$this->_success = false;
 			}
-				
 		} else {
-			$this->_error_code = 901;
-			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-			$this->_success = false;
+			$this->error(901);
 		}
-		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 	
 	public function createAction()
 	{
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest() && isset($this->_posts[$this->_name])) {
+		if($this->isPost() && $this->isAjax() && isset($this->_posts[$this->_name])) {
 			if(!$this->_model->isExistByKey($this->_name, $this->_posts[$this->_name])) {
-				
 				try {
 					$this->_model->insert(array(
 							$this->_name => $this->_posts[$this->_name],
@@ -125,26 +150,19 @@ class Company_RequestController extends Zend_Controller_Action
 					$this->_error_message = $e->getMessage();
 					$this->_success = false;
 				}
-				
 			} else {
-				$this->_error_code = 201;
-				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-				$this->_success = false;
+				$this->error(201);
 			}
 		} else {
-			$this->_error_code = 901;
-			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-			$this->_success = false;
+			$this->error(901);
 		}
-		
-		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 	
 	public function destroyAction()
 	{
-		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest() && isset($this->_posts[$this->_name])) {
+		if($this->isPost() && $this->isAjax() && isset($this->_posts[$this->_name])) {
 			if($this->_model->isExistByKey($this->_name, $this->_posts[$this->_name])) {
-				
 				try {
 					$this->_model->delete($this->_model->getAdapter()->quoteInto($this->_name . ' = ?', $this->_posts[$this->_name]));
 				}catch(Exception $e) {
@@ -152,17 +170,12 @@ class Company_RequestController extends Zend_Controller_Action
 					$this->_error_message = $e->getMessage();
 					$this->_success = false;
 				}
-				
 			} else {
-				$this->_error_code = 101;
-				$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-				$this->_success = false;
+				$this->error(101);
 			}
 		} else {
-			$this->_error_code = 901;
-			$this->_error_message = MyIndo_Tools_Error::getErrorMessage($this->_error_code);
-			$this->_success = false;
+			$this->error(901);
 		}
-		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
+		$this->json();
 	}
 }

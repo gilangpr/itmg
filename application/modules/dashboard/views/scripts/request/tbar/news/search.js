@@ -19,8 +19,8 @@ Date.prototype.customFormat = function(formatString){
     return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 }
 
-var SP_START_DATE = '1900-01-01';
-var SP_END_DATE = '2013-12-12';
+var startdate = '1900-01-01';
+var enddate = '2013-12-12';
 var SP_NAMES = new Array();
 
 var storeRR = loadStore('Newss');
@@ -40,37 +40,6 @@ storeRRC.load({
 	}
 });
 
-//var storeNT = Ext.create('Ext.data.Store',{
-//    storeId: 'NewssTitle',
-//    model: 'News',
-//    proxy: {
-//        type: 'ajax',
-//        api: {
-//            read: '/news/request/autocom'
-//        },
-//        actionMethods: {
-//            create: 'POST'
-//        },
-//        reader: {
-//            idProperty: 'TITLE',
-//            type: 'json',
-//            root: 'data.items',
-//            totalProperty: 'data.totalCount'
-//        },
-//        writer: {
-//            type: 'json',
-//            root: 'data',
-//            writeAllFields: true
-//        }
-//    },
-//    sorter: {
-//        property: 'NEWS_ID',
-//        direction: 'ASC'
-//    },
-//    autoSync: true
-//});
-
-//Add the additional 'advanced' VTypes
 Ext.apply(Ext.form.field.VTypes, {
 	daterange: function(val, field) {
 		var date = field.parseDate(val);
@@ -192,11 +161,15 @@ Ext.create('Ext.Window', {
 		listeners: {
 			click: function() {
 				var form = Ext.getCmp('news-search-form').getForm();
+				var _id = 'news-search-result-' + Math.random();
 				var rTitle = Ext.getCmp('news-title').getValue();
 				var rCategory = Ext.getCmp('news-category').getValue();
 				var rCompany = Ext.getCmp('news-company').getValue();
 				var rSource = Ext.getCmp('news-source').getValue();
-				var _id = 'news-search-result-' + Math.random();
+				var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
+				startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
+				var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
+				enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
 				
 				if(form.isValid()) {
 					if(typeof(rTitle) === 'undefined') {
@@ -211,28 +184,110 @@ Ext.create('Ext.Window', {
 					if(typeof(rSource) === 'undefined') {
 						rSource = '';
 					}
-					storeRR.load({
-						params: {
-							search: 1,
-							title: rTitle,
-							category: rCategory,
-							company: rCompany,
-							source: rSource
-						},
-						callback: function(d, i, e) {
-							Ext.getCmp('news-search-window').close();
+					
+					var _storeNews = Ext.create("Ext.data.Store", {
+						model: "News",
+						storeId: "Newss__",
+						proxy:{"type":"ajax","api":{"read":"\/news\/request\/read","create":"\/news\/request\/create","update":"\/news\/request\/update","destroy":"\/news\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"DATE","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true},
+							extraParams: {
+								search: 1,
+								title: rTitle,
+								category: rCategory,
+								company: rCompany,
+								source: rSource,
+								startdate: startdate,
+								enddate: enddate
+							}}});
+					//showLoadingWindow();					
+					_storeNews.load({
+						callback: function(d,i,e,f) {
 							if(d.length == 0) {
 								Ext.Msg.alert('Message', 'No data found.');
 							} else {
 								Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
 								c.up().add({
-									title: 'News Search Result',
+									title: 'Search Result',
 									closable: true,
 									id: _id,
 									autoScroll: true,
 									xtype: 'gridpanel',
 									layout: 'border',
-									store: storeRR,
+									store: _storeNews,
+									tbar: [{
+										xtype: 'button',
+										text: 'Download',
+										iconCls: 'icon-download',
+										listeners: {
+											click: function() {
+												var c = Ext.getCmp(_id);
+												var selected = c.getSelectionModel().getSelection();
+												if(selected.length > 0) {
+													document.location = sd.baseUrl + '/news/request/download/id/' + selected[0].data.NEWS_ID;
+													var store = loadStore('Newss');
+													setTimeout(function(){
+														store.loadPage(store.currentPage);
+													},800);
+												} else {
+													Ext.Msg.alert('Message', 'You did not select any News');
+												}
+											}
+										}
+									},{
+										xtype: 'button',
+										text: 'Delete',
+										iconCls: 'icon-stop',
+										listeners: {
+											click: function() {
+												var c = Ext.getCmp(_id);
+												var selected = c.getSelectionModel().getSelection();
+												if(selected.length > 0) {
+													Ext.create ('Ext.Window', {
+														html: 'Are you sure want do delete selected item(s) ?',
+														bodyPadding: '20 5 5 17',
+														title: 'Confirmation',
+														resizable: false,
+														modal: true,
+														closable: false,
+														draggable: false,
+														width: 300,
+														height: 120,
+														buttons: [{
+															text: 'Yes',
+															listeners: {
+																click: function() {
+																	showLoadingWindow();
+																	this.up().up().close();
+																	Ext.Ajax.request({
+																		url: sd.baseUrl + '/news/request/destroy',
+																		params: selected[0].data,
+																		success: function(data) {
+																			var json = Ext.decode(data.responseText);
+																			closeLoadingWindow();
+																			var store = loadStore('Newss');
+																			store.loadPage(store.currentPage);
+																		},
+																		failure: function() {
+																			var json = Ext.decode(data.responseText);
+																			closeLoadingWindow();
+																		}
+																	});
+																}
+															}
+														},{
+															text: 'No',
+															listeners: {
+																click: function() {
+																	this.up().up().close();
+																}
+															}
+														}]
+													}).show();
+												} else {
+													Ext.Msg.alert('Message', 'You did not select any News');
+												}
+							        		}
+							        	}
+									}],
 									"columns": [{
 	                                    "text": "Title",
 	                                    "dataIndex": "TITLE",
@@ -242,7 +297,7 @@ Ext.create('Ext.Window', {
 	                                    "dataType": "string",
 	                                    "visible": false,
 	                                    "editor": {
-	                                        "allowBlank": false
+	                                    "allowBlank": false
 	                                    }
 	                                }, {
 	                                    "text": "Category",
@@ -311,43 +366,47 @@ Ext.create('Ext.Window', {
 	                                    "flex": 0,
 	                                    "dataType": "string",
 	                                    "visible": false
-	                                }
-	                            ],
-	                            bbar: new Ext.PagingToolbar({
-							        store: storeRR,
-							        displayInfo: true,
-							        displayMsg: 'Displaying data {0} - {1} of {2}',
-							        emptyMsg: 'No data to display',
-							        items: [
-							            '-',
-							            'Records per page',
-							            '-',
-							            new Ext.form.ComboBox({
-										  name : 'perpage',
-										  width: 50,
-										  store: new Ext.data.ArrayStore({fields:['id'],data:[['25'],['50'],['75'],['100']]}),
-										  mode : 'local',
-										  value: '25',
-										  listWidth     : 40,
-										  triggerAction : 'all',
-										  displayField  : 'id',
-										  valueField    : 'id',
-										  editable      : false,
-										  forceSelection: true,
-										  listeners: {
-										  	select: function(combo, _records) {
-										  		_storePeers.pageSize = parseInt(_records[0].get('id'), 10);
-												_storePeers.loadPage(1);
-										  	}
-										  }
-										})
-							        ]
-							    })
+	                                }],
+	                                bbar: new Ext.PagingToolbar({
+	                                	store: _storeNews,
+								        displayInfo: true,
+								        displayMsg: 'Displaying data {0} - {1} of {2}',
+								        emptyMsg: 'No data to display',
+								        items: [
+								            '-',
+								            'Records per page',
+								            '-',
+								            new Ext.form.ComboBox({
+											  name : 'perpage',
+											  width: 50,
+											  store: new Ext.data.ArrayStore({fields:['id'],data:[['25'],['50'],['75'],['100']]}),
+											  mode : 'local',
+											  value: '25',
+											  listWidth     : 40,
+											  triggerAction : 'all',
+											  displayField  : 'id',
+											  valueField    : 'id',
+											  editable      : false,
+											  forceSelection: true,
+											  listeners: {
+											  	select: function(combo, _records) {
+											  		_storeNews.pageSize = parseInt(_records[0].get('id'), 10);
+											  		_storeNews.loadPage(1);
+											  	}
+											  }
+											})
+								        ],
+								        tbar: [{
+								        	
+								        }]
+	                                })
 								});
 								c.up().setActiveTab(_id);
+								//closeLoadingWindow();
 							}
 						}
 					});
+					this.up().up().close();
 				}
 			}
 		}
