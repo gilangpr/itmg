@@ -36,7 +36,8 @@ class MyIndo_Ext_Abstract extends Zend_Db_Table_Abstract
 	{
 		try {
 			$q = $this->select();
-			return $q->query()->rowCount();
+			$c = $q->query()->fetchAll();
+			return count($c);
 		} catch ( Exception $e ) {
 			return 0;
 		}
@@ -77,13 +78,12 @@ class MyIndo_Ext_Abstract extends Zend_Db_Table_Abstract
 		try {
 			$q = $this->select()
 			->where($name . ' = ?', $value);
-				
-			if($q->query()->rowCount() > 0) {
+			$x = $q->query()->fetchAll();
+			if(count($x) > 0) {
 				return $q->query()->fetch();
 			} else {
 				return array();
 			}
-			
 		} catch ( Exception $e ) {
 			return array();
 		}

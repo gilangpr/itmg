@@ -517,17 +517,14 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		         ->join('SHAREHOLDINGS','SHAREHOLDINGS.SHAREHOLDING_ID = SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID', array('*'));
  			}
  		}
- 		         $list = $list->query()->fetchAll();
-
- 		         
- 		         $data = array(
- 		         		'data' => array(
- 		         				'items' => $list,
- 		         				'totalCount' => count($list)
- 		         		)
- 		         );
- 		         
- 		         MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+ 		$list = $list->query()->fetchAll();
+ 		$data = array(
+ 				'data' => array(
+ 						'items' => $list,
+ 						'totalCount' => count($list)
+ 						)
+ 				);
+ 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
  	
  	public function autocomAction() 
@@ -551,4 +548,4 @@ class Shareholdings_RequestController extends Zend_Controller_Action
  		
  		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
  	}
- 	}
+ }

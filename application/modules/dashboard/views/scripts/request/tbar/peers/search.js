@@ -84,7 +84,7 @@ Ext.create('Ext.Window', {
 		                            			var id = 'peers-detail-' + _objSelectedGrid[0].data.PEER_ID;
 												var data = _objSelectedGrid[0].data;
 												console.log(id);
-												<?php echo $this->render('/request/tbar/peers/detail-core.js')?>
+												<?php echo $this->render('/request/tbar/peers/detail-core.js')?>;
 		                            		} else {
 		                            			Ext.Msg.alert('Error', 'You did not select any Peer.');
 		                            		}

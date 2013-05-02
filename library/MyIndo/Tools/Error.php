@@ -8,6 +8,7 @@ class MyIndo_Tools_Error
 		$errors = array(
 				'101' => 'ID not found.',
 				'201' => 'Data already exist.',
+				'202' => 'Delete failed, data is being used.',
 				'901' => 'Invalid Request.',
 				'902' => 'File type not allowed'
 		);
