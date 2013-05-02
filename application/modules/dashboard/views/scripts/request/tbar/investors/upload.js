@@ -27,7 +27,7 @@ Ext.create('Ext.Window', {
 							var json = Ext.decode(e.response.responseText);
 							Ext.Msg.show({
 								title: 'Message',
-								msg: 'File sucessfully uploaded',
+								msg: json.error_message,
 								//msg: json.message,
 								minWidth: 200,
 								modal: true,

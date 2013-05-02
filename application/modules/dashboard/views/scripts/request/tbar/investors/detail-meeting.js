@@ -39,7 +39,7 @@ if(meeting_sel.length > 0) {
                     border: false,
                     region:'north',
                     xtype: 'gridpanel',
-                    //store:storeCO,
+                    //store: storeCO,
                     id: 'contact-meeting-list-' + id,
                     autoScroll:true,
                     minHeight: 200,

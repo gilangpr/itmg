@@ -21,19 +21,13 @@ if(selected.length > 0) {
 					Ext.Ajax.request({
 						url: sd.baseUrl + '/investortype/request/destroy',
 						params: selected[0].data,
-						success: function(_a, _b) {
-							var json = Ext.decode(_a.responseText); // Decode responsetext | Json to Javasript Object
+						success: function(data) {
+							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
-							if(!json.success) {
-								Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
-							} else {
-								var store = loadStore('InvestorTypes');
-								store.loadPage(1);
-							}
-						},
-						failure: function(_a, _b) {
-							var json = Ext.decode(_a.responseText); // Decode responsetext | Json to Javasript Object
-							Ext.Msg.alert('Error', json.error_message);
+							var store = loadStore('InvestorTypes');
+							store.loadPage(1);						},
+						failure: function(data) {
+							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
 						}
 					});

@@ -59,7 +59,7 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		$modelPeer = new Application_Model_SellingPrice();
+		$modelPeer = new Application_Model_Peers();
 		try {
 			/* INSERT AVERAGE SELLING PRICE DATA */
 			$peer_id = $this->_getParam('id',0);
@@ -72,7 +72,6 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 				
 				$_res = $_q->query()->fetchAll();
 
-				/* UPDATE IF TITLE IS EXIST */
 				if(count($_res) == 0) {
 					$this->_model->insert(array(
 							'PEER_ID' => $peer_id,
@@ -83,6 +82,8 @@ class Sellingprice_RequestController extends Zend_Controller_Action
 							'CREATED_DATE' => date('Y-m-d H:i:s')
 					));
 				} else {
+					/* UPDATE IF TITLE IS EXIST */
+					
 					$this->_model->update(array(
 							'TITLE' => $this->_posts['TITLE'],
 							'TYPE' => $this->_posts['TYPE'],

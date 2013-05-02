@@ -61,7 +61,7 @@ class Totalcashcost_RequestController extends Zend_Controller_Action
 		$data = array(
 				'data' => array()
 		);
-		$modelPeer = new Application_Model_TotalCashCost();
+		$modelPeer = new Application_Model_Peers();
 		try {
 			/* INSERT TOTAL CASH COST DATA */
 			$peer_id = $this->_getParam('id',0);

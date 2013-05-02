@@ -1,6 +1,6 @@
 <?php 
 
-class Investors_RequestController extends Zend_Controller_Action
+class Investors_RequestController extends MyIndo_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -9,6 +9,7 @@ class Investors_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
+	protected $_data;
 	
 	public function init()
 	{
@@ -27,6 +28,13 @@ class Investors_RequestController extends Zend_Controller_Action
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
+		$this->_data = array(
+				'data' => array(
+						'items' => array(),
+						'totalCount' => 1
+						)
+				);
+		$this->_date = date('Y-m-d H:i:s');
 	}
 	public function createAction()
 	{
@@ -190,6 +198,17 @@ class Investors_RequestController extends Zend_Controller_Action
 					$q->where('EQUITY_ASSETS >= 0');
 				}
 				
+				/*
+				if(strtolower($EQUITY_ASSETS) == 'small') {
+					$q->where('EQUITY_ASSETS >= 0 AND EQUITY_ASSETS <= 20');
+				}else if(strtolower($EQUITY_ASSETS) == 'medium') {
+					$q->where('EQUITY_ASSETS >= 21 AND EQUITY_ASSETS <= 40');
+				} else if(strtolower($EQUITY_ASSETS) == 'large'){
+					$q->where('EQUITY_ASSETS >= 41');
+				} else {
+					$q->where('EQUITY_ASSETS >= 0');
+				}
+				//*/
 			}
 			
 			if(isset($this->_posts['INVESTOR_TYPE'])) {
@@ -225,7 +244,7 @@ class Investors_RequestController extends Zend_Controller_Action
 			
 		}
 	
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
+		MyIndo_Tools_Return::JSON($data);
 	}
 	
 	public function destroyAction(){
@@ -344,8 +363,143 @@ class Investors_RequestController extends Zend_Controller_Action
 	
 		
 	}
-
-	public function uploadAction (){
+	
+	public function uploadAction()
+	{
+		$ITModel = new Application_Model_InvestorType();
+		$LOModel = new Application_Model_Locations();
+		try {
+			$upload = new Zend_File_Transfer_Adapter_Http();
+			$upload->setDestination(APPLICATION_PATH ."/../public/upload/investors/");
+			$upload->addValidator('Extension',false, array('xls','xlsx','case' => true));
+			if($upload->isValid()) {
+				$upload->receive();
+				$fileInfo = $upload->getFileInfo();
+				
+				$tmp = explode('.', $fileInfo['FILE']['name']);
+				$fileName = MyIndo_Tools_Return::makePassword(microtime());
+				$fileExt = $tmp[count($tmp)-1];
+				$newName = $fileName . '.' . $fileExt;
+				
+				rename($upload->getDestination() . '/' . $fileInfo['FILE']['name'], $upload->getDestination() . '/' . $newName);
+				
+				try {
+					$inputFileName = $upload->getDestination() . '/' . $newName;
+					$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+					$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+					$objReader->setReadDataOnly(true);
+					$objPHPExcel = $objReader->load($inputFileName);
+					$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $inputFileType);
+					$objWriter->setPreCalculateFormulas(false);
+					$total = 0;
+					$err = array();
+					foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+						$highestRow         =  $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+						$highestColumn      =  $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+						$nrColumns = ord($highestColumn) - 64;
+						$highestColumn++;
+						for ($row = 2; $row < $highestRow + 1; $row++) {
+							$val = array();
+							for ($col = 'A'; $col < $highestColumn; $col++) {
+								$val[] = $objPHPExcel->setActiveSheetIndex(0)->getCell($col . $row)->getValue();
+							};
+							
+							/*
+							 * 0 - Company Name
+							 * 1 - Investor Type
+							 * 2 - Style
+							 * 3 - Equity Assets
+							 * 4 - Phone 1
+							 * 5 - Phone 2
+							 * 6 - Fax
+							 * 7 - Email 1
+							 * 8 - Email 2
+							 * 9 - Website
+							 * 10 - Address
+							 * 11 - Country
+							 * 12 - Company Overview
+							 * 13 - Investment Strategy
+							 */
+							
+							if(!empty($val[0]) && $val[0] != '') {
+								if(!$this->_model->isExistByKey('COMPANY_NAME', $val[0])) {
+									if(!$ITModel->isExistByKey('INVESTOR_TYPE', $val[1])) {
+										$investorType = $ITModel->insert(array(
+												'INVESTOR_TYPE' => $val[1],
+												'CREATED_DATE' => $this->_date
+												));
+									} else {
+										$investorType = $ITModel->getPkByKey('INVESTOR_TYPE', $val[1]);
+									}
+									$style = (!empty($val[2]) && $val[2] != '' ) ? $val[2] : '-';
+									$equityAssets = (is_numeric($val[3])) ? $val[3] : 0;
+									$phone1 = (!empty($val[4]) && $val[4] != '' ) ? $val[4] : '-';
+									$phone2 = (!empty($val[5]) && $val[5] != '' ) ? $val[5] : '-';
+									$fax = (!empty($val[6]) && $val[6] != '' ) ? $val[6] : '-';
+									$email1 = (!empty($val[7]) && $val[7] != '' ) ? $val[7] : '-';
+									$email2 = (!empty($val[8]) && $val[8] != '' ) ? $val[8] : '-';
+									$website = (!empty($val[9]) && $val[9] != '' ) ? $val[9] : '-';
+									$address = (!empty($val[10]) && $val[10] != '' ) ? $val[10] : '-';
+									if(!$LOModel->isExistByKey('LOCATION', $val[11])) {
+										$country = $LOModel->insert(array(
+												'LOCATION' => $val[11],
+												'CREATED_DATE' => $this->_date
+												));
+									} else {
+										$country = $LOModel->getPkByKey('LOCATION', $val[11]);
+									}
+									$companyOverview = (!empty($val[12]) && $val[12] != '' ) ? utf8_encode($val[12]) : '-';
+									$investmentStrategy = (!empty($val[13]) && $val[13] != '' ) ? utf8_encode($val[13]) : '-';
+									
+									try {
+										$this->_model->insert(array(
+												'INVESTOR_TYPE_ID' => $investorType,
+												'LOCATION_ID' => $country,
+												'COMPANY_NAME' => $val[0],
+												'STYLE' => $style,
+												'EQUITY_ASSETS' => $equityAssets,
+												'PHONE_1' => $phone1,
+												'PHONE_2' => $phone2,
+												'FAX' => $fax,
+												'EMAIL_1' => $email1,
+												'EMAIL_2' => $email2,
+												'WEBSITE' => $website,
+												'ADDRESS' => $address,
+												'COMPANY_OVERVIEW' => $companyOverview,
+												'INVESTMENT_STRATEGY' => $investmentStrategy,
+							 					'CREATED_DATE' => $this->_date
+												));
+										$total++;
+									}catch(Exception $e) {
+										$this->_success = false;
+										$this->_error_code = $e->getCode();
+										$this->_error_message = $e->getMessage();
+										$err[] = $e->getMessage();
+									}
+								}
+							}
+						}
+					}
+					$this->_error_message = $total . ' data successfully inserted.';
+					if(file_exists($upload->getDestination() . '/' . $newName)) {
+						unlink($upload->getDestination() . '/' . $newName);
+					}
+				}catch(Exception $e) {
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
+				}
+			} else {
+				$this->error(902);
+			}
+		}catch(Exception $e) {
+			$this->error(901);
+		}
+		$this->json();
+	}
+	
+	public function uploadOldAction ()
+	{
 			
 		$data = array(
 				'data' => array()
@@ -358,7 +512,7 @@ class Investors_RequestController extends Zend_Controller_Action
 	
 		$upload->setDestination(APPLICATION_PATH ."/../public/upload/investors/");
 		//$upload->addValidator('Extension',false,'xls,xlsx');
-		$upload->addValidator('Extension',false, array('xls','xlsx','case' => true));
+		$upload->addValidator('Extension',false, array('xls','xlsx','case'=>true));
 			if ($upload->isValid()) {
 		
 				$upload->receive();
@@ -435,25 +589,47 @@ class Investors_RequestController extends Zend_Controller_Action
 										'INVESTOR_TYPE_ID' => $IT_id,
 										'LOCATION_ID' => $LO_id,
 										'COMPANY_NAME' => $val[0],
-										'STYLE' => $val[2],
-										'EQUITY_ASSETS' => $val[3] ,
-										'PHONE_1' => $val[4],
-										'PHONE_2' => $val[5],
-										'FAX' => $val[6],
-										'EMAIL_1' => $val[7],
-										'EMAIL_2' => $val[8],
-										'WEBSITE' => $val[9],
-										'ADDRESS' => $val[10],
-										'COMPANY_OVERVIEW' => $val[12],
-										'INVESTMENT_STRATEGY' => $val[13],
+										'STYLE'=> $val[2],
+										'EQUITY_ASSETS'=>$val[3] ,
+										'PHONE_1'=>$val[4],
+										'PHONE_2'=>$val[5],
+										'FAX'=>$val[6],
+										'EMAIL_1'=>$val[7],
+										'EMAIL_2'=>$val[8],
+										'WEBSITE'=>$val[9],
+										'ADDRESS'=>$val[10],
+										'COMPANY_OVERVIEW'=>$val[12],
+										'INVESTMENT_STRATEGY'=>$val[13],
 					 					'CREATED_DATE' => date('Y-m-d H:i:s')
 									));
 								$total = $total + count($jum);
-								
-							} else {
+								/*
+								$data = array(
+									'data' => array(
+										'items' => $total,
+										'totalCount' => $total
+										)
+									);
+								*/
+							}
+							
+							else{
+								/*
+								if($total == 0){
+									//$total=1;
+									$this->_success = false;
+									$this->_error_message = '0 Data Insert';	
+								}
+								else{
+									$jumlah=$total+1;
+									$this->_success = false;
+									$this->_error_message = $jumlah.' Data Insert';	
+								}
+								*/
 								$this->_success = false;
 								$this->_error_message = 'Any data Already Exist';	
 							}
+							//$jumlah = $total+1;
 						}
 						
 					}
@@ -477,10 +653,11 @@ class Investors_RequestController extends Zend_Controller_Action
 					$this->_error_message = $e->getMessage();
 					$this->_success = false;
 		} 
-		
+	    /*
 		if(file_exists($upload->getDestination() . '/' . $new_name)) {
 			unlink($upload->getDestination() . '/' . $new_name);
 		}
+		*/
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	
 	}

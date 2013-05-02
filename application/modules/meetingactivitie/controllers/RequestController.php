@@ -29,13 +29,6 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		$this->_error_message = '';
 		$this->_success = true;
 		
-		$this->_data = array(
-				'data' => array(
-						'items' => array(),
-						'totalCount' => 0
-						)
-				);
-		
 	}
 	
 	public function createAction()
@@ -106,34 +99,7 @@ class Meetingactivitie_RequestController extends Zend_Controller_Action
 		
 	public function readAction()
 	{	
-		if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
-			if(isset($this->_posts['sort'])) {
-				// Decode sort JSON :
-				$sort = Zend_Json::decode($this->_posts['sort']);
-			}
-			// Query data
-			$q = $this->_model->select();
-			if(isset($this->_posts['sort'])) {
-				if($sort[0]['property'] == 'MEETING_EVENT' || $sort[0]['property'] == 'MEETING_DATE') {
-					$q->order($sort[0]['property'] . ' ' . $sort[0]['direction']);
-				}
-			}
-			
-			if(isset($this->_posts['query'])) {
-				if(!empty($this->_posts['query']) && $this->_posts['query'] != '') {
-					$q->where('MEETING_EVENT LIKE ?', '%' . $this->_posts['query'] . '%');
-				}
-			}
-			// Count all data
-			$rTotal = $q->query()->fetchAll();
-			$totalCount = count($rTotal);
-			
-			// Fetch sorted & limit data
-			$q->limit($this->_limit, $this->_start);
-			$full = $q->query()->fetchAll();
-		} else {
-			$full = $this->_model->getListLimit($this->_limit, $this->_start, 'MEETING_DATE DESC');
-		}
+		$full = $this->_model->getListLimit($this->_limit, $this->_start, 'MEETING_DATE ASC');
 		$_temp = '';
 		$_temp2 = '';
 		$_i = 0;
