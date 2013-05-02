@@ -67,13 +67,13 @@ if (!c.up().items.get(id)) {
 				},{
 					fieldLabel: 'Brief History',
 					name: 'BRIEF_HISTORY',
-					xtype: 'htmleditor',
+					xtype: 'textfield',
 					height: 150,
 					allowBlank: false
 				},{
 					fieldLabel: 'Business Activity',
 					name: 'BUSINESS_ACTIVITY',
-					xtype: 'htmleditor',
+					xtype: 'textfield',
 					height: 150,
 					allowBlank: false
 				}]
