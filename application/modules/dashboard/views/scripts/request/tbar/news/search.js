@@ -1,4 +1,4 @@
-Date.prototype.customFormat = function(formatString){
+	Date.prototype.customFormat = function(formatString){
     var YYYY,YY,MMMM,MMM,MM,M,DDDD,DDD,DD,D,hhh,hh,h,mm,m,ss,s,ampm,AMPM,dMod,th;
     var dateObject = this;
     YY = ((YYYY=dateObject.getFullYear())+"").slice(-2);
@@ -162,28 +162,17 @@ Ext.create('Ext.Window', {
 			click: function() {
 				var form = Ext.getCmp('news-search-form').getForm();
 				var _id = 'news-search-result-' + Math.random();
-				var rTitle = Ext.getCmp('news-title').getValue();
-				var rCategory = Ext.getCmp('news-category').getValue();
-				var rCompany = Ext.getCmp('news-company').getValue();
-				var rSource = Ext.getCmp('news-source').getValue();
-				var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
-				startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
-				var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
-				enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
 				
 				if(form.isValid()) {
-					if(typeof(rTitle) === 'undefined') {
-						rTitle = '';
-					}
-					if(typeof(rCategory) === 'undefined') {
-						rCategory = '';
-					}
-					if(typeof(rCompany) === 'undefined') {
-						rCategory = '';
-					}
-					if(typeof(rSource) === 'undefined') {
-						rSource = '';
-					}
+
+					var rTitle = Ext.getCmp('news-title').getValue();
+					var rCategory = Ext.getCmp('news-category').getValue();
+					var rCompany = Ext.getCmp('news-company').getValue();
+					var rSource = Ext.getCmp('news-source').getValue();
+					var stDate = new Date(Date.parse(Ext.getCmp('start-date').getValue()));
+					startdate = stDate.customFormat('#YYYY#-#MM#-#DD#');
+					var endDate = new Date(Date.parse(Ext.getCmp('end-date').getValue()));
+					enddate = endDate.customFormat('#YYYY#-#MM#-#DD#');
 					
 					var _storeNews = Ext.create("Ext.data.Store", {
 						model: "News",
