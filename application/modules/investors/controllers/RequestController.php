@@ -493,6 +493,79 @@ class Investors_RequestController extends MyIndo_Controller_Action
 				$this->error(902);
 			}
 		}catch(Exception $e) {
+			$this->_error_code = $e->getMessage();
+			$this->_error_message = $e->getMessage();
+			$this->_success = false;
+		}
+		$this->json();
+	}
+	
+	public function searchAction()
+	{
+		if($this->isPost() && $this->isAjax()) {
+			
+			/* Models : */
+			$contactModel = new Application_Model_Contacts();
+			$equityAssetsModel = new Application_Model_Equityasset();
+			$investorTypeModel = new Application_Model_InvestorType();
+			$locationModel = new Application_Model_Locations();
+			/* End of : Model */
+			
+			$companyName = (!empty($this->_posts['COMPANY_NAME'])) ? $this->_posts['COMPANY_NAME'] : '*';
+			$contactPerson = (!empty($this->_posts['CONTACT_PERSON'])) ? $this->_posts['CONTACT_PERSON'] : '*';
+			$equityAssets = (!empty($this->_posts['EQUITY_ASSETS'])) ? $this->_posts['EQUITY_ASSETS'] : '*';
+			$investorType = (!empty($this->_posts['INVESTOR_TYPE'])) ? $this->_posts['INVESTOR_TYPE'] : '*';
+			$location = (!empty($this->_posts['LOCATION'])) ? $this->_posts['LOCATION'] : '*';
+			
+			$q = $this->_model->select()->from('INVESTORS',array('*'))->setIntegrityCheck(false);
+			
+			if($companyName != '*') {
+				$q->where('COMPANY_NAME LIKE ?', '%' . $companyName . '%');
+			}
+			
+			if($investorType != '*') {
+				if($investorTypeModel->isExistByKey('INVESTOR_TYPE', $investorType)) {
+					$investorTypeId = $investorTypeModel->getPkByKey('INVESTOR_TYPE', $investorType);
+					$q->where('INVESTORS.INVESTOR_TYPE_ID = ?', $investorTypeId);
+				}
+			}
+			
+			if($location != '*') {
+				if($locationModel->isExistByKey('LOCATION', $location)) {
+					$locationId = $locationModel->getPkByKey('LOCATION', $location);
+					$q->where('INVESTORS.LOCATION_ID = ?', $locationId);
+				}
+			}
+			
+			if($equityAssets != '*') {
+				if($equityAssetsModel->isExistByKey('EQUITY_TYPE', $equityAssets)) {
+					$qEquity = $equityAssetsModel->select()
+					->where('EQUITY_TYPE = ?', $equityAssets);
+					$resEquity = $qEquity->query()->fetch();
+					$q->where('EQUITY_ASSETS >= ?', $resEquity['MIN_VALUE'])
+					->where('EQUITY_ASSETS <= ?', $resEquity['MAX_VALUE']);
+				}
+			}
+			
+			if($contactPerson != '*') {
+				$qContact = $contactModel->select()
+				->where('NAME LIKE ?', '%' . $contactPerson . '%');
+				$resContact = $qContact->query()->fetchAll();
+				if(count($resContact) > 0) {
+					$q->where('CONTACTS.NAME LIKE ?', '%' . $contactPerson . '%');
+					$q->join('CONTACTS', 'CONTACTS.INVESTOR_ID = INVESTORS.INVESTOR_ID', array('NAME'));
+				}
+			}
+			$totalCount = $q->query()->fetchAll();
+			
+			$q->join('LOCATIONS', 'LOCATIONS.LOCATION_ID = INVESTORS.LOCATION_ID', array('LOCATION'))
+			->join('INVESTOR_TYPE', 'INVESTOR_TYPE.INVESTOR_TYPE_ID = INVESTORS.INVESTOR_TYPE_ID', array('INVESTOR_TYPE'))
+			->limit($this->_limit, $this->_start);
+			$result = $q->query()->fetchAll();
+			$this->_data['data']['items'] = $result;
+			$this->_data['data']['totalCount'] = count($totalCount);
+			
+		} else {
 			$this->error(901);
 		}
 		$this->json();

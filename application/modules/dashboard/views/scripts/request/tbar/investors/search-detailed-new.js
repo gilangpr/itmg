@@ -1,3 +1,7 @@
+var c = Ext.getCmp('<?php echo $this->container ?>');
+var xid = 'investors-detail-' + Math.random();
+var data = _store.data.items;
+
 var cellEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 		clicksToMoveEditor: 1,
         autoCancel: false
