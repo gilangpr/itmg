@@ -38,18 +38,18 @@ class Shareholdings_ExecutiveController extends MyIndo_Controller_Action
 				foreach($data as $k=>$d) {
 					$total += $d['AMOUNT'];
 				}
+				$totalCount = $q->query()->fetchAll();
 				
 				$q->limit($this->_limit, $this->_start);
 				
 				$data = $q->query()->fetchAll();
-				$totalCount = count($data);
 				
 				foreach($data as $k=>$d) {
 					$data[$k]['PERCENTAGE'] = ($d['AMOUNT'] / $total) * 100 . ' %';
 				}
 				
 				$this->_data['data']['items'] = $data;
-				$this->_data['data']['totalCount'] = count($data);
+				$this->_data['data']['totalCount'] = count($totalCount);
 			}
 		}
 		
