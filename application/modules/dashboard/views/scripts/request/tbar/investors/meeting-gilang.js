@@ -799,40 +799,6 @@ if(__selected.length > 0) {
                         emptyText:'Notes is null',
                         minHeight: 160
                         //allowBlank: false
-<<<<<<< HEAD
-=======
-                    }],
-                    buttons: [{
-                        text: 'Update',
-                        iconCls: 'icon-accept',
-                        listeners: {
-                            click: function() {
-                                var form = Ext.getCmp('meeting-detail-notes-form-' + xid).getForm();
-                                if(form.isValid()) {
-                                    form.submit({
-
-                                        url: sd.baseUrl + '/meetingactivitie/request/updatenotes/id/'+meeting__id.MEETING_ACTIVITIE_ID,
-                                        waitMsg: 'Updateing data, please wait..',
-                                         //var store=loadStore('Meetingactivities'),
-                                        params: {
-                                            id: meeting__id.MEETING_ACTIVITIE_ID,
-                                            INVESTOR_ID:meeting__id.INVESTOR_ID
-                                            //type: 'NOTES'
-                                        },
-                                        success: function(d, e) {
-                                            var json = Ext.decode(e.response.responseText);
-                                            Ext.Msg.alert('Message', 'Update success.');
-                                            storeMA.loadPage(storeMA.currentPage);
-                                        },
-                                        failure: function(d, e) {
-                                            var json = Ext.decode(e.response.responseText);
-                                            Ext.Msg.alert('Error', json.error_message);
-                                        }
-                                    })
-                                }
-                            }
-                        }
->>>>>>> 7900c1bf69283adf15dfd8546faaffcb18f6a617
                     }]
                 }]
             }]
