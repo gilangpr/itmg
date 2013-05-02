@@ -131,6 +131,7 @@ class Meetinginvestor_RequestController extends Zend_Controller_Action
                 $this->_data['data']['items'][$_i]['MEETING_DATE'] = $d['MEETING_DATE'];
                 $this->_data['data']['items'][$_i]['MEETING_EVENT'] = $d['MEETING_EVENT'];
                 $this->_data['data']['items'][$_i]['INVESTOR_ID'] = $d['INVESTOR_ID'];
+                $this->_data['data']['items'][$_i]['NOTES'] = $d['NOTES'];
             }
             $Meetingcontact = new Application_Model_Meetingcontact();
             $In_Id = $d['INVESTOR_ID'];

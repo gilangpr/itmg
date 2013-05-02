@@ -25,7 +25,7 @@ if(selected.length > 0) {
 							var json = Ext.decode(data.responseText); // Decode responsetext | Json to Javasript Object
 							closeLoadingWindow();
 							if(!json.success) {
-								Ext.Msg.alert('Error', json.error_message);
+								Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
 							} else {
 								var store = loadStore('Locations');
 								store.loadPage(1);
