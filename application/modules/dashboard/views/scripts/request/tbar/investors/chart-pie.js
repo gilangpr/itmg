@@ -221,7 +221,7 @@
 								name:'TITLE'
 							}
 						},{
-							text: 'Value',
+							text: 'Value (%)',
 							width: 120,
 							align: 'center',
 							dataIndex: 'VALUE',

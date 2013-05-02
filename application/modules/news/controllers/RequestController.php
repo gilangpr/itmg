@@ -43,7 +43,6 @@ class News_RequestController extends Zend_Controller_Action
 		if($this->getRequest()->isPost() && $this->getRequest()->isXmlHttpRequest()) {
 			$ncatModel = new Application_Model_NewsCategory();
 			$ncomModel = new Application_Model_Company();
-			
 			if(!isset($this->_posts['search'])) {
 	
 				/* Not search query */
