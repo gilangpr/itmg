@@ -68,7 +68,7 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		try {
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);
-			if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
+			if ($modelCS->isExistByKey('PEER_ID', $peer_id)) {
 				$this->_model->insert(array(
 					'PEER_ID' => $peer_id,
 					'TITLE' => $this->_post['TITLE'],
@@ -122,40 +122,6 @@ class Coalsales_RequestController extends Zend_Controller_Action
 		}
 		
 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
-		
-// 		$data = array(
-// 			'data' => array()
-// 		);
-// 		$modelCoalsales = new Application_Model_Coalsales();
-// 		$modelCoalSalesTitle = new Application_Model_CoalSalesTitle();
-// 		try {
-// 			$peer_id = $this->_getParam('id',0);
-// 			if ($modelCoalsales->isExistByKey('PEER_ID', $peer_id)) {
-// 				$this->_model->insert(array(
-// 					'PEER_ID' => $peer_id,
-// 					'TITLE' => $this->_post['TITLE'],
-// 					'TYPE' => $this->_post['TYPE'],
-// 					'COUNTRY' => $this->_post['COUNTRY'],
-// 					'VOLUME' => $this->_post['VOLUME'],
-// 					'CREATED_DATE' => date('Y-m-d H:i:s')
-// 				));
-// 				if(!$modelCoalSalesTitle->isExistByKey('TITLE', $this->_posts['TITLE'])) {
-// 					$modelCoalSalesTitle->insert(array(
-// 							'TITLE' => $this->_posts['TITLE'],
-// 							'CREATED_DATE' => date('Y-m-d H:i:s')
-// 							));
-// 				}
-// 			} else {
-// 				$this->_error_code = 404;
-// 				$this->_error_message = 'PEER_ID NOT FOUND';
-// 				$this->_success = false;
-// 			}
-// 		}catch(Exception $e) {
-// 			$this->_error_code = $e->getCode();
-// 			$this->_error_message = $e->getMessage();
-// 			$this->_success = false;
-// 		}
-// 		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 
 	public function readAction()

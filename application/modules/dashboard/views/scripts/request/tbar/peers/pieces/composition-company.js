@@ -123,20 +123,19 @@
                             listeners: {
                                 click: function() {
                                     var form = Ext.getCmp('add-new-composition-form').getForm();
-                                    //var store = loadStore('CompositionCompanys');
 
                                     if (form.isValid()) {
                                         form.submit({
                                             url: sd.baseUrl + '/compositioncompany/request/create/id/' + data.PEER_ID,
                                             success: function(_a, _b) {
-                                                var json = Ext.decode(_a.response.responseText);
+                                                var json = Ext.decode(_b.response.responseText);
                                                 form.reset();
                                                 storeCSY.load(); // Refresh grid data
                                                 Ext.Msg.alert('Success', 'Data has been saved');
                                                 Ext.getCmp('CSY').close();
                                             },
                                             failure: function(_a, _b) {
-                                                var json = Ext.decode(_a.response.responseText);
+                                                var json = Ext.decode(_b.response.responseText);
                                                 Ext.Msg.alert('Error', json.error_message);
                                             }
                                         });
