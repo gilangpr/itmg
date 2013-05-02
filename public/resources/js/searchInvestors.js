@@ -984,6 +984,7 @@ function showInvestorSearch2() {
 											id: 'investors-search-result-' + xyz,
 											closable: true,
 											bbar: bbar,
+											autoScroll: true,
 											items: [{
 												xtype: 'gridpanel',
 												store: _storeSearchInvestors,

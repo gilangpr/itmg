@@ -117,7 +117,8 @@ function showShareholdingSearch() {
 											columns: [{
 												text: 'Date',
 												dataIndex: 'DATE',
-												flex: 1
+												width: 120,
+												align: 'center'
 											},{
 												text: 'Investor Name',
 												dataIndex: 'INVESTOR_NAME',
@@ -136,9 +137,10 @@ function showShareholdingSearch() {
 												text: 'No.Of Share',
 												width: 120,
 												dataIndex: 'AMOUNT',
-												renderer: Ext.util.Format.numberRenderer('0.,/i')
+												renderer: Ext.util.Format.numberRenderer('0.,/i'),
+												align: 'center'
 											},{
-												text: 'Percentage',
+												text: 'Percentage<br/>(%)',
 												width: 120,
 												dataIndex: 'PERCENTAGE',
 												renderer: Ext.util.Format.numberRenderer('0.00,/i'),

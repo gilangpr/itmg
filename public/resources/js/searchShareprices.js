@@ -167,7 +167,7 @@ function showSharepricesSearch() {
 											series[i] = {
 													type: 'line',
 													highlight: {
-														size: 7,
+														size: 2,
 														radius: 7
 													},
 													axis: 'left',
@@ -175,7 +175,7 @@ function showSharepricesSearch() {
 													yField: json.data.names[i],
 									                markerConfig: {
 									                    type: 'circle',
-									                    size: 4,
+									                    size: 1,
 									                    radius: 4,
 									                    'stroke-width': 0
 									                }
