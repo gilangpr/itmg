@@ -8,7 +8,7 @@
     maxHeight: grid_height,
     autoScroll: true,
     store: storeRR,
-    id: 'rr-grid',
+    id: 'rr-grid-' + data.PEER_ID,
     bbar: new Ext.PagingToolbar({
         store: storeRR,
         displayInfo: true,
@@ -88,26 +88,41 @@
                                 listeners: {
                                     click: function() {
                                         var form = Ext.getCmp('add-new-reserves-resources-form').getForm();
-                                        var store = loadStore ('PeerResourceReserves');
+                                        //var store = loadStore ('PeerResourceReserves');
                                         
-                                        if (form.isValid()) {
-                                            form.submit({
-                                                url: sd.baseUrl + '/peerrs/request/create/id/' + data.PEER_ID,
-                                                success: function(_a, _b) {
-                                                    //console.log(data);
-                                                    var json = Ext.decode(_a.response.responseText);
-                                                    form.reset();
-                                                    store.load(); // Refresh grid data
-                                                    Ext.Msg.alert('Success', 'Data has been saved');
-                                                    Ext.getCmp('RR').close();
-                                                },
-                                                failure: function(_a, _b) {
-                                                    //console.log(data);
-                                                    var json = Ext.decode(_a.response.responseText);
-                                                    Ext.Msg.alert('Error', json.error_message);
+                                        if(form.isValid()) {
+                                        form.submit({
+                                        url: sd.baseUrl + '/peerrs/request/create/id/' + data.PEER_ID,
+                                        success: function(_a, _b) {
+                                            var json = Ext.decode(_b.response.responseText);
+                                            storeRR.load();
+                                            Ext.Msg.alert('Success', 'Data has been saved');
+                                            Ext.getCmp('RR').close();
+                                        },
+                                        failure: function(_a, _b) {
+                                                var json = Ext.decode(_b.response.responseText);
+                                                Ext.Msg.alert('Error', json.error_code + ': ' + json.error_message);
                                                 }
                                             });
                                         }
+                                        // if (form.isValid()) {
+                                        //     form.submit({
+                                        //         url: sd.baseUrl + '/peerrs/request/create/id/' + data.PEER_ID,
+                                        //         success: function(_a, _b) {
+                                        //             //console.log(data);
+                                        //             var json = Ext.decode(_a.response.responseText);
+                                        //             form.reset();
+                                        //             store.load(); // Refresh grid data
+                                        //             Ext.Msg.alert('Success', 'Data has been saved');
+                                        //             Ext.getCmp('RR').close();
+                                        //         },
+                                        //         failure: function(_a, _b) {
+                                        //             //console.log(data);
+                                        //             var json = Ext.decode(_a.response.responseText);
+                                        //             Ext.Msg.alert('Error', json.error_message);
+                                        //         }
+                                        //     });
+                                        // }
                                     }
                                 }
                             },{
@@ -128,7 +143,7 @@
         iconCls: 'icon-stop',
         listeners: {
             click: function() {
-            	var _c = Ext.getCmp('rr-grid');
+            	var _c = Ext.getCmp('rr-grid-' + data.PEER_ID);
             	var _selected = _c.getSelectionModel().getSelection();
             	if(_selected.length > 0) {
             		var _data = _selected[0].data;

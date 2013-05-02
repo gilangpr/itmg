@@ -147,30 +147,44 @@
                             listeners: {
                                 click: function() {
                                     var form = Ext.getCmp('add-financial-performance-form').getForm();
-                                    var store = loadStore ('FinancialPerformances');
-                                        
-                                    if (form.isValid()) {
+                                    //var store = loadStore ('FinancialPerformances');
+                                    if(form.isValid()) {
                                         form.submit({
                                         url: sd.baseUrl + '/financialperform/request/create/id/' + data.PEER_ID,
-                                        success: function(d) {
-                                            //console.log(data);
-                                            var json = Ext.decode(d.responseText);
-                                            form.reset();
-                                            store.load({
-                                                    params: {
-                                                        id: data.PEER_ID
-                                                    }
-                                            }); // Refresh grid data
+                                        success: function(_a, _b) {
+                                            var json = Ext.decode(_b.response.responseText);
+                                            storeFP.load();
                                             Ext.Msg.alert('Success', 'Data has been saved');
                                             Ext.getCmp('FP').close();
                                         },
-                                        failure: function(data) {
-                                                //console.log(data);
-                                                var json = Ext.decode(data.responseText);
-                                                Ext.Msg.alert('Error', json.error_message);
+                                        failure: function(_a, _b) {
+                                                var json = Ext.decode(_b.response.responseText);
+                                                Ext.Msg.alert('Error', json.error_code + ': ' + json.error_message);
                                             }
-                                        }); 
-                                    }
+                                        });
+                                    }    
+                                    // if (form.isValid()) {
+                                    //     form.submit({
+                                    //     url: sd.baseUrl + '/financialperform/request/create/id/' + data.PEER_ID,
+                                    //     success: function(d) {
+                                    //         //console.log(data);
+                                    //         var json = Ext.decode(d.responseText);
+                                    //         form.reset();
+                                    //         store.load({
+                                    //                 params: {
+                                    //                     id: data.PEER_ID
+                                    //                 }
+                                    //         }); // Refresh grid data
+                                    //         Ext.Msg.alert('Success', 'Data has been saved');
+                                    //         Ext.getCmp('FP').close();
+                                    //     },
+                                    //     failure: function(data) {
+                                    //             //console.log(data);
+                                    //             var json = Ext.decode(data.responseText);
+                                    //             Ext.Msg.alert('Error', json.error_message);
+                                    //         }
+                                    //     }); 
+                                    // }
                                 }
                             }
                         },{

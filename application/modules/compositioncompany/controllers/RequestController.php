@@ -61,7 +61,7 @@ class Compositioncompany_RequestController extends Zend_Controller_Action
 		$data = array(
 			'data' => array()
 		);
-		$modelPeer = new Application_Model_CompositionCompany();
+		$modelPeer = new Application_Model_Peers();
 		try {
 			//Insert Data :
 			$peer_id = $this->_getParam('id',0);

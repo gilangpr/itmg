@@ -62,7 +62,7 @@ class Strippingratio_RequestController extends Zend_Controller_Action
 		try {
 			/* INSERT STRIPPING RATIO DATA */
 			$peer_id = $this->_getParam('id',0);
-			die($peer_id);
+			//die($peer_id);
 			if($modelPeer->isExistByKey('PEER_ID', $peer_id)) {
 				
 				/* UPDATE IF TITLE IS EXIST */
