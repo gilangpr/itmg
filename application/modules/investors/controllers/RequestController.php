@@ -1,6 +1,6 @@
 <?php 
 
-class Investors_RequestController extends Zend_Controller_Action
+class Investors_RequestController extends MyIndo_Controller_Action
 {
 	protected $_model;
 	protected $_limit;
@@ -9,6 +9,7 @@ class Investors_RequestController extends Zend_Controller_Action
 	protected $_error_code;
 	protected $_error_message;
 	protected $_success;
+	protected $_data;
 	
 	public function init()
 	{
@@ -27,6 +28,12 @@ class Investors_RequestController extends Zend_Controller_Action
 		$this->_error_code = 0;
 		$this->_error_message = '';
 		$this->_success = true;
+		$this->_data = array(
+				'data' => array(
+						'items' => array(),
+						'totalCount' => 1
+						)
+				);
 	}
 	public function createAction()
 	{
@@ -355,8 +362,36 @@ class Investors_RequestController extends Zend_Controller_Action
 	
 		
 	}
-
-	public function uploadAction (){
+	
+	public function uploadAction()
+	{
+		$ITModel = new Application_Model_InvestorType();
+		$LOModel = new Application_Model_Locations();
+		try {
+			$upload = new Zend_File_Transfer_Adapter_Http();
+			$upload->setDestination(APPLICATION_PATH ."/../public/upload/investors/");
+			$upload->addValidator('Extension',false, array('xls','xlsx','case' => true));
+			if($upload->isValid()) {
+				$upload->receive();
+				$fileInfo = $upload->getFileInfo();
+				
+				$tmp = explode('.', $fileInfo['FILE']['name']);
+				$fileName = MyIndo_Tools_Return::makePassword(microtime());
+				$fileExt = $tmp[count($tmp)-1];
+				$newName = $fileName . '.' . $fileExt;
+				
+				echo $newName;
+			} else {
+				$this->error(902);
+			}
+		}catch(Exception $e) {
+			$this->error(901);
+		}
+		$this->json();
+	}
+	
+	public function uploadOldAction ()
+	{
 			
 		$data = array(
 				'data' => array()
