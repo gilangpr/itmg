@@ -60,6 +60,11 @@ Ext.create('Ext.Window', {
 				fieldLabel: 'Company',
 				allowBlank: false
 			},{
+				fieldLabel: 'Analyst',
+				name: 'ANALYST',
+				emptyText: 'Research Report Analyst',
+				allowBlank: false
+			},{
 				xtype: 'filefield',
 				name: 'FILE_PATH',
 				fieldLabel: 'File',

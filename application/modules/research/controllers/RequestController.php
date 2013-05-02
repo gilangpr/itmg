@@ -256,6 +256,7 @@ class Research_RequestController extends Zend_Controller_Action
 				$adp = new Zend_File_Transfer_Adapter_Http();
 				$mimeModel = new Application_Model_Mime();
 				$rrcModel = new Application_Model_ResearchReportCategory();
+				$ncomModel = new Application_Model_Company();
 				
 				$adp->setDestination(APPLICATION_PATH . '/../public/upload/researchs/');
 				$adp->addValidator('Extension',false,'doc,docx,xls,xlsx,pdf,txt');
@@ -281,10 +282,16 @@ class Research_RequestController extends Zend_Controller_Action
 						$rrcID = $rrcModel->getPkByKey('RESEARCH_REPORT_CATEGORY', $this->_posts['CATEGORY']);
 						/* End of : Get Research Report Category ID */
 						
+						/* Get News Company ID */
+						$ncomID = $ncomModel->getPkByKey('COMPANY_NAME', $this->_posts['COMPANY_NAME']);
+						/* End of : Get News Company ID */
+						
 						$this->_model->insert(array(
 								'RESEARCH_REPORT_CATEGORY_ID' => $rrcID,
 								'TITLE' => $this->_posts['TITLE'],
 								'DESCRIPTION' => '',
+								'COMPANY_ID' => $ncomID,
+								'ANALYST' => $this->_posts['ANALYST'],
 								'FILE_NAME' => $new_name,
 								'FILE_SIZE' => (int)$fileInfo['FILE_PATH']['size'],
 								'FILE_PATH' => '/upload/researchs/' . $new_name,
