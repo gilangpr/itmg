@@ -172,7 +172,6 @@ var storeCA = Ext.create('Ext.data.Store', {
 	model: 'CustomAttribute',
 	storeId: 'CustomAttributes',
 	proxy: {
-		extraParams:{id:selected[0].data.INVESTOR_ID},
         "type": "ajax",
         "api": {
             "read": "\/customattributes\/request\/read",
@@ -234,6 +233,7 @@ if(!c.up().items.get(xid)) {
 			disabled: true,
 			listeners: {
 				click: function() {
+					showLoadingWindow();
 					var btn = Ext.getCmp(xid + '-btn-right');
 					_idx--;
 					btn.enable();
@@ -273,32 +273,49 @@ if(!c.up().items.get(xid)) {
 					Ext.getCmp(xid + '-investment-strategy').setValue(data.INVESTMENT_STRATEGY);
 					
 					/* End of : Investment Strategy */
-					
+					storeMA.proxy.extraParams = {
+						id: data.INVESTOR_ID	
+					};
 					storeMA.load({
 						params: {
 							id: data.INVESTOR_ID
 						}
 					});
+					storeMI.proxy.extraParams = {
+							id: data.INVESTOR_ID	
+						};
 					storeMI.load({
 						params: {
 							id: data.INVESTOR_ID
 						}
 					});
+					storeCO.proxy.extraParams = {
+							id: data.INVESTOR_ID	
+						};
 					storeCO.load({
 						params: {
 							id: data.INVESTOR_ID
 						}
 					});
+					storeSH.proxy.extraParams = {
+							id: data.INVESTOR_ID	
+						};
 					storeSH.load({
 						params: {
 							id: data.INVESTOR_ID
 						}
 					});
+					storePD.proxy.extraParams = {
+							id: data.INVESTOR_ID	
+						};
 					storePD.load({
 						params: {
 							id: data.INVESTOR_ID
 						}
 					});
+					storeCA.proxy.extraParams = {
+							id: data.INVESTOR_ID	
+						};
 					storeCA.load({
 						params: {
 							id: data.INVESTOR_ID
@@ -315,7 +332,6 @@ if(!c.up().items.get(xid)) {
 			iconCls: 'icon-right',
 			iconAlign: 'right',
 			id: xid + '-btn-right',
-			disabled: true,
 			listeners: {
 				click: function() {
 					showLoadingWindow();
@@ -359,39 +375,57 @@ if(!c.up().items.get(xid)) {
 					
 					/* End of : Investment Strategy */
 					
-					storeMA.load({
-						params: {
-							id: data.INVESTOR_ID
-						}
-					});
-					storeMI.load({
-						params: {
-							id: data.INVESTOR_ID
-						}
-					});
-					storeCO.load({
-						params: {
-							id: data.INVESTOR_ID
-						}
-					});
-					storeSH.load({
-						params: {
-							id: data.INVESTOR_ID
-						}
-					});
-					storePD.load({
-						params: {
-							id: data.INVESTOR_ID
-						}
-					});
-					storeCA.load({
-						params: {
-							id: data.INVESTOR_ID
-						},
-						callback: function() {
-							closeLoadingWindow();
-						}
-					});
+					storeMA.proxy.extraParams = {
+							id: data.INVESTOR_ID	
+						};
+						storeMA.load({
+							params: {
+								id: data.INVESTOR_ID
+							}
+						});
+						storeMI.proxy.extraParams = {
+								id: data.INVESTOR_ID	
+							};
+						storeMI.load({
+							params: {
+								id: data.INVESTOR_ID
+							}
+						});
+						storeCO.proxy.extraParams = {
+								id: data.INVESTOR_ID	
+							};
+						storeCO.load({
+							params: {
+								id: data.INVESTOR_ID
+							}
+						});
+						storeSH.proxy.extraParams = {
+								id: data.INVESTOR_ID	
+							};
+						storeSH.load({
+							params: {
+								id: data.INVESTOR_ID
+							}
+						});
+						storePD.proxy.extraParams = {
+								id: data.INVESTOR_ID	
+							};
+						storePD.load({
+							params: {
+								id: data.INVESTOR_ID
+							}
+						});
+						storeCA.proxy.extraParams = {
+								id: data.INVESTOR_ID	
+							};
+						storeCA.load({
+							params: {
+								id: data.INVESTOR_ID
+							},
+							callback: function() {
+								closeLoadingWindow();
+							}
+						});
 				}
 			}
 		},{
