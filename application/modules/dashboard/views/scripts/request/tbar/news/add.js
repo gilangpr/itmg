@@ -4,7 +4,12 @@ var storeNews = Ext.create("Ext.data.Store", {
 	proxy:{"type":"ajax","api":{"read":"\/news\/request\/read","create":"\/news\/request\/create","update":"\/news\/request\/update","destroy":"\/news\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"NEWS_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
 	sorter: {"property":"NEWS_ID","direction":"ASC"}});
 
-var storeNC = loadStore('Companys');
+var storeNC = Ext.create("Ext.data.Store", {
+	model: "Company",
+	storeId: "Companys__",
+	proxy:{"type":"ajax","api":{"read":"\/company\/request\/read","create":"\/company\/request\/create","update":"\/company\/request\/update","destroy":"\/company\/request\/destroy"},"actionMethods":{"create":"POST","destroy":"POST","read":"POST","update":"POST"},"reader":{"idProperty":"COMPANY_ID","type":"json","root":"data.items","totalProperty":"data.totalCount"},"writer":{"type":"json","root":"data","writeAllFields":true}},
+	sorter: {"property":"COMPANY_ID","direction":"ASC"}});
+
 storeNC.load ({
 	params: {
 		all: 1
