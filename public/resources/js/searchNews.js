@@ -27,7 +27,7 @@ function showNewsSearch() {
 	var storeRR = loadStore('Newss');
 	var storeRRC = loadStore('NewsCategorys');
 	var storeNC = loadStore('Companys');
-	var c = Ext.getCmp('<?php echo $this->container ?>');
+	var c = Ext.getCmp('main-content');
 	var storeRR_curpage = storeRR.currentPage;
 	storeRR.load({
 		params: {
@@ -207,7 +207,7 @@ function showNewsSearch() {
 									Ext.Msg.alert('Message', 'No data found.');
 								} else {
 									Ext.Msg.alert('Message', 'Result: ' + d.length + ' data(s) found.');
-									c.up().add({
+									c.add({
 										title: 'Search Result',
 										closable: true,
 										id: _id,
@@ -403,7 +403,7 @@ function showNewsSearch() {
 									        }]
 		                                })
 									});
-									c.up().setActiveTab(_id);
+									c.setActiveTab(_id);
 									//closeLoadingWindow();
 								}
 							}
