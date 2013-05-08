@@ -184,10 +184,20 @@ function loadContent(param1, editor) {
 												    editable: false
 												});
 											} else {
-												if(e.dataType == 'int') {
-													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.,/i');
-												} else if(e.dataType == 'float'){
-													records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.00,/i');
+												if(param1.text == 'Shareprices' || param1.text == 'Share Price') {
+													if(e.text == 'JKSE') {
+														if(e.dataType == 'int') {
+															records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.,/i');
+														} else if(e.dataType == 'float'){
+															records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.00,/i');
+														}
+													}
+												} else {
+													if(e.dataType == 'int') {
+														records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.,/i');
+													} else if(e.dataType == 'float'){
+														records.raw.contents.columns[i].renderer = Ext.util.Format.numberRenderer('0.00,/i');
+													}
 												}
 											}
 										});
